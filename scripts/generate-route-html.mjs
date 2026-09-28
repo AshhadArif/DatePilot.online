@@ -12,18 +12,19 @@ const routes = {
   '/time': ['Time Tools — Countdown, Time Difference, Time Zone Converter', 'Count down to a date, compare elapsed time, and convert between time zones using DatePilot time tools.'],
   '/guides': ['Date and Time Guides — Calculations, Calendars, Time Zones', 'Practical explanations for date calculations, calendar rules, time zones, and date formats.'],
   '/faq': ['Frequently Asked Questions — DatePilot', 'Answers about DatePilot calculations, endpoint conventions, privacy, and how date tools work.'],
-  '/calculators/date-calculator': ['Date Calculator | Add or Subtract Days from a Date', 'Add or subtract calendar days from any starting date. Understand month lengths, leap years, and year boundaries.'],
-  '/calculators/age-calculator': ['Age Calculator — Exact Age in Years, Months, and Days', 'Calculate calendar age from birth date to any target date. Learn why age differs from total days divided by 365.'],
-  '/calculators/days-between-dates': ['Days Between Dates Calculator', 'Calculate elapsed days between two dates. Understand exclusive vs. inclusive counting and endpoint conventions.'],
-  '/calculators/add-days': ['Add Days to Date Calculator', 'Find a future date by adding calendar days. See how month lengths and year boundaries affect the result.'],
-  '/calculators/subtract-days': ['Subtract Days from Date Calculator', 'Find an earlier date by subtracting calendar days. Cross month and year boundaries accurately.'],
-  '/calculators/working-days': ['Working Days Calculator — Count Weekdays Between Dates', 'Count weekdays between two dates. Understand the Monday–Friday rule and why holidays are separate.'],
-  '/calendar/day-of-week': ['Day of the Week Calculator', 'Find the weekday for any Gregorian calendar date. Understand why the year matters for weekday lookup.'],
-  '/calendar/week-number': ['ISO Week Number Calculator', 'Find an ISO 8601 week number and week-year. Learn how week-years differ from calendar years around New Year.'],
-  '/calendar/leap-year': ['Leap Year Calculator — Gregorian Rule', 'Check whether a year has 365 or 366 days. Understand the century exception and why 1900 is not a leap year.'],
-  '/time/countdown': ['Countdown Calculator — Time Remaining Until a Date', 'Calculate the remaining days and hours until a target date and time.'],
-  '/time/time-difference': ['Time Difference Calculator — Elapsed Hours and Minutes', 'Compare two date and time values. Calculate elapsed duration in hours and minutes.'],
-  '/time/time-zone-converter': ['Time Zone Converter — Convert Between Named Time Zones', 'Convert a local date and time between named IANA time zones. Understand DST and date changes.'],
+  '/calculators/date-calculator': ['Date Calculator — Add or Subtract Days From a Date', 'Add or subtract any number of days from a starting date. The calculator handles month lengths, leap years, and year boundaries automatically.'],
+  '/calculators/age-calculator': ['Age Calculator — Calculate Exact Age in Years, Months, Days', 'Calculate calendar age from a birth date to any target date. Learn why age differs from total days divided by 365.'],
+  '/calculators/days-between-dates': ['Days Between Dates — Date Difference Calculator', 'Count the elapsed calendar days between two dates. Understand exclusive versus inclusive counting and endpoint conventions.'],
+  '/calculators/days-calculator': ['Days Calculator — Days From Today, Before & Between Dates', 'Work out dates from a day count: what date is a number of days from today, what date was a number of days ago, and the days between dates.'],
+  '/calculators/add-days': ['Add Days to Date — Calculate a Future Date in Days', 'Add days to a date to find the resulting future calendar date and weekday across month and year boundaries.'],
+  '/calculators/subtract-days': ['Subtract Days From Date — Calculate a Date in the Past', 'Subtract days from a date to find an earlier calendar date, borrowing correctly across month and year boundaries.'],
+  '/calculators/working-days': ['Working Days Calculator — Count Business Days Between Dates', 'Count weekdays between two dates. Understand the Monday–Friday rule and why holidays are separate.'],
+  '/calendar/day-of-week': ['Day of the Week Calculator — What Day Was or Will Be', 'Find the weekday for any past or future Gregorian date. Understand why the year matters for weekday lookup.'],
+  '/calendar/week-number': ['Week Number Calculator — Current ISO Week Number', 'Find an ISO 8601 week number and week-year. Learn how week-years differ from calendar years around New Year.'],
+  '/calendar/leap-year': ['Leap Year Calculator — Is This Year a Leap Year?', 'Check whether a year has 365 or 366 days. Understand the century exception and why 1900 is not a leap year.'],
+  '/time/countdown': ['Countdown Calculator — How Many Days Until a Date', 'Count the days and hours remaining until a target date, measured from your device clock.'],
+  '/time/time-difference': ['Time Difference Calculator — Time Between Two Times', 'Calculate the elapsed time between two dates and times in hours and minutes, including intervals that cross midnight.'],
+  '/time/time-zone-converter': ['Time Zone Converter — Convert Time Zones & UTC Offsets', 'Convert a local date and time between named time zones using UTC offsets and daylight saving rules for the specific date.'],
   '/about': ['About DatePilot — Our Approach to Date Calculations', 'Learn how DatePilot builds date and time tools, explains its methods, and checks calculation accuracy.'],
   '/contact': ['Contact DatePilot — Report Issues and Corrections', 'Report incorrect calculations, broken links, accessibility issues, or other problems with DatePilot.'],
   '/privacy-policy': ['Privacy Policy — How DatePilot Handles Your Data', 'DatePilot calculators run in your browser. Read how we handle calculator inputs, cookies, and any analytics.'],
@@ -58,7 +59,7 @@ for (const [slug, title] of Object.entries(guideTitles)) {
 
 const template = fs.readFileSync(templatePath, 'utf8')
 for (const [route, [title, description]] of Object.entries(routes)) {
-  const canonical = `${siteUrl}${route === '/' ? '/' : route}`
+  const canonical = `${siteUrl}${route === '/' ? '/' : `${route}/`}`
   const html = template
     .replace(/<title>.*?<\/title>/, `<title>${title}</title>`)
     .replace(/<meta name="description" content=".*?" \/>/, `<meta name="description" content="${description}" />`)
