@@ -94,6 +94,17 @@ h3 { margin-bottom: 5px; }
 .faq-item h3 { font-size: 20px; margin: 0 0 10px; color: var(--ink); }
 .faq-item p { max-width: 680px; color: #405050; font-size: 17px; line-height: 1.75; }
 .link-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 24px; max-width: 760px; }
+.seo-content h3 { font-size: 21px; margin: 26px 0 10px; color: var(--ink); }
+.seo-content ul { padding-left: 24px; }
+.seo-content ul li { margin-bottom: 6px; }
+.table-wrap { max-width: 760px; overflow-x: auto; margin: 18px 0; border: 1px solid var(--line); background: white; }
+.table-wrap table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.table-wrap th, .table-wrap td { padding: 11px 13px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; color: #405050; line-height: 1.55; }
+.table-wrap th { font: 11px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .06em; color: var(--ink); background: #f0eee5; }
+.table-wrap tr:last-child td { border-bottom: 0; }
+.note { max-width: 680px; padding: 14px 16px; border-left: 3px solid var(--accent); background: #f7f6ee; }
+.live-note { max-width: 680px; padding: 16px 18px; border-left: 3px solid var(--teal); background: #eef4f1; }
+.result strong { white-space: pre-line; }
 .legal-section { max-width: 720px; border-top: 1px solid var(--line); padding: 24px 0 4px; }
 .legal-section h2 { font-size: 27px; margin: 0 0 8px; }
 .legal-review { margin-top: 42px; padding: 18px; border-left: 3px solid var(--accent); background: #f0eee5; font-size: 14px; }

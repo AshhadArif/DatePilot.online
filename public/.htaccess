@@ -8,6 +8,9 @@ RewriteRule ^ https://datepilot.online%{REQUEST_URI} [R=301,L]
 # Block internal docs from being served
 RewriteRule ^internal(/|$) - [F,L]
 
+# Block planning docs from being served
+RewriteRule ^docs(/|$) - [F,L]
+
 # SPA fallback: unknown paths serve index.html
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

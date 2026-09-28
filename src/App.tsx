@@ -1,23 +1,26 @@
 import { useEffect, useState, useCallback } from 'react'
 import './App.css'
 import { guideContent, toolContent } from './content'
+import type { Block } from './content'
+import { DynamicBlock } from './DynamicBlocks'
 
-type Tool = { slug: string; title: string; category: 'Date' | 'Calendar' | 'Time'; summary: string; method: string }
+type Tool = { slug: string; title: string; seoTitle: string; category: 'Date' | 'Calendar' | 'Time'; summary: string; method: string }
 type Page = { slug: string; title: string; description: string }
 
 const tools: Tool[] = [
-  { slug: 'date-calculator', title: 'Date Calculator', category: 'Date', summary: 'Add calendar time to a starting date.', method: 'Calendar arithmetic is used for the result.' },
-  { slug: 'age-calculator', title: 'Age Calculator', category: 'Date', summary: 'Find an exact age between two dates.', method: 'Age is counted by calendar anniversaries.' },
-  { slug: 'days-between-dates', title: 'Days Between Dates', category: 'Date', summary: 'Measure the elapsed days between dates.', method: 'The result excludes both named endpoints.' },
-  { slug: 'add-days', title: 'Add Days to Date', category: 'Date', summary: 'Find a future date by adding days.', method: 'The result moves through calendar dates.' },
-  { slug: 'subtract-days', title: 'Subtract Days from Date', category: 'Date', summary: 'Find an earlier date by subtracting days.', method: 'Month and year boundaries are handled as calendar dates.' },
-  { slug: 'working-days', title: 'Working Days Calculator', category: 'Date', summary: 'Count weekdays between two dates.', method: 'Monday through Friday count; holidays are not assumed.' },
-  { slug: 'day-of-week', title: 'Day of the Week', category: 'Calendar', summary: 'Discover the weekday for a date.', method: 'Uses the proleptic Gregorian calendar.' },
-  { slug: 'week-number', title: 'Week Number Calculator', category: 'Calendar', summary: 'Find an ISO 8601 week and week-year.', method: 'ISO weeks start Monday and week 1 contains the first Thursday.' },
-  { slug: 'leap-year', title: 'Leap Year Calculator', category: 'Calendar', summary: 'Check whether a year has 366 days.', method: 'Centuries are leap years only when divisible by 400.' },
-  { slug: 'countdown', title: 'Countdown Calculator', category: 'Time', summary: 'See how much time remains until a moment.', method: 'Measures from this device clock to the target.' },
-  { slug: 'time-difference', title: 'Time Difference Calculator', category: 'Time', summary: 'Compare two date and time values.', method: 'Reports elapsed duration between local values.' },
-  { slug: 'time-zone-converter', title: 'Time Zone Converter', category: 'Time', summary: 'Translate a date and time between zones.', method: 'Uses browser IANA timezone data.' },
+  { slug: 'date-calculator', title: 'Date Calculator', seoTitle: 'Date Calculator — Add or Subtract Days From a Date', category: 'Date', summary: 'Add calendar time to a starting date.', method: 'Calendar arithmetic is used for the result.' },
+  { slug: 'age-calculator', title: 'Age Calculator', seoTitle: 'Age Calculator — Calculate Exact Age in Years, Months, Days', category: 'Date', summary: 'Find an exact age between two dates.', method: 'Age is counted by calendar anniversaries.' },
+  { slug: 'days-between-dates', title: 'Days Between Dates', seoTitle: 'Days Between Dates — Date Difference Calculator', category: 'Date', summary: 'Measure the elapsed days between dates.', method: 'The result excludes both named endpoints.' },
+  { slug: 'days-calculator', title: 'Days Calculator', seoTitle: 'Days Calculator — Days From Today, Before & Between Dates', category: 'Date', summary: 'Find dates from a day count in either direction.', method: 'Both directions are calculated from the reference date.' },
+  { slug: 'add-days', title: 'Add Days to Date', seoTitle: 'Add Days to Date — Calculate a Future Date in Days', category: 'Date', summary: 'Find a future date by adding days.', method: 'The result moves through calendar dates.' },
+  { slug: 'subtract-days', title: 'Subtract Days from Date', seoTitle: 'Subtract Days From Date — Calculate a Date in the Past', category: 'Date', summary: 'Find an earlier date by subtracting days.', method: 'Month and year boundaries are handled as calendar dates.' },
+  { slug: 'working-days', title: 'Working Days Calculator', seoTitle: 'Working Days Calculator — Count Business Days Between Dates', category: 'Date', summary: 'Count weekdays between two dates.', method: 'Monday through Friday count; holidays are not assumed.' },
+  { slug: 'day-of-week', title: 'Day of the Week Calculator', seoTitle: 'Day of the Week Calculator — What Day Was or Will Be', category: 'Calendar', summary: 'Discover the weekday for a date.', method: 'Uses the proleptic Gregorian calendar.' },
+  { slug: 'week-number', title: 'Week Number Calculator', seoTitle: 'Week Number Calculator — Current ISO Week Number', category: 'Calendar', summary: 'Find an ISO 8601 week and week-year.', method: 'ISO weeks start Monday and week 1 contains the first Thursday.' },
+  { slug: 'leap-year', title: 'Leap Year Calculator', seoTitle: 'Leap Year Calculator — Is This Year a Leap Year?', category: 'Calendar', summary: 'Check whether a year has 366 days.', method: 'Centuries are leap years only when divisible by 400.' },
+  { slug: 'countdown', title: 'Countdown Calculator', seoTitle: 'Countdown Calculator — How Many Days Until a Date', category: 'Time', summary: 'See how much time remains until a moment.', method: 'Measures from this device clock to the target.' },
+  { slug: 'time-difference', title: 'Time Difference Calculator', seoTitle: 'Time Difference Calculator — Time Between Two Times', category: 'Time', summary: 'Compare two date and time values.', method: 'Reports elapsed duration between local values.' },
+  { slug: 'time-zone-converter', title: 'Time Zone Converter', seoTitle: 'Time Zone Converter — Convert Time Zones & UTC Offsets', category: 'Time', summary: 'Translate a date and time between zones.', method: 'Uses browser IANA timezone data.' },
 ]
 
 const guides: Page[] = [
@@ -41,16 +44,29 @@ const toolPath = (tool: Tool) => tool.category === 'Calendar' ? `/calendar/${too
 const today = () => new Date().toISOString().slice(0, 10)
 const localDate = (value: string) => new Date(`${value}T00:00:00`)
 const prettyDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+const weekday = (date: Date) => date.toLocaleDateString('en-US', { weekday: 'long' })
 const shiftDays = (date: Date, count: number) => { const result = new Date(date); result.setDate(result.getDate() + count); return result }
+const zoneOffset = (wall: Date, timeZone: string) => {
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone, hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).formatToParts(wall)
+  const value = (type: string) => Number(parts.find((part) => part.type === type)?.value)
+  const asUtc = Date.UTC(value('year'), value('month') - 1, value('day'), value('hour') % 24, value('minute'), value('second'))
+  return asUtc - wall.getTime()
+}
+const zoneToUtc = (wall: Date, timeZone: string) => {
+  const numbers = Date.UTC(wall.getFullYear(), wall.getMonth(), wall.getDate(), wall.getHours(), wall.getMinutes())
+  const first = numbers - zoneOffset(new Date(numbers), timeZone)
+  return new Date(numbers - zoneOffset(new Date(first), timeZone))
+}
 const dayGap = (a: Date, b: Date) => Math.round((Date.UTC(b.getFullYear(), b.getMonth(), b.getDate()) - Date.UTC(a.getFullYear(), a.getMonth(), a.getDate())) / 86400000)
 const normalize = (path: string) => path.length > 1 ? path.replace(/\/$/, '') : path
+const stripLinks = (text: string) => text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
 const SITE_URL = 'https://datepilot.online'
 
 const routeSeo = (path: string) => {
   const tool = tools.find((item) => toolPath(item) === path)
   const guide = guides.find((item) => `/guides/${item.slug}` === path)
-  if (tool) return { title: tool.title, description: toolContent[tool.slug]?.answer ?? tool.summary, type: 'WebApplication' }
-  if (guide) return { title: guide.title, description: guideContent[guide.slug]?.answer ?? guide.description, type: 'Article' }
+  if (tool) return { title: tool.seoTitle, description: stripLinks(toolContent[tool.slug]?.answer ?? tool.summary), type: 'WebApplication' }
+  if (guide) return { title: guide.title, description: stripLinks(guideContent[guide.slug]?.answer ?? guide.description), type: 'Article' }
   const pages: Record<string, { title: string; description: string }> = {
     '/': { title: 'DatePilot — Date, Calendar, and Time Tools', description: 'Free date calculators, calendar tools, and time utilities. Calculate dates, age, working days, week numbers, and time zones with clear explanations.' },
     '/calculators': { title: 'Date and Time Calculators', description: 'Use DatePilot calculators to add or subtract days, count working days, find age, and calculate date differences with clear methodology.' },
@@ -139,7 +155,7 @@ function updateSeo(path: string) {
       name: `${seo.title} — Frequently Asked Questions`,
       description: seo.description,
       mainEntity: toolContent[currentTool.slug].faqs.map(([q, a]) => ({
-        '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a }
+        '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: stripLinks(a) }
       }))
     })
   }
@@ -312,6 +328,12 @@ function Calculator({ tool }: { tool: Tool }) {
     if (tool.slug === 'add-days') return setResult(prettyDate(shiftDays(a, n)))
     if (tool.slug === 'subtract-days') return setResult(prettyDate(shiftDays(a, -n)))
     if (tool.slug === 'date-calculator') return setResult(prettyDate(shiftDays(a, n)))
+    if (tool.slug === 'days-calculator') {
+      if (Number.isNaN(n)) return setError('Please enter a valid number of days.')
+      const count = Math.abs(n)
+      const after = shiftDays(a, count); const before = shiftDays(a, -count)
+      return setResult(`After: ${prettyDate(after)} (${weekday(after)})\nBefore: ${prettyDate(before)} (${weekday(before)})`)
+    }
     if (tool.slug === 'days-between-dates') {
       if (Number.isNaN(b.getTime())) return setError('Please enter a valid end date.')
       return setResult(`${Math.abs(dayGap(a, b))} days`)
@@ -320,20 +342,22 @@ function Calculator({ tool }: { tool: Tool }) {
       if (Number.isNaN(b.getTime())) return setError('Please enter a valid target date.')
       if (b < a) return setError('The target date must be after the birth date.')
       let years = b.getFullYear() - a.getFullYear(); let months = b.getMonth() - a.getMonth(); let days = b.getDate() - a.getDate()
-      if (days < 0) { months--; days += new Date(b.getFullYear(), b.getMonth(), 0).getDate() }
-      if (months < 0) { years--; months += 12 }
+      let borrowed = 0
+      while (days < 0 && borrowed < 12) { months -= 1; borrowed += 1; days += new Date(b.getFullYear(), b.getMonth() - borrowed + 1, 0).getDate() }
+      if (months < 0) { years -= 1; months += 12 }
       return setResult(`${years} years, ${months} months, ${days} days`)
     }
-    if (tool.slug === 'day-of-week') return setResult(a.toLocaleDateString('en-US', { weekday: 'long' }))
+    if (tool.slug === 'day-of-week') return setResult(weekday(a))
     if (tool.slug === 'week-number') {
       const thursday = shiftDays(a, 3 - ((a.getDay() + 6) % 7))
-      const first = new Date(thursday.getFullYear(), 0, 4)
-      return setResult(`ISO week ${Math.ceil((dayGap(first, thursday) + 1) / 7)}, ${thursday.getFullYear()}`)
+      const first = new Date(thursday.getFullYear(), 0, 1)
+      return setResult(`ISO week ${Math.floor(dayGap(first, thursday) / 7) + 1}, ${thursday.getFullYear()}`)
     }
     if (tool.slug === 'working-days') {
       if (Number.isNaN(b.getTime())) return setError('Please enter a valid end date.')
-      let count = 0; let cursor = new Date(a)
-      while (cursor <= b) { if (cursor.getDay() > 0 && cursor.getDay() < 6) count++; cursor = shiftDays(cursor, 1) }
+      const from = a <= b ? a : b; const to = a <= b ? b : a
+      let count = 0; let cursor = new Date(from)
+      while (cursor <= to) { if (cursor.getDay() > 0 && cursor.getDay() < 6) count++; cursor = shiftDays(cursor, 1) }
       return setResult(`${count} working days`)
     }
     if (tool.slug === 'countdown') {
@@ -348,11 +372,16 @@ function Calculator({ tool }: { tool: Tool }) {
     <label className="field"><span>{label}</span><input type={type} value={value} onChange={(event) => setter(event.target.value)} /></label>
   )
 
+  const startLabel = tool.slug === 'age-calculator' ? 'Birth date' : tool.slug === 'days-calculator' ? 'Reference date' : 'Start date'
+  const endLabel = tool.slug === 'age-calculator' || tool.slug === 'countdown' ? 'Target date' : 'End date'
+  const needsEnd = ['days-between-dates', 'age-calculator', 'working-days', 'countdown'].includes(tool.slug)
+  const needsDays = ['add-days', 'subtract-days', 'date-calculator', 'days-calculator'].includes(tool.slug)
+
   return <div className="calculator">
     <div className="form-grid">
       {tool.slug === 'leap-year'
         ? <label className="field"><span>Calendar year</span><input type="number" value={year} onChange={(event) => setYear(event.target.value)} min="1" /></label>
-        : <>{field(tool.slug === 'age-calculator' ? 'Birth date' : 'Start date', start, setStart)}{!['add-days', 'subtract-days', 'date-calculator', 'day-of-week', 'week-number'].includes(tool.slug) && field('End date', end, setEnd)}{['add-days', 'subtract-days', 'date-calculator'].includes(tool.slug) && <label className="field"><span>Days</span><input type="number" value={amount} onChange={(event) => setAmount(event.target.value)} /></label>}</>
+        : <>{tool.slug !== 'countdown' && field(startLabel, start, setStart)}{needsEnd && field(endLabel, end, setEnd)}{needsDays && <label className="field"><span>Days</span><input type="number" value={amount} onChange={(event) => setAmount(event.target.value)} /></label>}</>
       }
     </div>
     <div className="calculator-actions">
@@ -379,9 +408,10 @@ function EnhancedCalculator({ tool }: { tool: Tool }) {
     if (!Number.isFinite(first) || !Number.isFinite(second)) return setError('Please enter both date and time values.')
     if (tool.slug === 'time-difference') {
       const minutes = Math.round(Math.abs(second - first) / 60000)
-      return setResult(`${Math.floor(minutes / 60)} hours, ${minutes % 6} minutes${second < first ? ' (first is later)' : ''}`)
+      return setResult(`${Math.floor(minutes / 60)} hours, ${minutes % 60} minutes${second < first ? ' (first is later)' : ''}`)
     }
-    const converted = new Intl.DateTimeFormat('en-GB', { dateStyle: 'full', timeStyle: 'short', timeZone: destinationZone }).format(new Date(first))
+    const instant = zoneToUtc(new Date(first), sourceZone)
+    const converted = new Intl.DateTimeFormat('en-GB', { dateStyle: 'full', timeStyle: 'short', timeZone: destinationZone }).format(instant)
     return setResult(`${converted} in ${destinationZone}`)
   }
 
@@ -421,27 +451,39 @@ function Breadcrumbs({ items, go }: { items: [string, string][]; go: (p: string)
   </nav>
 }
 
+function RichText({ text, go }: { text: string; go: (path: string) => void }) {
+  const parts = text.split(/\[([^\]]+)\]\(([^)]+)\)/g)
+  return <>{parts.map((part, index) => {
+    if (index % 3 === 1) return <NavLink key={index} className="inline-link" to={parts[index + 1]} go={go}>{part}</NavLink>
+    if (index % 3 === 2) return null
+    return part ? <span key={index}>{part}</span> : null
+  })}</>
+}
+
+function renderBlocks(blocks: Block[], go: (path: string) => void) {
+  return blocks.map((block, index) => {
+    switch (block.type) {
+      case 'p': return <p key={index}><RichText text={block.text} go={go} /></p>
+      case 'h3': return <h3 key={index}>{block.text}</h3>
+      case 'ol': return <ol key={index}>{block.items.map((item) => <li key={item}><RichText text={item} go={go} /></li>)}</ol>
+      case 'ul': return <ul key={index}>{block.items.map((item) => <li key={item}><RichText text={item} go={go} /></li>)}</ul>
+      case 'table': return <div className="table-wrap" key={index}>
+        <table>
+          <thead><tr>{block.headers.map((header) => <th key={header} scope="col">{header}</th>)}</tr></thead>
+          <tbody>{block.rows.map((row, rowIndex) => <tr key={rowIndex}>{row.map((cell, cellIndex) => <td key={cellIndex}>{cell}</td>)}</tr>)}</tbody>
+        </table>
+      </div>
+      case 'note': return <p className="note" key={index}><strong>Note: </strong><RichText text={block.text} go={go} /></p>
+      case 'component': return <DynamicBlock key={index} name={block.name} />
+      default: return null
+    }
+  })
+}
+
 function ToolPage({ tool, go }: { tool: Tool; go: (path: string) => void }) {
   const content = toolContent[tool.slug]
-  const related = tools.filter((item) => item.slug !== tool.slug && item.category === tool.category).slice(0, 4)
+  const related = content.related.map((slug) => tools.find((item) => item.slug === slug)).filter((item): item is Tool => Boolean(item)).slice(0, 4)
   const categoryPath = tool.category === 'Time' ? '/time' : tool.category === 'Calendar' ? '/calendar' : '/calculators'
-
-  const h2Variants: Record<string, string[]> = {
-    'date-calculator': ['What Is a Date Calculator?', 'How to Add or Subtract Days From Any Date', 'Calendar Arithmetic: Why Month Lengths Matter', 'Worked Example: Adding 30 Days to January 1', 'Edge Cases: Leap Years, Month Ends, and Year Boundaries'],
-    'age-calculator': ['What Is Calendar Age?', 'How to Calculate Exact Age in Years, Months, and Days', 'Why Age Differs From Total Days Divided by 365', 'Worked Example: Age on a Specific Date', 'Leap-Day Birthdays and Month-End Edge Cases'],
-    'days-between-dates': ['What Does "Days Between Dates" Measure?', 'Exclusive vs. Inclusive Day Counts', 'How to Count Elapsed Days Manually', 'Worked Example: January to February', 'When Endpoint Convention Changes the Answer'],
-    'add-days': ['What Does "Add Days to a Date" Mean?', 'How Calendar Addition Works', 'Crossing Month and Year Boundaries', 'Worked Example: Adding 30 Days to January 1', 'Why a Calendar Month Is Not Always 30 Days'],
-    'subtract-days': ['What Does "Subtract Days from a Date" Mean?', 'How Calendar Subtraction Works', 'Crossing Year Boundaries in Reverse', 'Worked Example: Going Back 31 Days From January 31', 'Common Subtraction Mistakes'],
-    'working-days': ['What Counts as a Working Day?', 'How the Weekday Rule Works', 'Why Holidays Are Not Automatically Included', 'Worked Example: Counting a Full Work Week', 'Endpoint Inclusion and Edge Cases'],
-    'day-of-week': ['What Is a Day of the Week?', 'How the Gregorian Calendar Determines Weekdays', 'Worked Example: Finding a Weekday', 'Why the Year Matters for Weekday Lookup', 'Using Weekday Results for Planning'],
-    'week-number': ['What Is an ISO Week Number?', 'How ISO 8601 Week Counting Works', 'Worked Example: Week Numbers Around New Year', 'Week-Year vs. Calendar Year', 'Common Week-Number Mistakes'],
-    'leap-year': ['What Is a Leap Year?', 'The Gregorian Leap-Year Rule', 'Worked Example: Testing 2024, 1900, and 2000', 'Why Leap Days Matter for Date Calculations', 'Leap-Year Myths and Misconceptions'],
-    'countdown': ['What Is a Countdown Calculator?', 'How Remaining Duration Is Measured', 'Worked Example: Counting Down to a Target', 'Why the Device Clock Matters', 'Daylight Saving and Timezone Effects on Countdowns'],
-    'time-difference': ['What Is a Time Difference?', 'How Elapsed Duration Is Calculated', 'Worked Example: Comparing Two Date-Times', 'Why Clock Labels Can Be Misleading', 'Daylight Saving Time and Duration'],
-    'time-zone-converter': ['What Is a Time Zone Converter?', 'How Named Zones Differ From UTC Offsets', 'Worked Example: Converting Between New York and London', 'When the Calendar Date Changes', 'Why DST Rules Matter for Scheduling'],
-  }
-
-  const h2s = h2Variants[tool.slug] || ['How It Works', 'How to Use This Calculator', 'Method and Formula', 'Worked Example', 'Important Things to Know']
 
   return <main className="page" id="main-content">
     <Breadcrumbs items={[['Tools', categoryPath], [tool.title, toolPath(tool)]]} go={go} />
@@ -450,30 +492,27 @@ function ToolPage({ tool, go }: { tool: Tool; go: (path: string) => void }) {
     <p className="lead">{content.answer}</p>
     <Calculator tool={tool} />
     <section className="seo-content">
-      <h2>{h2s[0]}</h2>
-      <p>{content.answer}</p>
-      <h2>{h2s[1]}</h2>
-      <ol>{content.howTo.map((step) => <li key={step}>{step}</li>)}</ol>
-      <h2>{h2s[2]}</h2>
-      <p>{content.formula}</p>
-      <h2>{h2s[3]}</h2>
-      <p>{content.example}</p>
-      <h2>{h2s[4]}</h2>
-      <p>{content.considerations}</p>
-      <h2>Common Mistakes to Avoid</h2>
-      <p>{content.mistakes}</p>
+      {content.intro.map((paragraph) => <p key={paragraph}><RichText text={paragraph} go={go} /></p>)}
+      <h2>How to Use the {tool.title}</h2>
+      <ol>{content.howTo.map((step) => <li key={step}><RichText text={step} go={go} /></li>)}</ol>
+    </section>
+    {content.sections.map((section) => <section className="seo-content" key={section.heading}>
+      <h2>{section.heading}</h2>
+      {renderBlocks(section.blocks, go)}
+    </section>)}
+    <section className="seo-content">
       <h2>Related Calculators</h2>
       <div className="link-grid">{related.map((item) => <NavLink className="related" key={item.slug} to={toolPath(item)} go={go}>{item.title} ↗</NavLink>)}</div>
       <h2>Related Guides</h2>
       <div className="link-grid">{content.guideSlugs.map((slug) => { const guide = guides.find((item) => item.slug === slug); return guide ? <NavLink className="related" key={slug} to={`/guides/${slug}`} go={go}>{guide.title} ↗</NavLink> : null })}</div>
-      {content.faqs && content.faqs.length > 0 && <>
-        <h2>Frequently Asked Questions</h2>
-        {content.faqs.map(([question, answer]) => <div key={question} className="faq-item">
-          <h3>{question}</h3>
-          <p>{answer}</p>
-        </div>)}
-      </>}
     </section>
+    {content.faqs.length > 0 && <section className="seo-content">
+      <h2>Frequently Asked Questions</h2>
+      {content.faqs.map(([question, answer]) => <div key={question} className="faq-item">
+        <h3>{question}</h3>
+        <p><RichText text={answer} go={go} /></p>
+      </div>)}
+    </section>}
   </main>
 }
 
@@ -691,7 +730,7 @@ function App() {
   else if (path === '/time') page = <ToolIndex category="Time" go={go} />
   else if (path === '/guides') page = <Guides go={go} />
   else if (path === '/faq') page = <Faq go={go} />
-  else if (tool) page = <ToolPage tool={tool} go={go} />
+  else if (tool) page = <ToolPage key={tool.slug} tool={tool} go={go} />
   else if (guide) page = <GuidePage guide={guide} go={go} />
   else if (['about', 'contact', 'privacy-policy', 'cookie-policy', 'terms', 'disclaimer', 'report-an-error'].some((item) => path === `/${item}`)) page = <TrustPage kind={path.slice(1)} go={go} />
 
