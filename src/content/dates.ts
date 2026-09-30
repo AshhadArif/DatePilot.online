@@ -112,6 +112,14 @@ export const dateContent: Record<string, ToolContent> = {
         ],
       },
       {
+        heading: 'Leap Years and Date Calculations',
+        blocks: [
+          { type: 'p', text: 'A leap year adds one day to the calendar — 29 February — which changes the answer to any date calculation that crosses it. From 1 March 2023 to 1 March 2024 the span contains 366 days, because February 2024 has 29 days. The same anniversary one year later, 1 March 2024 to 1 March 2025, contains 365.' },
+          { type: 'p', text: 'Shorter spans follow the same rule: adding 30 days to 1 February 2024 gives 2 March 2024, while the identical count from 1 February 2025 gives 3 March 2025 — the same day count lands on a different date because one span passes through 29 February and the other does not.' },
+          { type: 'p', text: 'The Gregorian calendar inserts a leap day in years divisible by four, except century years, which are leap years only when divisible by 400. So 2000 was a leap year and 2100 will not be. The calculator reads this from the browser Gregorian calendar automatically, so no manual adjustment is needed — but if you are checking a result by hand, February is the first place to look.' },
+        ],
+      },
+      {
         heading: 'Common Date Calculation Mistakes',
         blocks: [
           {
@@ -178,26 +186,9 @@ export const dateContent: Record<string, ToolContent> = {
       {
         heading: 'How to Calculate the Number of Days Between Dates',
         blocks: [
-          { type: 'p', text: 'There are two correct answers to almost every "how many days between" question, and they differ by one day. Choosing the wrong one is the most common mistake in date arithmetic.' },
-          {
-            type: 'table',
-            headers: ['Convention', 'What is counted', 'Mon 5 Jan to Fri 9 Jan'],
-            rows: [
-              ['Exclusive (elapsed gap)', 'Neither named date is counted as an extra day', '4 days'],
-              ['Inclusive (schedule count)', 'Both the first and the last date are counted', '5 days'],
-            ],
-          },
-          { type: 'p', text: 'The calculator uses the exclusive convention. The inclusive count is always exactly one greater whenever the two dates differ.' },
-          { type: 'h3', text: 'Which one do I need?' },
-          {
-            type: 'ul',
-            items: [
-              'Elapsed time, phases, and "how long between" — exclusive. A hotel stay from 1 January to 3 January is 2 nights.',
-              'Schedules that include both ends — inclusive. Leave from Monday to Wednesday is 3 days away from work.',
-              'Legal, tax, or contractual deadlines — check the wording of the rule itself, because jurisdictions differ on whether the first or last day is counted.',
-            ],
-          },
-          { type: 'p', text: 'Doing it by hand: count the days left in the start month, add the complete months in between, then add the days used in the final month. For example, 15 January to 15 March is 16 days in January, 28 days in February, and 15 days in March — 59 days in a common year, 60 in a leap year.' },
+          { type: 'p', text: 'To calculate the number of days between two dates by hand, break the interval at each month boundary: count the days left in the start month, add the complete months in between, then add the days used in the final month.' },
+          { type: 'p', text: 'For example, 15 January to 15 March is 16 days in January, 28 days in February, and 15 days in March — 59 days in a common year, 60 in a leap year. The calculator does the same interval arithmetic on real calendar dates, so February length and the month rollover are never something you have to track.' },
+          { type: 'p', text: 'One decision comes before any counting: whether the two named dates themselves are part of the count. The two conventions differ by exactly one day, and the next section explains which one applies.' },
         ],
       },
       {
@@ -221,9 +212,35 @@ export const dateContent: Record<string, ToolContent> = {
               ['31 December 2025', '1 January 2026', '1', '2'],
               ['15 March 2026', '15 April 2026', '31', '32'],
               ['28 September 2026', '25 December 2026', '88', '89'],
+              ['1 February 2024', '1 March 2024', '29', '30'],
+              ['1 December 2025', '1 March 2026', '90', '91'],
             ],
           },
-          { type: 'p', text: 'The third row shows why February has to be checked separately: 28 February to 1 March is a single day in 2026, but the same pair of dates in a leap year is still one day, while 1 February to 1 March becomes 29 days instead of 28.' },
+          { type: 'p', text: 'The rows cover the four cases worth practising: two dates in the same month, two dates in different months, two dates in different years, and a span across a leap February. The seventh row is the leap-year case — 1 February to 1 March 2024 covers all 29 days of February 2024 — while the third row shows the single-day gap at the end of a common-year February. The eighth row crosses both a year boundary and a 31-day month.' },
+        ],
+      },
+      {
+        heading: 'Inclusive vs Exclusive Date Counting',
+        blocks: [
+          { type: 'p', text: 'There are two correct answers to almost every "how many days between" question, and they differ by one day. Choosing the wrong one is the most common mistake in date arithmetic.' },
+          {
+            type: 'table',
+            headers: ['Convention', 'What is counted', 'Mon 5 Jan to Fri 9 Jan'],
+            rows: [
+              ['Exclusive (elapsed gap)', 'Neither named date is counted as an extra day', '4 days'],
+              ['Inclusive (schedule count)', 'Both the first and the last date are counted', '5 days'],
+            ],
+          },
+          { type: 'p', text: 'The calculator uses the exclusive convention: it reports the elapsed gap, the number of midnights between the two dates. The inclusive count is always exactly one greater whenever the two dates differ.' },
+          { type: 'h3', text: 'Which one do I need?' },
+          {
+            type: 'ul',
+            items: [
+              'Elapsed time, phases, and "how long between" — exclusive. A hotel stay from 1 January to 3 January is 2 nights.',
+              'Schedules that include both ends — inclusive. Leave from Monday to Wednesday is 3 days away from work.',
+              'Legal, tax, or contractual deadlines — check the wording of the rule itself, because jurisdictions differ on whether the first or last day is counted.',
+            ],
+          },
         ],
       },
       {
@@ -263,6 +280,7 @@ export const dateContent: Record<string, ToolContent> = {
         heading: 'More Ways to Compare Two Dates',
         blocks: [
           { type: 'p', text: 'A day count is only one way to express a difference. Break the same span into weeks and days with the [Days Calculator](/calculators/days-calculator), find the weekday of either endpoint with the [Day of the Week calculator](/calendar/day-of-week), or compare two moments in clock time with the [Time Difference Calculator](/time/time-difference).' },
+          { type: 'p', text: 'When the question runs in one direction instead — the date that falls before a deadline, a notice period worked backwards — the [Subtract Days From Date calculator](/calculators/subtract-days) and the [Add Days to Date calculator](/calculators/add-days) move from a date in a single step.' },
           { type: 'p', text: 'For the conventions behind endpoint counting and why two sources can disagree by a day, read [How to Calculate Days Between Dates](/guides/days-between-dates).' },
         ],
       },

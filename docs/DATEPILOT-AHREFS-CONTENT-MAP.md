@@ -1,10 +1,13 @@
 # DatePilot Ahrefs Content Map
 
-Source: Ahrefs Google US keyword export, file `google_us_add-days-to-a-date-age-in_overview_2026-09-28_23-05-32.csv` (58 rows, exported 2026-09-28).
+Sources:
 
-Metrics are Ahrefs estimates for the US market:
+1. `my_1ecd991ba21f408e8dc2a22bdd341b64_search-volume-history_2026-10-01_01-42-31.csv` — monthly US search-volume history for the five priority keywords, October 2025 to September 2026 (primary table below).
+2. Ahrefs Google US keyword export, file `google_us_add-days-to-a-date-age-in_overview_2026-09-28_23-05-32.csv` (58 rows, exported 2026-09-28) — broader keyword metrics (Volume, KD, traffic potential, parent topic) in the second table.
 
-- **Volume** = estimated average monthly searches
+Metrics in the overview export are Ahrefs estimates for the US market:
+
+- **Volume** = estimated average monthly searches (12-month average)
 - **KD** = keyword difficulty
 - **TP** = traffic potential of the current top-ranking result for that keyword
 - **Parent** = Ahrefs parent topic, used to decide which keywords belong on the same page
@@ -14,7 +17,38 @@ Rules applied when building this map:
 1. One primary keyword per page. Everything else is supporting coverage on the same page when the Ahrefs parent topic matches and the search intent is the same.
 2. A keyword only gets a new page when the intent is materially different from every existing page and the page can carry substantial unique value.
 3. No keyword is added to a page just because it exists in the export.
-4. Volumes, KD and traffic potential are copied from the export. Nothing is estimated or invented.
+4. Volumes, KD and traffic potential are copied from the export. Nothing is estimated or invented. Missing metrics are recorded as N/A.
+
+## Priority clusters — September 2026 volume history
+
+"Latest volume" is the September 2026 monthly value from the history file. "Trend" is the change from October 2025 to September 2026, the earliest and latest months in the file. The file contains exactly these five keywords and a monthly total; metrics not in the file (KD, traffic potential, parent topic) are N/A here and are taken from the overview export where available.
+
+| Keyword | Current/Latest Volume | Trend | Intent | Target Page | Primary/Supporting | Action | Notes |
+| --- | ---: | --- | --- | --- | --- | --- | --- |
+| age calculator | 15,079 | +8.2% (13,937 → 15,079, Oct 2025 → Sep 2026) | Informational, calculator | /calculators/age-calculator | Primary | Expand (Priority 1) | Largest cluster term; 12-month range 13,591–15,196. Overview export: Volume 379,000, KD 48, TP 173,000, parent `how old am i`. |
+| date calculator | 11,485 | −2.1% (11,729 → 11,485, Oct 2025 → Sep 2026) | Informational, calculator | /calculators/date-calculator | Primary | Expand (Priority 2) | Stable; 12-month range 10,972–11,857. Overview export: Volume 186,000, KD 60, TP 84,000, parent `date`. |
+| age calculator by date of birth | 590 | +220.7% (184 → 590, Oct 2025 → Sep 2026; peak 879 in May 2026) | Informational, calculator | /calculators/age-calculator | Supporting | Expand existing page, no new page | Fastest-growing cluster term. Covered by the dedicated "Calculate Age From Date of Birth" section; a separate page would cannibalize the primary page. KD/TP: N/A in history file. |
+| days between dates | 307 | −3.5% (318 → 307, Oct 2025 → Sep 2026) | Informational, calculator | /calculators/days-between-dates | Primary | Expand (Priority 3) | 12-month range 257–324. Overview export: Volume 59,000, KD 0, TP 220,000, parent `days between dates`. |
+| calculate age | 267 | +23.6% (216 → 267, Oct 2025 → Sep 2026) | Informational, calculator | /calculators/age-calculator | Supporting | Expand existing page, no new page | Same intent as `age calculator`; integrated naturally into the intro, how-to, methodology and FAQ instead of a duplicate page. KD/TP: N/A in history file. |
+
+Cluster total (five keywords): 28,426 in September 2026, +5.8% versus October 2025 (26,864).
+
+Monthly history from the same file:
+
+| Month | age calculator | date calculator | age calculator by date of birth | days between dates | calculate age | Total |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 2025-10 | 13,937 | 11,729 | 184 | 318 | 216 | 26,864 |
+| 2025-11 | 13,987 | 11,267 | 171 | 314 | 218 | 26,520 |
+| 2025-12 | 13,591 | 10,972 | 218 | 257 | 266 | 26,018 |
+| 2026-01 | 14,783 | 11,658 | 352 | 289 | 327 | 28,312 |
+| 2026-02 | 15,103 | 11,724 | 264 | 296 | 211 | 28,296 |
+| 2026-03 | 14,860 | 11,857 | 663 | 324 | 261 | 28,585 |
+| 2026-04 | 14,658 | 11,688 | 727 | 309 | 321 | 28,491 |
+| 2026-05 | 15,196 | 11,435 | 879 | 298 | 326 | 29,024 |
+| 2026-06 | 14,883 | 11,185 | 573 | 295 | 270 | 28,372 |
+| 2026-07 | 15,148 | 11,663 | 577 | 295 | 277 | 29,035 |
+| 2026-08 | 14,957 | 11,502 | 578 | 315 | 263 | 27,931 |
+| 2026-09 | 15,079 | 11,485 | 590 | 307 | 267 | 28,426 |
 
 ## Consolidation decisions made before implementation
 
@@ -28,7 +62,7 @@ Rules applied when building this map:
 | Do `how many days until` and date-specific `how many days until <date>` variants need pages? | No. Covered by `/time/countdown`. | Ahrefs parent is date-specific (`how many days until april 25th`), so the head term has almost no traffic potential of its own (TP 200). |
 | Does `time between two times` need its own page? | No. Covered by `/time/time-difference`. | Its parent is `time duration calculator`, the same parent as `time difference calculator`. One tool answers both. |
 
-## Keyword-to-page map
+## Keyword-to-page map (broader overview export, 2026-09-28)
 
 | Keyword | Volume | KD | Traffic potential | Target page | Primary/Supporting | Action |
 | --- | ---: | -: | ---: | --- | --- | --- |
@@ -106,12 +140,12 @@ Rules applied when building this map:
 
 ## Implementation priority
 
-Order follows the Ahrefs opportunity (volume × traffic potential × difficulty) inside each cluster:
+Order follows the brief's priority clusters first (Age Calculator → Date Calculator → Days Between Dates), then the Ahrefs opportunity (volume × traffic potential × difficulty):
 
-1. Age Calculator
-2. Days Between Dates
-3. Days Calculator (new)
-4. Date Calculator
+1. Age Calculator (cluster: age calculator, calculate age, age calculator by date of birth)
+2. Date Calculator (cluster: date calculator)
+3. Days Between Dates (cluster: days between dates)
+4. Days Calculator (new)
 5. Add Days to Date
 6. Working Days / Business Days Calculator
 7. Countdown Calculator
