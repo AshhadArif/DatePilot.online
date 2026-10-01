@@ -160,20 +160,128 @@ export const ageContent: Record<string, ToolContent> = {
       {
         heading: 'Related Date Questions',
         blocks: [
-          { type: 'p', text: 'Age questions usually come with a second question: how long until something, or how far apart two dates are. The [Days Between Dates calculator](/calculators/days-between-dates) counts the calendar days between any two dates, the [Date Calculator](/calculators/date-calculator) finds the date a birthday or deadline falls on, and the [Countdown Calculator](/time/countdown) shows the time remaining until a target date.' },
+          { type: 'p', text: 'Age questions usually come with a second question: how long until something, or how far apart two dates are. When both dates are birth dates, the [Age Difference Calculator](/calculators/age-difference-calculator) reports the gap between two people directly. The [Days Between Dates calculator](/calculators/days-between-dates) counts the calendar days between any two dates, the [Date Calculator](/calculators/date-calculator) finds the date a birthday or deadline falls on, and the [Countdown Calculator](/time/countdown) shows the time remaining until a target date.' },
           { type: 'p', text: 'To place a birthday on the calendar, the [Day of the Week calculator](/calendar/day-of-week) tells you which weekday it falls on and the [Week Number Calculator](/calendar/week-number) gives the ISO week number of that date. For schedules — notice periods, delivery windows, working time between two dates — use the [Subtract Days From Date](/calculators/subtract-days), [Add Days to Date](/calculators/add-days), or [Working Days](/calculators/working-days) calculators.' },
           { type: 'p', text: 'For the rules behind the arithmetic itself — endpoint conventions, leap days, and why two calculators can disagree — read [How to Calculate Age](/guides/how-to-calculate-age).' },
         ],
       },
     ],
     guideSlugs: ['how-to-calculate-age', 'days-between-dates', 'leap-years'],
-    related: ['date-calculator', 'days-between-dates', 'add-days', 'working-days'],
+    related: ['age-difference-calculator', 'days-between-dates', 'date-calculator', 'add-days'],
     faqs: [
       ['How old am I today?', 'Enter your date of birth and leave the target date on today. The calculator returns your age in completed years, months, and days as of the current date on your device.'],
       ['How is exact age calculated?', 'Exact age counts completed years since the birth date first, then complete months from the most recent birthday, then the days left over. It never divides a day count by 365, so leap days and 30-day and 31-day months are handled by the calendar itself.'],
       ['Can I calculate my age on a past or future date?', 'Yes. Change the target date to any date before or after today. This is useful for working out an age at a past event, or how old someone will be on a future date. The target date only needs to be after the birth date.'],
       ['Can I calculate age in months and days only?', 'The result is always given in years, months, and days together, because that is the form that stays unambiguous. If you want a single total, ask the [Days Between Dates calculator](/calculators/days-between-dates) for the days between the birth date and the target date.'],
       ['How are leap-day birthdays handled?', 'In a leap year the birthday is 29 February. In a non-leap year this calculator reaches the next birthday on 1 March, so on 28 February the reported age is one day short of the next whole year. The same day-of-month rule applies to anyone born on the 30th or 31st: a completed month is only counted once the day of the month has been reached again.'],
+    ],
+  },
+  'age-difference-calculator': {
+    answer: 'An age difference calculator finds the gap between two birth dates in years, months, and days, and reports the total calendar days between them. Enter any two dates of birth — the order does not matter — to see who is older and by exactly how much.',
+    intro: [
+      'The age gap between two people shows up everywhere: siblings comparing birthdays, couples, classmates and cohorts, colleagues with different start dates, and anyone working out how many years apart two events fall. The question is always the same — how much older is one person than the other — but the arithmetic hides leap days, unequal month lengths, and the fact that a "5 year gap" is not always 1,825 days.',
+      'This calculator takes two birth dates and returns the difference twice: once the way people say it (years, months, and days) and once the way spreadsheets like it (total calendar days). It also tells you which of the two dates is the earlier one, so the direction of the gap is never guesswork.',
+    ],
+    howTo: [
+      'Enter the first birth date.',
+      'Enter the second birth date. The order does not matter — the calculator works out which date is earlier.',
+      'Select "Calculate result".',
+      'Read the gap in years, months, and days on the first line.',
+      'The second line gives the same gap in total calendar days, and the third line states which birth date is older.',
+      'If the dates are the same, the calculator reports a zero gap.',
+    ],
+    sections: [
+      {
+        heading: 'What Is an Age Difference Calculator?',
+        blocks: [
+          { type: 'p', text: 'An age difference calculator measures the interval between two birth dates. Unlike the [Age Calculator](/calculators/age-calculator), which asks "how old is this one person at this date", this tool asks "how far apart are these two people". Both use the same calendar-anniversary arithmetic, but the inputs and the framing are different: here both fields are birth dates, neither field is a "today" reference, and you can enter them in either order.' },
+          { type: 'p', text: 'Two answers come out. The calendar answer breaks the gap into completed years, then completed months, then leftover days — the form people use in conversation. The total-days answer counts every calendar day between the dates, including leap days — the form that works in formulas and comparisons.' },
+        ],
+      },
+      {
+        heading: 'Age Difference vs Age Calculator',
+        blocks: [
+          {
+            type: 'table',
+            headers: ['Question', 'Inputs', 'Tool'],
+            rows: [
+              ['How old am I today?', 'One birth date, target defaults to today', 'Age Calculator'],
+              ['How old will I be on my graduation date?', 'One birth date, one target date', 'Age Calculator'],
+              ['How far apart are these two people?', 'Two birth dates, any order', 'Age Difference Calculator'],
+              ['How many days are between these dates?', 'Two dates of any kind', 'Days Between Dates'],
+            ],
+          },
+          { type: 'p', text: 'If you find yourself entering the same date twice — once as a birth date and once as a target — you are probably asking the age-gap question, and this is the page for it.' },
+        ],
+      },
+      {
+        heading: 'How the Age Difference Calculator Works',
+        blocks: [
+          { type: 'p', text: 'The calculator first orders the two dates: the earlier one is treated as the older person. It then counts completed years from the earlier date to the later one, complete months from the last anniversary, and the days remaining after that. Finally it measures the straight calendar-day distance between the two dates for the total-days line.' },
+          { type: 'p', text: 'The month-counting rule is deliberately conservative: a month only counts once the day-of-month has been reached again. From 31 January to 28 February that means the month is not yet complete, because February never reaches day 31. Different tools make different choices here, which is why an age gap can differ by a day between websites — the section on leap-day birthdays below shows the other common edge case.' },
+        ],
+      },
+      {
+        heading: 'Age Difference Examples',
+        blocks: [
+          {
+            type: 'table',
+            headers: ['First birth date', 'Second birth date', 'Gap', 'Total days'],
+            rows: [
+              ['15 May 1990', '28 September 1995', '5 years, 4 months, 13 days', '1,962'],
+              ['1 January 1990', '1 January 1995', '5 years, 0 months, 0 days', '1,826'],
+              ['29 February 2024', '1 March 2026', '2 years, 0 months, 0 days', '731'],
+              ['10 June 2010', '10 June 2010', '0 years, 0 months, 0 days', '0'],
+            ],
+          },
+          { type: 'p', text: 'The first row shows a gap that does not divide evenly: five years and change, which is why the total-days figure matters when precision counts. The second row shows a clean five-year gap that still contains 1,826 days — one more than 5 × 365 — because 1992 was a leap year. The rows are the same in either input order; only the "who is older" line changes.' },
+        ],
+      },
+      {
+        heading: 'Age Gap in Days vs Years, Months, and Days',
+        blocks: [
+          { type: 'p', text: 'Both lines describe the same interval, but they answer slightly different questions. "5 years, 4 months, 13 days" tells you where the two people stand relative to their birthdays: both have had five birthdays, one has had four more months of anniversaries. "1,962 days" tells you the raw distance, which is what you need for formulas, averages, or comparisons across many pairs.' },
+          { type: 'p', text: 'Never divide the day count by 365 to get the calendar gap — leap days make that wrong. From 1 January 1990 to 1 January 1995 the raw count is 1,826 days, but the calendar gap is exactly 5 years, because the extra day belongs to 1992 and does not move either anniversary.' },
+          { type: 'note', text: 'For the pure day count between two dates that are not birth dates — project ranges, deadlines, event spans — use [Days Between Dates](/calculators/days-between-dates) instead; it reports the same total-days figure with endpoint conventions explained.' },
+        ],
+      },
+      {
+        heading: 'Leap Day Birth Dates',
+        blocks: [
+          { type: 'p', text: 'A 29 February birthday only has a true anniversary in leap years. DatePilot reaches the next birthday on 1 March in non-leap years, the same rule the [Age Calculator](/calculators/age-calculator) uses, so from 29 February 2024 to 1 March 2026 the gap reports as 2 years, 0 months, 0 days — two anniversaries have passed under the reached-day rule, with no leftover days.' },
+          { type: 'p', text: 'Other tools may report 2 years and 1 day for the same pair, anchoring the anniversary differently. Neither is wrong; they are different stated conventions. DatePilot shows its rule beside the result so you can adjust by a day when you are matching another source.' },
+        ],
+      },
+      {
+        heading: 'Common Mistakes When Comparing Ages',
+        blocks: [
+          {
+            type: 'ul',
+            items: [
+              'Dividing total days by 365 to get years — leap days and anniversary dates break that shortcut.',
+              'Assuming a 5-year gap is always 1,825 days — it is 1,826 when a leap day falls inside the span.',
+              'Entering the dates in a fixed order and discarding the answer when it looks backwards — order does not matter here.',
+              'Comparing results from two tools that use different month-borrow conventions without checking their stated rule.',
+              'Using a birth-date gap for a schedule question — notice periods and deadlines belong to the working-day tools.',
+            ],
+          },
+        ],
+      },
+      {
+        heading: 'Related Tools',
+        blocks: [
+          { type: 'p', text: 'Check one person\'s age at any date with the [Age Calculator](/calculators/age-calculator), count days between arbitrary dates with [Days Between Dates](/calculators/days-between-dates), find the weekday of a birthday with the [Day of the Week calculator](/calendar/day-of-week), and read the underlying rules in [How to Calculate Age](/guides/how-to-calculate-age).' },
+        ],
+      },
+    ],
+    guideSlugs: ['how-to-calculate-age', 'days-between-dates', 'leap-years'],
+    related: ['age-calculator', 'days-between-dates', 'date-calculator', 'day-of-week'],
+    faqs: [
+      ['Which person is older?', 'The earlier birth date is the older person. You can enter the dates in either order — the calculator orders them internally and states which side is older in the result.'],
+      ['How is this different from the Age Calculator?', 'The Age Calculator measures one person from a birth date to a target date (today by default). This tool measures the distance between two birth dates, with no "today" involved. If both of your dates are birthdays, use this page.'],
+      ['Why does another calculator differ by a day?', 'Usually the leap-day or month-borrow convention. DatePilot counts a month only once the day-of-month is reached again, and reaches 29 February birthdays on 1 March in non-leap years. Check the other tool\'s stated rule and adjust by one day if needed.'],
+      ['Does the total-days line include leap days?', 'Yes. Every calendar day between the two dates is counted, including 29 February. That is why a five-year gap can total 1,826 days rather than 1,825.'],
+      ['Can I enter dates in the future?', 'Yes. Both fields are plain calendar dates, so the tool works for planned dates too — for example, the gap between two expected dates. The earlier date is always reported as the older side.'],
     ],
   },
 }

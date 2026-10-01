@@ -85,6 +85,22 @@ export const dateContent: Record<string, ToolContent> = {
         ],
       },
       {
+        heading: 'Why "Months Between Dates" Is Ambiguous',
+        blocks: [
+          { type: 'p', text: 'Ask two sources how many months lie between 23 June 2023 and 25 September 2025 and you can receive two different answers. Neither is wrong — they follow different definitions of a month.' },
+          {
+            type: 'table',
+            headers: ['Method', 'Rule', '23 Jun 2023 to 25 Sep 2025 (825 days)'],
+            rows: [
+              ['Calendar anniversaries', 'Count complete months by day of month, then leftover days', '27 months, 2 days'],
+              ['Average month (30.44 days)', 'Divide the day count by 365.25 ÷ 12', '≈ 27.1 months'],
+            ],
+          },
+          { type: 'p', text: 'The anniversary method is the one that agrees with real life: subscriptions renew on the same day of the month, babies turn one month old on the same date, and contract periods run in whole calendar months. The average-month method is only a rough decimal for statistics, and it drifts further from the calendar answer the longer the span.' },
+          { type: 'p', text: 'This calculator works in days precisely because of this ambiguity: adding 30 days is always exactly 30 days, while "one month" is 28, 29, 30, or 31 days depending on where the span starts. To count the gap between two dates in months, use the [Days Between Dates calculator](/calculators/days-between-dates), which reports both the day count and the anniversary-based month breakdown.' },
+        ],
+      },
+      {
         heading: 'Date Calculator Examples',
         blocks: [
           {
@@ -146,6 +162,7 @@ export const dateContent: Record<string, ToolContent> = {
     faqs: [
       ['What happens if I add days that cross February?', 'The calculator handles it automatically. 31 January 2026 plus 1 day is 1 February 2026, and if the year is a leap year February has 29 days instead of 28, so a span that crosses 29 February is one day longer than the same span in a common year.'],
       ['Can I subtract days instead of adding?', 'Yes. Enter a negative number of days, for example -30, and the calculator moves the date backward across month and year boundaries.'],
+      ['How many months are between two dates?', 'Count calendar anniversaries: complete months from the earlier date, then the leftover days. Between 23 June 2023 and 25 September 2025 that is 27 months and 2 days across 825 days. Dividing 825 by the average month length gives ≈27.1 instead — close, but not an anniversary count. The [Days Between Dates calculator](/calculators/days-between-dates) prints both the day count and the anniversary breakdown.'],
       ['Is adding days the same as adding hours?', 'No. This calculator works with calendar days, midnight to midnight. During a daylight saving change a calendar day can be 23 or 25 elapsed hours, so for time-based differences use the [Time Difference Calculator](/time/time-difference).'],
       ['How do I calculate a date without a calculator?', 'Break the interval at each month boundary: count the remaining days in the start month, add the full months in between, then add the days used in the final month. Always check whether the span crosses February and 31 December.'],
     ],
@@ -161,8 +178,9 @@ export const dateContent: Record<string, ToolContent> = {
       'Enter the earlier date as the start date.',
       'Enter the later date as the end date.',
       'Select "Calculate result".',
-      'Read the number of days. This is the elapsed gap: neither named date is counted as an extra day.',
-      'If you need to include both dates in the count, add 1 to the result — the reason is explained below.',
+      'Read the number of days on the first line. This is the elapsed gap: neither named date is counted as an extra day.',
+      'The lines below break the same span into weeks and days, years, months, and days, and total months.',
+      'If you need to include both dates in the count, add 1 to the first line — the reason is explained below.',
     ],
     sections: [
       {
@@ -217,6 +235,18 @@ export const dateContent: Record<string, ToolContent> = {
             ],
           },
           { type: 'p', text: 'The rows cover the four cases worth practising: two dates in the same month, two dates in different months, two dates in different years, and a span across a leap February. The seventh row is the leap-year case — 1 February to 1 March 2024 covers all 29 days of February 2024 — while the third row shows the single-day gap at the end of a common-year February. The eighth row crosses both a year boundary and a 31-day month.' },
+        ],
+      },
+      {
+        heading: 'Weeks, Months, and Years Between Dates',
+        blocks: [
+          { type: 'p', text: 'The day count on the first line of the result is the primary answer, but the same span can be expressed in other units — and the calculator prints them all. The second line gives weeks and days, the third breaks the span into calendar years, months, and days, and the fourth counts total months.' },
+          { type: 'h3', text: 'Weeks between two dates' },
+          { type: 'p', text: 'To convert days to weeks by hand, divide by 7 and keep the remainder: 825 days ÷ 7 = 117 with 6 left over, so 117 weeks and 6 days. The remainder is always between 0 and 6, and the two figures always multiply back to the original count (117 × 7 + 6 = 825). Any span that is a multiple of 7 days is a whole number of weeks with no remainder.' },
+          { type: 'h3', text: 'Months and years between two dates' },
+          { type: 'p', text: 'Months cannot be converted with division, because calendar months have different lengths. Instead the calculator counts calendar anniversaries: complete years from the earlier date first, then complete months, then the leftover days — the same rule the Age Calculator uses. The alternative-units lines apply the same walk, so 23 June 2023 to 25 September 2025 reports 825 days, 117 weeks and 6 days, 2 years, 3 months, and 2 days, and 27 months and 2 days — one span, four valid descriptions.' },
+          { type: 'p', text: 'Total months is simply years × 12 + months, which is useful when comparing spans of different lengths. If you need to add months to a start date instead of counting them between two dates, that is calendar arithmetic with its own ambiguity — covered in the [Date Calculator](/calculators/date-calculator).' },
+          { type: 'note', text: 'Dividing the day count by 30.44 (the average month length) gives a decimal month figure that will not match the anniversary count. Both appear online; the anniversary method is the one that agrees with birthdays and contract periods.' },
         ],
       },
       {
@@ -286,10 +316,11 @@ export const dateContent: Record<string, ToolContent> = {
       },
     ],
     guideSlugs: ['days-between-dates', 'date-calculations', 'working-days'],
-    related: ['date-calculator', 'days-calculator', 'working-days', 'add-days'],
+    related: ['date-calculator', 'days-calculator', 'working-days', 'time-since-calculator'],
     faqs: [
       ['Does the result include the start date and the end date?', 'No. The calculator reports an exclusive elapsed gap, so neither named date is added as an extra day. If you need a count that includes both dates — for leave, bookings, or a schedule — add 1 to the result.'],
       ['How do I calculate how many days have passed since a date?', 'Enter the past date as the start date and today as the end date. The result is the number of elapsed days between them. This is the same calculation used for "how many days since" questions.'],
+      ['How many weeks are between two dates?', 'Divide the day count by 7 and keep the remainder as the leftover days. 825 days is 117 weeks and 6 days, because 117 × 7 + 6 = 825. The calculator prints this on the second line of every result.'],
       ['What if I enter the later date first?', 'The result is unchanged. The calculator reports the absolute difference, so the order of the two inputs does not matter.'],
       ['Does this count weekends and holidays?', 'Yes. Every calendar day counts, including Saturdays, Sundays, and public holidays. If you need to exclude weekends, use the [Working Days Calculator](/calculators/working-days).'],
       ['How does it handle leap years?', 'The calculation follows the Gregorian calendar, so February contributes 29 days in a leap year and 28 otherwise. Any span that crosses 29 February is counted correctly without adjustment.'],

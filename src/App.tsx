@@ -10,16 +10,20 @@ type Page = { slug: string; title: string; description: string }
 const tools: Tool[] = [
   { slug: 'date-calculator', title: 'Date Calculator', seoTitle: 'Date Calculator — Add or Subtract Days From a Date', category: 'Date', summary: 'Add calendar time to a starting date.', method: 'Calendar arithmetic is used for the result.' },
   { slug: 'age-calculator', title: 'Age Calculator', seoTitle: 'Age Calculator — Calculate Exact Age in Years, Months, Days', category: 'Date', summary: 'Find an exact age between two dates.', method: 'Age is counted by calendar anniversaries.' },
+  { slug: 'age-difference-calculator', title: 'Age Difference Calculator', seoTitle: 'Age Difference Calculator — Gap Between Two Birth Dates', category: 'Date', summary: 'Find the age gap between two people.', method: 'The gap is counted by calendar anniversaries, in either input order.' },
   { slug: 'days-between-dates', title: 'Days Between Dates', seoTitle: 'Days Between Dates — Date Difference Calculator', category: 'Date', summary: 'Measure the elapsed days between dates.', method: 'The result excludes both named endpoints.' },
   { slug: 'days-calculator', title: 'Days Calculator', seoTitle: 'Days Calculator — Days From Today, Before & Between Dates', category: 'Date', summary: 'Find dates from a day count in either direction.', method: 'Both directions are calculated from the reference date.' },
   { slug: 'add-days', title: 'Add Days to Date', seoTitle: 'Add Days to Date — Calculate a Future Date in Days', category: 'Date', summary: 'Find a future date by adding days.', method: 'The result moves through calendar dates.' },
   { slug: 'subtract-days', title: 'Subtract Days from Date', seoTitle: 'Subtract Days From Date — Calculate a Date in the Past', category: 'Date', summary: 'Find an earlier date by subtracting days.', method: 'Month and year boundaries are handled as calendar dates.' },
   { slug: 'working-days', title: 'Working Days Calculator', seoTitle: 'Working Days Calculator — Count Business Days Between Dates', category: 'Date', summary: 'Count weekdays between two dates.', method: 'Monday through Friday count; holidays are not assumed.' },
+  { slug: 'business-date-calculator', title: 'Business Date Calculator', seoTitle: 'Business Date Calculator — Add or Subtract Business Days', category: 'Date', summary: 'Move a date forward or backward by business days.', method: 'Monday through Friday count; holidays are not assumed.' },
   { slug: 'day-of-week', title: 'Day of the Week Calculator', seoTitle: 'Day of the Week Calculator — What Day Was or Will Be', category: 'Calendar', summary: 'Discover the weekday for a date.', method: 'Uses the proleptic Gregorian calendar.' },
   { slug: 'week-number', title: 'Week Number Calculator', seoTitle: 'Week Number Calculator — Current ISO Week Number', category: 'Calendar', summary: 'Find an ISO 8601 week and week-year.', method: 'ISO weeks start Monday and week 1 contains the first Thursday.' },
   { slug: 'leap-year', title: 'Leap Year Calculator', seoTitle: 'Leap Year Calculator — Is This Year a Leap Year?', category: 'Calendar', summary: 'Check whether a year has 366 days.', method: 'Centuries are leap years only when divisible by 400.' },
   { slug: 'countdown', title: 'Countdown Calculator', seoTitle: 'Countdown Calculator — How Many Days Until a Date', category: 'Time', summary: 'See how much time remains until a moment.', method: 'Measures from this device clock to the target.' },
+  { slug: 'time-since-calculator', title: 'Time Since Calculator', seoTitle: 'Time Since Calculator — Elapsed Time From a Date', category: 'Time', summary: 'See how much time has passed since a moment.', method: 'Measured live from this device clock.' },
   { slug: 'time-difference', title: 'Time Difference Calculator', seoTitle: 'Time Difference Calculator — Time Between Two Times', category: 'Time', summary: 'Compare two date and time values.', method: 'Reports elapsed duration between local values.' },
+  { slug: 'work-hours-calculator', title: 'Work Hours Calculator', seoTitle: 'Work Hours Calculator — Shift Duration With Breaks', category: 'Time', summary: 'Total a shift with unpaid breaks.', method: 'Overnight shifts count into the next day; breaks are subtracted.' },
   { slug: 'time-zone-converter', title: 'Time Zone Converter', seoTitle: 'Time Zone Converter — Convert Time Zones & UTC Offsets', category: 'Time', summary: 'Translate a date and time between zones.', method: 'Uses browser IANA timezone data.' },
 ]
 
@@ -58,6 +62,15 @@ const zoneToUtc = (wall: Date, timeZone: string) => {
   return new Date(numbers - zoneOffset(new Date(first), timeZone))
 }
 const dayGap = (a: Date, b: Date) => Math.round((Date.UTC(b.getFullYear(), b.getMonth(), b.getDate()) - Date.UTC(a.getFullYear(), a.getMonth(), a.getDate())) / 86400000)
+const unit = (count: number, word: string) => `${count.toLocaleString('en-GB')} ${word}${count === 1 ? '' : 's'}`
+const decompose = (from: Date, to: Date) => {
+  let years = to.getFullYear() - from.getFullYear(); let months = to.getMonth() - from.getMonth(); let days = to.getDate() - from.getDate()
+  let borrowed = 0
+  while (days < 0 && borrowed < 12) { months -= 1; borrowed += 1; days += new Date(to.getFullYear(), to.getMonth() - borrowed + 1, 0).getDate() }
+  if (months < 0) { years -= 1; months += 12 }
+  const totalDays = Math.abs(dayGap(from, to))
+  return { years, months, days, totalDays, weeks: Math.floor(totalDays / 7), restDays: totalDays % 7, totalMonths: years * 12 + months }
+}
 const normalize = (path: string) => path.length > 1 ? path.replace(/\/$/, '') : path
 const stripLinks = (text: string) => text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
 const SITE_URL = 'https://datepilot.online'
@@ -315,6 +328,10 @@ function Calculator({ tool }: { tool: Tool }) {
   const [error, setError] = useState('')
 
   if (tool.slug === 'time-difference' || tool.slug === 'time-zone-converter') return <EnhancedCalculator tool={tool} />
+  if (tool.slug === 'business-date-calculator') return <BusinessDateCalculator />
+  if (tool.slug === 'age-difference-calculator') return <AgeDifferenceCalculator />
+  if (tool.slug === 'time-since-calculator') return <TimeSinceCalculator />
+  if (tool.slug === 'work-hours-calculator') return <WorkHoursCalculator />
 
   const calculate = () => {
     setError(''); setResult('')
@@ -336,7 +353,11 @@ function Calculator({ tool }: { tool: Tool }) {
     }
     if (tool.slug === 'days-between-dates') {
       if (Number.isNaN(b.getTime())) return setError('Please enter a valid end date.')
-      return setResult(`${Math.abs(dayGap(a, b))} days`)
+      const totalDays = Math.abs(dayGap(a, b))
+      if (totalDays === 0) return setResult('0 days')
+      const [earlier, later] = dayGap(a, b) >= 0 ? [a, b] : [b, a]
+      const span = decompose(earlier, later)
+      return setResult(`${totalDays.toLocaleString('en-GB')} days\n${unit(span.weeks, 'week')}, ${unit(span.restDays, 'day')}\n${unit(span.years, 'year')}, ${unit(span.months, 'month')}, ${unit(span.days, 'day')}\n${unit(span.totalMonths, 'month')}, ${unit(span.days, 'day')}`)
     }
     if (tool.slug === 'age-calculator') {
       if (Number.isNaN(b.getTime())) return setError('Please enter a valid target date.')
@@ -436,6 +457,184 @@ function EnhancedCalculator({ tool }: { tool: Tool }) {
     </div>
     {error && <p className="error" role="alert">{error}</p>}
     {result && <div className="result" aria-live="polite"><span className="eyebrow accent">YOUR RESULT</span><strong>{result}</strong><p>{tool.method}</p></div>}
+  </div>
+}
+
+function BusinessDateCalculator() {
+  const [start, setStart] = useState(today())
+  const [count, setCount] = useState('10')
+  const [direction, setDirection] = useState<'after' | 'before'>('after')
+  const [result, setResult] = useState('')
+  const [error, setError] = useState('')
+
+  const calculate = () => {
+    setError(''); setResult('')
+    const a = localDate(start)
+    if (Number.isNaN(a.getTime())) return setError('Please enter a valid start date.')
+    if (count.trim() === '') return setError('Please enter the number of business days.')
+    const n = Number(count)
+    if (!Number.isInteger(n)) return setError('Please enter a whole number of business days.')
+    if (Math.abs(n) > 10000) return setError('Please enter 10,000 business days or fewer.')
+    const step = direction === 'after' ? 1 : -1
+    let cursor = new Date(a)
+    let remaining = Math.abs(n)
+    while (remaining > 0) {
+      cursor = shiftDays(cursor, step)
+      const day = cursor.getDay()
+      if (day > 0 && day < 6) remaining -= 1
+    }
+    const label = direction === 'after' ? 'After' : 'Before'
+    const spanned = Math.abs(dayGap(a, cursor))
+    const first = `${label} ${unit(Math.abs(n), 'business day')}: ${weekday(cursor)}, ${prettyDate(cursor)}`
+    return setResult(spanned > 0 ? `${first}\n${unit(spanned, 'calendar day')} spanned (weekends included)` : first)
+  }
+
+  const reset = () => { setStart(today()); setCount('10'); setDirection('after'); setResult(''); setError('') }
+
+  return <div className="calculator">
+    <div className="form-grid">
+      <label className="field"><span>Start date</span><input type="date" value={start} onChange={(event) => setStart(event.target.value)} /></label>
+      <label className="field"><span>Business days</span><input type="number" value={count} onChange={(event) => setCount(event.target.value)} /></label>
+      <label className="field"><span>Direction</span><select value={direction} onChange={(event) => setDirection(event.target.value as 'after' | 'before')}><option value="after">After (forward)</option><option value="before">Before (backward)</option></select></label>
+    </div>
+    <div className="calculator-actions">
+      <button className="primary" onClick={calculate}>Calculate result <span>→</span></button>
+      <button className="reset-btn" onClick={reset} type="button">Reset</button>
+    </div>
+    {error && <p className="error" role="alert">{error}</p>}
+    {result && <div className="result" aria-live="polite"><span className="eyebrow accent">YOUR RESULT</span><strong>{result}</strong><p>Monday through Friday count; holidays are not assumed.</p></div>}
+  </div>
+}
+
+function AgeDifferenceCalculator() {
+  const [first, setFirst] = useState(today())
+  const [second, setSecond] = useState(today())
+  const [result, setResult] = useState('')
+  const [error, setError] = useState('')
+
+  const calculate = () => {
+    setError(''); setResult('')
+    const a = localDate(first); const b = localDate(second)
+    if (Number.isNaN(a.getTime())) return setError('Please enter a valid first birth date.')
+    if (Number.isNaN(b.getTime())) return setError('Please enter a valid second birth date.')
+    if (a.getTime() === b.getTime()) return setResult('Same birth date\n0 years, 0 months, 0 days apart')
+    const [earlier, later, who] = a < b ? [a, b, 'The first birth date is older.'] : [b, a, 'The second birth date is older.']
+    const gap = decompose(earlier, later)
+    return setResult(`${unit(gap.years, 'year')}, ${unit(gap.months, 'month')}, ${unit(gap.days, 'day')}\n${unit(gap.totalDays, 'calendar day')} total\n${who}`)
+  }
+
+  const reset = () => { setFirst(today()); setSecond(today()); setResult(''); setError('') }
+
+  const field = (label: string, value: string, setter: (value: string) => void) => (
+    <label className="field"><span>{label}</span><input type="date" value={value} onChange={(event) => setter(event.target.value)} /></label>
+  )
+
+  return <div className="calculator">
+    <div className="form-grid">
+      {field('First birth date', first, setFirst)}
+      {field('Second birth date', second, setSecond)}
+    </div>
+    <div className="calculator-actions">
+      <button className="primary" onClick={calculate}>Calculate result <span>→</span></button>
+      <button className="reset-btn" onClick={reset} type="button">Reset</button>
+    </div>
+    {error && <p className="error" role="alert">{error}</p>}
+    {result && <div className="result" aria-live="polite"><span className="eyebrow accent">YOUR RESULT</span><strong>{result}</strong><p>Gap is counted by calendar anniversaries; inputs work in either order.</p></div>}
+  </div>
+}
+
+function TimeSinceCalculator() {
+  const [start, setStart] = useState(`${today()}T00:00`)
+  const [now, setNow] = useState(() => new Date())
+
+  useEffect(() => { const id = window.setInterval(() => setNow(new Date()), 1000); return () => window.clearInterval(id) }, [])
+
+  const reset = () => setStart(`${today()}T00:00`)
+
+  const startMs = new Date(start).getTime()
+  const invalid = !start || start.length < 16 || !Number.isFinite(startMs)
+  const future = !invalid && startMs > now.getTime()
+
+  const startDate = invalid ? null : localDate(start.slice(0, 10))
+  const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const diffMs = invalid || future ? 0 : now.getTime() - startMs
+  const totalSeconds = Math.floor(diffMs / 1000)
+  const seconds = totalSeconds % 60
+  const minutes = Math.floor(totalSeconds / 60) % 60
+  const hours = Math.floor(totalSeconds / 3600) % 24
+  const days = Math.floor(totalSeconds / 86400)
+  const span = startDate && !future ? decompose(startDate, nowDate) : null
+  const stamp = startDate ? `${weekday(startDate)}, ${prettyDate(startDate)}, ${start.slice(11, 16)}` : ''
+  const live = span ? `${unit(span.years, 'year')}, ${unit(span.months, 'month')}, ${unit(span.days, 'day')}\n${unit(days, 'day')}, ${unit(hours, 'hour')}, ${unit(minutes, 'minute')}, ${unit(seconds, 'second')}\nSince ${stamp}` : ''
+
+  return <div className="calculator">
+    <div className="form-grid">
+      <label className="field"><span>Time since</span><input type="datetime-local" value={start} onChange={(event) => setStart(event.target.value)} /></label>
+    </div>
+    <div className="calculator-actions">
+      <button className="reset-btn" onClick={reset} type="button">Reset</button>
+    </div>
+    {invalid
+      ? <p className="error" role="alert">Please enter a valid date and time.</p>
+      : future
+        ? <div className="result" aria-live="polite"><span className="eyebrow accent">NOT YET</span><strong>That moment has not happened yet.</strong><p>Enter a date and time in the past to measure the elapsed time.</p></div>
+        : <div className="result"><span className="eyebrow accent">TIME SINCE</span><strong>{live}</strong><p>Refreshes every second from this device clock.</p></div>}
+  </div>
+}
+
+function WorkHoursCalculator() {
+  const [shiftStart, setShiftStart] = useState('09:00')
+  const [shiftEnd, setShiftEnd] = useState('17:00')
+  const [breakMinutes, setBreakMinutes] = useState('30')
+  const [result, setResult] = useState('')
+  const [error, setError] = useState('')
+
+  const toMinutes = (value: string) => {
+    const match = /^(\d{1,2}):(\d{2})$/.exec(value)
+    if (!match) return NaN
+    const hours = Number(match[1]); const minutes = Number(match[2])
+    if (hours > 23 || minutes > 59) return NaN
+    return hours * 60 + minutes
+  }
+  const fmt = (total: number) => `${unit(Math.floor(total / 60), 'hour')} ${unit(total % 60, 'minute')}`
+
+  const calculate = () => {
+    setError(''); setResult('')
+    const from = toMinutes(shiftStart); const to = toMinutes(shiftEnd)
+    if (Number.isNaN(from)) return setError('Please enter a valid start time.')
+    if (Number.isNaN(to)) return setError('Please enter a valid end time.')
+    if (breakMinutes.trim() === '') return setError('Please enter the break length in minutes.')
+    const unpaid = Number(breakMinutes)
+    if (!Number.isInteger(unpaid) || unpaid < 0) return setError('Please enter break minutes as a whole number of 0 or more.')
+    let gross = to - from
+    const overnight = gross < 0
+    if (overnight) gross += 1440
+    if (gross === 0) return setError('Start and end times are the same — enter the actual clock-out time.')
+    if (unpaid >= gross) return setError('The break must be shorter than the shift.')
+    const net = gross - unpaid
+    const first = `${fmt(net)} worked — ${(net / 60).toFixed(2)} decimal hours`
+    const second = `Gross shift ${fmt(gross)} · Break ${unpaid} minutes${overnight ? ' · Overnight' : ''}`
+    return setResult(`${first}\n${second}`)
+  }
+
+  const reset = () => { setShiftStart('09:00'); setShiftEnd('17:00'); setBreakMinutes('30'); setResult(''); setError('') }
+
+  const field = (label: string, value: string, setter: (value: string) => void, type = 'time') => (
+    <label className="field"><span>{label}</span><input type={type} value={value} onChange={(event) => setter(event.target.value)} /></label>
+  )
+
+  return <div className="calculator">
+    <div className="form-grid">
+      {field('Clock in', shiftStart, setShiftStart)}
+      {field('Clock out', shiftEnd, setShiftEnd)}
+      {field('Unpaid break (minutes)', breakMinutes, setBreakMinutes, 'number')}
+    </div>
+    <div className="calculator-actions">
+      <button className="primary" onClick={calculate}>Calculate result <span>→</span></button>
+      <button className="reset-btn" onClick={reset} type="button">Reset</button>
+    </div>
+    {error && <p className="error" role="alert">{error}</p>}
+    {result && <div className="result" aria-live="polite"><span className="eyebrow accent">YOUR RESULT</span><strong>{result}</strong><p>Overnight shifts count into the next day; breaks are subtracted.</p></div>}
   </div>
 }
 

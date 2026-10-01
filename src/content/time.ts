@@ -65,7 +65,7 @@ export const timeContent: Record<string, ToolContent> = {
         heading: 'Countdowns and Whole Calendar Days',
         blocks: [
           { type: 'p', text: 'Countdown answers are often compared with calendar-day answers, and the two can differ. A countdown to 17:00 on the target date includes part of the target day, while an exclusive date difference stops at the previous midnight.' },
-          { type: 'p', text: 'Use whole days when the question is "what date is it", "how many days are left", or "how many days since" — the [Days Calculator](/calculators/days-calculator) and [Days Between Dates](/calculators/days-between-dates) cover those. Use hours and minutes when the question is "how long until", which is what this tool answers.' },
+          { type: 'p', text: 'Use whole days when the question is "what date is it", "how many days are left", or "how many days since" — the [Days Calculator](/calculators/days-calculator) and [Days Between Dates](/calculators/days-between-dates) cover those. Use hours and minutes when the question is "how long until", which is what this tool answers. For the past-pointing version of the same live measurement — how long since a moment, ticking on screen — use the [Time Since Calculator](/time/time-since-calculator).' },
           { type: 'p', text: 'Countdowns to annual events restart themselves. Once a date has passed, choosing the same day and month in the following year starts a fresh countdown to the next occurrence — the tool does not remember whether you have counted down before. Events tied to a weekday rather than a fixed day and month behave differently: they move with the calendar, so the target date should be checked each year instead of assumed.' },
           { type: 'p', text: 'Counting down is also usually only half of the planning question. Once the target is set, the next steps are checking its weekday with the [Day of the Week calculator](/calendar/day-of-week) and counting the weekdays that remain with the [Working Days Calculator](/calculators/working-days), because a deadline that lands on a Saturday rarely behaves like one that lands midweek.' },
         ],
@@ -87,7 +87,7 @@ export const timeContent: Record<string, ToolContent> = {
       },
     ],
     guideSlugs: ['time-zones', 'daylight-saving-time', 'date-calculations'],
-    related: ['days-between-dates', 'time-difference', 'days-calculator', 'time-zone-converter'],
+    related: ['time-since-calculator', 'days-between-dates', 'time-difference', 'days-calculator'],
     faqs: [
       ['How do I count the days until a date?', 'Choose the target date and press "Calculate result". The answer is given in days and hours from the current moment. For a plain calendar-day count, use the [Days Between Dates calculator](/calculators/days-between-dates).'],
       ['Does the countdown update automatically?', 'No. The result is measured when you press the button. Press it again whenever you want a refreshed figure.'],
@@ -192,12 +192,12 @@ export const timeContent: Record<string, ToolContent> = {
       {
         heading: 'Related Tools',
         blocks: [
-          { type: 'p', text: 'Convert between zones with the [Time Zone Converter](/time/time-zone-converter), count calendar days with [Days Between Dates](/calculators/days-between-dates), and see remaining time to an event with the [Countdown Calculator](/time/countdown).' },
+          { type: 'p', text: 'Total a shift with breaks using the [Work Hours Calculator](/time/work-hours-calculator), measure how long since a past moment with the [Time Since Calculator](/time/time-since-calculator), convert between zones with the [Time Zone Converter](/time/time-zone-converter), count calendar days with [Days Between Dates](/calculators/days-between-dates), and see remaining time to an event with the [Countdown Calculator](/time/countdown).' },
         ],
       },
     ],
     guideSlugs: ['time-zones', 'daylight-saving-time', 'date-time-formats'],
-    related: ['time-zone-converter', 'countdown', 'days-between-dates', 'day-of-week'],
+    related: ['work-hours-calculator', 'time-since-calculator', 'countdown', 'time-zone-converter'],
     faqs: [
       ['How do I calculate the time between two times?', 'Convert both moments to a common measure, subtract the earlier from the later, and add 24 hours if the interval crosses midnight. The calculator does this for you and returns the answer in hours and minutes.'],
       ['Does the calculator count in days as well as hours?', 'No. The result is reported as hours and minutes, so a week shows as 168 hours. For day counts use the [Days Between Dates calculator](/calculators/days-between-dates).'],
@@ -324,6 +324,244 @@ export const timeContent: Record<string, ToolContent> = {
       ['Why can a converted time fall on a different date?', 'Zones can differ by several hours, so a late-evening time converted east crosses midnight into the next day, and an early-morning time converted west can fall into the previous day.'],
       ['Does daylight saving affect the conversion?', 'Yes. The offset for a zone changes when its clocks move, and zones change on different dates. The converter evaluates the rule for the date you enter rather than assuming a fixed offset.'],
       ['Why is my zone not a whole number of hours from UTC?', 'Some zones are offset by 30 or 45 minutes — India is UTC+5:30, for example. Named zones handle this correctly, which is why abbreviations and rough offsets should not be used for conversion.'],
+    ],
+  },
+
+  'time-since-calculator': {
+    answer: 'A time since calculator shows how much time has passed from a past date and time until now, updating every second. It reports the elapsed time in calendar years, months, and days, plus total days, hours, minutes, and seconds.',
+    intro: [
+      '"How long has it been since..." is one of the most natural time questions there is — since a birthday, since an event, since a project started, since a date that matters. The answer is not fixed: it grows by the second, which is why a live measurement beats a static number.',
+      'Enter a date and time in the past and this calculator keeps counting for you. The first line breaks the span into calendar years, months, and days — the way people say it. The second line gives the raw elapsed time down to the second — the way stopwatches say it. Both refresh every second while the page is open.',
+    ],
+    howTo: [
+      'Enter the past date and time you want to measure from.',
+      'Results appear immediately — there is no calculate button to press.',
+      'Read the calendar line (years, months, days) for the human-readable span.',
+      'Read the total line (days, hours, minutes, seconds) for the precise elapsed time.',
+      'The bottom line confirms the exact start moment being measured from.',
+      'Press "Reset" to return the input to the start of today.',
+    ],
+    sections: [
+      {
+        heading: 'What Is a Time Since Calculator?',
+        blocks: [
+          { type: 'p', text: 'A time since calculator measures elapsed time from a past moment to right now. It is the past-facing twin of the countdown: a countdown looks forward to a target, a time-since looks backward to an anchor. Both are live measurements — leave the page open and the numbers keep moving.' },
+          { type: 'p', text: 'The tool reports the answer in two forms because one span genuinely has two descriptions. "Three years since we started" describes anniversaries; "1,096 days, 4 hours, 12 minutes" describes clock time. Neither replaces the other, so the calculator shows both.' },
+        ],
+      },
+      {
+        heading: 'Time Since vs Days Between vs Time Difference',
+        blocks: [
+          {
+            type: 'table',
+            headers: ['Question', 'Tool', 'Updates live?'],
+            rows: [
+              ['How long since this moment (down to the second)?', 'Time Since Calculator', 'Yes, every second'],
+              ['How many calendar days between these two dates?', 'Days Between Dates', 'No — fixed dates'],
+              ['How many hours and minutes between two fixed moments?', 'Time Difference Calculator', 'No — fixed moments'],
+              ['How long until a future date?', 'Countdown Calculator', 'Recalculate on press'],
+            ],
+          },
+          { type: 'p', text: 'The rule of thumb: if one end of your question is "right now", this is the page. If both ends are fixed dates, use [Days Between Dates](/calculators/days-between-dates); if both ends are fixed date-and-times and you only need hours and minutes, use the [Time Difference Calculator](/time/time-difference).' },
+        ],
+      },
+      {
+        heading: 'How the Time Since Calculator Works',
+        blocks: [
+          { type: 'p', text: 'The calculator takes the moment you entered and subtracts it from the current device clock. The raw difference is decomposed into days, hours, minutes, and seconds for the total line. In parallel it walks the calendar from the start date to today — counting completed years to each anniversary, then months, then leftover days — for the calendar line. The clock refreshes once a second.' },
+          { type: 'p', text: 'Because it reads your device clock, an unsynchronized device shows an unsynchronized answer. Nothing is sent anywhere: the calculation runs entirely in your browser, exactly like every other DatePilot tool.' },
+          { type: 'note', text: 'Enter a moment in the future and the calculator says so instead of showing a negative count — elapsed time only runs one way.' },
+        ],
+      },
+      {
+        heading: 'Worked Example: Time Since Three Different Starts',
+        blocks: [
+          { type: 'p', text: 'Read at 1 October 2026, 10:30 local time:' },
+          {
+            type: 'table',
+            headers: ['Time since', 'Calendar line', 'Total line'],
+            rows: [
+              ['1 January 2020, 00:00', '6 years, 9 months, 0 days', '2,465 days, 10 hours, 30 minutes'],
+              ['1 October 2016, 00:00', '10 years, 0 months, 0 days', '3,652 days, 10 hours, 30 minutes'],
+              ['1 September 2026, 00:00', '0 years, 1 month, 0 days', '30 days, 10 hours, 30 minutes'],
+            ],
+          },
+          { type: 'p', text: 'The middle row is the leap-day check: ten calendar years containing 3,652 days, two more than 10 × 365, because 2020 and 2024 were leap years. The third row shows how a short span still gets a full calendar description — one month crossed on 1 October, plus the days since.' },
+        ],
+      },
+      {
+        heading: 'Why the Two Lines Can Disagree',
+        blocks: [
+          { type: 'p', text: 'The calendar line counts whole calendar dates; the total line counts raw clock time. When the start time is late in the day, the two views genuinely differ. Start at 18:00 on 30 September and read the result at 10:30 on 1 October: the calendar line reports 1 day (30 September to 1 October is one calendar date apart), while the total line reports 16 hours 30 minutes — not yet a full 24 hours.' },
+          { type: 'p', text: 'Neither is wrong. The calendar line answers "which dates have we passed"; the total line answers "how much time has ticked by". Use anniversaries when you are thinking in birthdays and deadlines, and the raw total when you are thinking in durations.' },
+        ],
+      },
+      {
+        heading: 'Common Mistakes When Measuring Time Since',
+        blocks: [
+          {
+            type: 'ul',
+            items: [
+              'Dividing total days by 365 to get years — leap days and the day-of-anniversary rule make that answer wrong.',
+              'Comparing a live "time since" figure with a fixed date-difference figure; they are measured from different anchors.',
+              'Forgetting the time of day — "since 1 January" means something different at 00:00 and at 23:59.',
+              'Trusting a device clock that is not synchronized.',
+              'Using a countdown for a past moment, or this tool for a future one — direction matters.',
+            ],
+          },
+        ],
+      },
+      {
+        heading: 'Related Tools',
+        blocks: [
+          { type: 'p', text: 'Count forward to an event with the [Countdown Calculator](/time/countdown), measure two fixed moments with the [Time Difference Calculator](/time/time-difference), count calendar days with [Days Between Dates](/calculators/days-between-dates), and read how date arithmetic works in [How Date Calculations Work](/guides/date-calculations).' },
+        ],
+      },
+    ],
+    guideSlugs: ['days-between-dates', 'date-calculations', 'date-time-formats'],
+    related: ['countdown', 'time-difference', 'days-between-dates', 'age-calculator'],
+    faqs: [
+      ['Does the result update on its own?', 'Yes. The elapsed time refreshes every second while the page is open, measured from your device clock. Press "Reset" to return the input to the start of today.'],
+      ['What does the calendar line mean?', 'It counts completed years, months, and days from the start date to today using calendar anniversaries — the same rule the Age Calculator uses. The total line below it counts raw elapsed days, hours, minutes, and seconds.'],
+      ['Why do the two lines sometimes disagree?', 'The calendar line counts whole calendar dates crossed; the total line counts clock time. If the start time is late in the day, one calendar date may have passed without 24 hours having elapsed.'],
+      ['Can I measure time until a future date?', 'No — that is a countdown. Use the [Countdown Calculator](/time/countdown) for future targets; it reports the time remaining instead of time passed.'],
+      ['Does it count leap days?', 'Yes. The total line counts every elapsed day, including 29 February, and the calendar line counts anniversaries rather than dividing by 365.'],
+    ],
+  },
+
+  'work-hours-calculator': {
+    answer: 'A work hours calculator totals a shift from clock-in and clock-out times, subtracts an unpaid break, and reports hours worked in hours and minutes and as a decimal for timesheets. Overnight shifts that pass midnight are handled automatically.',
+    intro: [
+      'Every timesheet starts with the same three numbers: when the shift started, when it ended, and how long the unpaid break was. From those three, the hours actually worked fall out — but only if the arithmetic survives lunch breaks, shifts that cross midnight, and the decimal format payroll systems expect.',
+      'Enter the clock-in time, the clock-out time, and the break length. The calculator returns the net hours in hours and minutes for people and in decimal form for spreadsheets, and it tells you whether the shift ran overnight.',
+    ],
+    howTo: [
+      'Enter the clock-in time (for example 09:00).',
+      'Enter the clock-out time (for example 17:00).',
+      'Enter the unpaid break in minutes — use 0 when the break is paid.',
+      'Select "Calculate result".',
+      'Read the net hours worked on the first line and the decimal figure in brackets.',
+      'The second line shows the gross shift length, the break deducted, and whether the shift ran overnight.',
+    ],
+    sections: [
+      {
+        heading: 'What Is a Work Hours Calculator?',
+        blocks: [
+          { type: 'p', text: 'A work hours calculator converts clock-in and clock-out times into hours actually worked. It answers the question every hourly worker, freelancer, and manager asks at the end of a shift: how many hours do I put on the timesheet? The answer is the shift length minus any unpaid break, expressed both as hours and minutes and as a decimal number.' },
+          { type: 'p', text: 'It is deliberately narrower than a full payroll system. No hourly rates, no overtime thresholds, no tax — just the time arithmetic, done correctly, so the number you carry into those other calculations is right.' },
+        ],
+      },
+      {
+        heading: 'The Work Hours Formula',
+        blocks: [
+          { type: 'p', text: 'The whole calculation is one line:' },
+          { type: 'p', text: 'Hours worked = (clock out − clock in) − unpaid break' },
+          { type: 'p', text: 'Subtract the clock-in time from the clock-out time to get the gross shift length, then take off the break. If the clock-out is earlier than the clock-in, the shift crossed midnight: add 24 hours before subtracting, which is exactly what the calculator does.' },
+          {
+            type: 'table',
+            headers: ['Clock in', 'Clock out', 'Break', 'Gross', 'Worked'],
+            rows: [
+              ['09:00', '17:00', '0 min', '8h 00m', '8h 00m (8.00)'],
+              ['09:00', '17:00', '30 min', '8h 00m', '7h 30m (7.50)'],
+              ['08:30', '17:45', '45 min', '9h 15m', '8h 30m (8.50)'],
+              ['22:00', '06:00', '0 min', '8h 00m', '8h 00m (8.00) overnight'],
+            ],
+          },
+        ],
+      },
+      {
+        heading: 'How to Calculate Work Hours by Hand',
+        blocks: [
+          {
+            type: 'ol',
+            items: [
+              'Write both times in 24-hour format (5:30 PM becomes 17:30).',
+              'Subtract the clock-in time from the clock-out time, borrowing 60 minutes if the minutes would go negative.',
+              'If the result is negative, the shift crossed midnight — add 24 hours.',
+              'Subtract the unpaid break in minutes.',
+              'Convert to decimal by dividing the minutes by 60 for timesheet entry.',
+            ],
+          },
+          { type: 'p', text: 'The manual version fails most often at step 3 — a 22:00 to 06:00 shift looks like minus 16 hours until you remember it runs into the next day — and at step 4, when a lunch break is remembered after the timesheet is filled in.' },
+        ],
+      },
+      {
+        heading: 'Work Hours Examples',
+        blocks: [
+          {
+            type: 'table',
+            headers: ['Scenario', 'Inputs', 'Result'],
+            rows: [
+              ['Standard 9-to-5, unpaid lunch', '09:00–17:00, 30 min break', '7 hours 30 minutes (7.50)'],
+              ['9-to-5, paid break', '09:00–17:00, 0 min break', '8 hours 0 minutes (8.00)'],
+              ['Early finish with long break', '08:30–17:45, 45 min break', '8 hours 30 minutes (8.50)'],
+              ['Night shift across midnight', '22:00–06:00, 0 min break', '8 hours 0 minutes (8.00)'],
+              ['Short evening block', '19:25–19:45, 0 min break', '0 hours 20 minutes (0.33)'],
+            ],
+          },
+          { type: 'p', text: 'The 9-to-5 comparison is the one people meet most often: without a break the shift is a clean 8 hours; with a 30-minute unpaid lunch it is 7.50 — the difference between an 8-hour and a 7.5-hour timesheet entry from the same clock times.' },
+          { type: 'note', text: 'The calculator rejects a break that is longer than the shift and times where the clock-in equals the clock-out, because both cases usually mean a mistyped time rather than a real schedule.' },
+        ],
+      },
+      {
+        heading: 'Overnight Shifts',
+        blocks: [
+          { type: 'p', text: 'When the clock-out time is numerically earlier than the clock-in time, the shift belongs to the next day: 22:00 to 06:00 is a standard 8-hour night shift, not a negative duration. The calculator adds the missing 24 hours automatically and flags the result as overnight.' },
+          { type: 'p', text: 'A midnight crossing also changes the date on a timesheet. If your records include dates as well as times, remember that a shift started on Friday at 22:00 and ended on Saturday at 06:00 belongs to Friday\'s shift for reporting purposes, even though the clock-out fell on Saturday.' },
+        ],
+      },
+      {
+        heading: 'Decimal Hours for Timesheets',
+        blocks: [
+          { type: 'p', text: 'Spreadsheets and payroll systems usually want decimal hours rather than hours and minutes: 7 hours 30 minutes becomes 7.50, 8 hours 30 minutes becomes 8.50, and 20 minutes becomes 0.33. The conversion is minutes ÷ 60 — 30 ÷ 60 = 0.5, 45 ÷ 60 = 0.75.' },
+          { type: 'p', text: 'Decimal hours add cleanly, which is why they are the payroll standard: five shifts of 7.50 total 37.50 hours, a figure you can multiply by a rate directly. Rounded to two decimal places, the calculator\'s decimal figure matches the format most timesheet columns expect.' },
+        ],
+      },
+      {
+        heading: 'Paid and Unpaid Breaks',
+        blocks: [
+          { type: 'p', text: 'Only subtract breaks that are genuinely unpaid. Many jurisdictions require short rest breaks (typically 5 to 20 minutes) to be paid, while meal breaks of 30 minutes or more are commonly unpaid — but the rules differ by country, state, and contract. Enter the break your employer actually deducts, not the break you technically take.' },
+          { type: 'p', text: 'If every break at your workplace is paid, enter 0 and the calculator returns the full gross shift. The break field exists for the schedules that do deduct, which is where manual timesheets most often go wrong.' },
+          { type: 'note', text: 'DatePilot applies no overtime rules, pay rates, or rounding policies — it reports raw hours only. Your employment contract or local law decides everything beyond that.' },
+        ],
+      },
+      {
+        heading: 'Work Hours vs Time Difference',
+        blocks: [
+          { type: 'p', text: 'Both tools measure time, with different jobs. The [Time Difference Calculator](/time/time-difference) compares two full date-and-time values — useful when the moments sit on different days or weeks — and reports hours and minutes only. The Work Hours Calculator is built for a single shift: clock times, a break deduction, decimal output, and an overnight flag.' },
+          { type: 'p', text: 'If your question includes a break or a decimal figure, this is the right tool. If it spans multiple days and needs no break logic, use time difference; if it spans multiple days of work rather than clock time, count the weekdays with the [Working Days Calculator](/calculators/working-days).' },
+        ],
+      },
+      {
+        heading: 'Common Work Hours Mistakes',
+        blocks: [
+          {
+            type: 'ul',
+            items: [
+              'Forgetting to subtract the unpaid lunch, inflating the timesheet by 30 minutes a day.',
+              'Treating an overnight shift as a negative duration instead of adding 24 hours.',
+              'Rounding 7.5 hours up to 8 on a timesheet that expects exact decimals.',
+              'Subtracting a paid break that payroll does not actually deduct.',
+              'Using clock-time subtraction across two different dates without noting which shift the hours belong to.',
+            ],
+          },
+        ],
+      },
+      {
+        heading: 'Related Tools',
+        blocks: [
+          { type: 'p', text: 'Compare two full moments with the [Time Difference Calculator](/time/time-difference), count the weekdays in a date range with the [Working Days Calculator](/calculators/working-days), and convert a meeting time across zones with the [Time Zone Converter](/time/time-zone-converter).' },
+        ],
+      },
+    ],
+    guideSlugs: ['date-time-formats', 'working-days', 'date-calculations'],
+    related: ['time-difference', 'working-days', 'countdown', 'time-zone-converter'],
+    faqs: [
+      ['How many hours is a 9-to-5 job?', 'Eight hours if every minute is paid. With a standard 30-minute unpaid lunch break it is 7 hours 30 minutes (7.50 decimal); with an unpaid 60-minute break it is 7 hours.'],
+      ['What happens if I finish earlier than I started?', 'The calculator treats it as an overnight shift: it adds 24 hours and reports the true length. A 22:00 to 06:00 shift is 8 hours, flagged as overnight.'],
+      ['What are decimal hours?', 'Hours expressed as a decimal number of hours: 7 hours 30 minutes = 7.50, 8 hours 15 minutes = 8.25. Divide the minutes by 60 to convert. Timesheets and payroll systems prefer this format because the values add directly.'],
+      ['Why does the calculator reject my times?', 'It reports an error when the clock-in equals the clock-out (usually a typo) or when the break is as long as or longer than the shift itself. Re-enter the times and calculate again.'],
+      ['Does it calculate overtime or pay?', 'No. It reports hours worked only — no rates, overtime thresholds, or rounding rules. Apply your contract\'s rules to the raw hours it returns.'],
     ],
   },
 }
