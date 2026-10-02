@@ -57,7 +57,7 @@ export const guideContent: Record<string, GuideContent> = {
       ['Practical workflow', 'Define your weekend rule, check for holidays in your region, then use the calculator. For example: "How many working days from 1 January to 31 January 2026, excluding New Year\'s Day (1 January) and assuming Monday-Friday weekends?" First calculate total weekdays, then subtract the holidays that fall on weekdays.'],
       ['Common mistakes', 'Calling weekdays "business days" without checking holidays. Not verifying whether the start and end dates are weekdays. Forgetting that different countries have different weekend days. Not accounting for regional holidays when the calculation is for business purposes.'],
     ],
-    toolSlugs: ['working-days', 'days-between-dates', 'add-days'],
+    toolSlugs: ['working-days', 'days-between-dates', 'add-days', 'deadline-calculator'],
   },
   'leap-years': {
     answer: 'The Gregorian leap-year rule adds February 29 to keep the calendar aligned with the solar year. Without leap days, the calendar would drift about one day every four years, eventually placing summer in December.',
@@ -68,7 +68,7 @@ export const guideContent: Record<string, GuideContent> = {
       ['Impact on date calculations', 'Leap days affect age calculations (someone born on 29 February has a birthday every 4 years), date differences (a span crossing 29 February is one day longer), and annual planning (February has 29 days instead of 28). Any calculation crossing February should account for whether the year is a leap year.'],
       ['Historical context', 'The Julian calendar (used before the Gregorian reform) had a simpler rule: every 4 years is a leap year. This created an error of about 11 minutes per year, which accumulated to 10 days by the 1500s. The Gregorian reform corrected this with the century exception. Different countries adopted the Gregorian calendar at different times.'],
     ],
-    toolSlugs: ['leap-year', 'days-between-dates', 'calendar-systems'],
+    toolSlugs: ['leap-year', 'days-between-dates', 'calendar-systems', 'day-of-year'],
   },
   'week-numbers': {
     answer: 'Week numbers organize dates into seven-day periods, but the result depends entirely on which convention you use. DatePilot uses ISO 8601, the international standard for week numbering.',
@@ -79,7 +79,7 @@ export const guideContent: Record<string, GuideContent> = {
       ['December/January boundary', 'The most confusing part of ISO week numbering is the year boundary. Example: 29 December 2025 (Monday) through 4 January 2026 (Sunday) is all in ISO week 1 of 2026. The Thursday of this week is 1 January 2026. So 29 December 2025 is in week 1 of 2026, not week 52 of 2025.'],
       ['When to use ISO weeks', 'ISO weeks are used in business, manufacturing, software development, and financial reporting. They provide a consistent way to reference weeks across years. If your team or industry uses a different convention (e.g., weeks starting on Sunday), make sure everyone uses the same system.'],
     ],
-    toolSlugs: ['week-number', 'day-of-week', 'iso-week-date'],
+    toolSlugs: ['week-number', 'day-of-week', 'iso-week-date', 'quarter-calculator'],
   },
   'iso-week-date': {
     answer: 'ISO week dates provide a complete date representation using a week-year, week number, and weekday. The system is designed for consistent week-based scheduling and reporting.',
@@ -146,7 +146,7 @@ export const guideContent: Record<string, GuideContent> = {
       ['Time format considerations', 'Use the 24-hour clock for precision: 14:30 is unambiguous, while 2:30 PM requires the reader to check AM/PM. Include the timezone for remote audiences: "14:30 UTC" or "14:30 Eastern Time." For international scheduling, always include the timezone abbreviation or offset.'],
       ['Choosing a format for your project', 'Pick one format and document it in your team\'s style guide. Use the same format consistently across all documents, calendars, and communications. For data, use ISO 8601. For human text, use written months with the 24-hour clock.'],
     ],
-    toolSlugs: ['date-calculator', 'time-zone-converter', 'utc-vs-gmt'],
+    toolSlugs: ['date-calculator', 'time-zone-converter', 'utc-vs-gmt', 'date-format-converter'],
   },
   'calendar-systems': {
     answer: 'A calendar system defines how dates are named and arranged. DatePilot uses the proleptic Gregorian calendar, which is the standard civil calendar used by most of the world today.',
