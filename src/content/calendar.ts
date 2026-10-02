@@ -192,7 +192,7 @@ export const calendarContent: Record<string, ToolContent> = {
       },
     ],
     guideSlugs: ['week-numbers', 'iso-week-date', 'day-of-week'],
-    related: ['day-of-week', 'leap-year', 'days-between-dates', 'working-days'],
+    related: ['day-of-week', 'quarter-calculator', 'leap-year', 'day-of-year'],
     faqs: [
       ['How do I find the current week number?', 'The "Current Week Number" panel above shows the live ISO week, its week-year, and the Monday that starts it. For a past or future date use the calculator at the top of the page.'],
       ['What is the difference between the calendar year and the week-year?', 'They usually match, but not always. A week belongs to the year whose Thursday falls in it, so days in early January can belong to the previous week-year and days in late December to the next one.'],
@@ -299,13 +299,183 @@ export const calendarContent: Record<string, ToolContent> = {
       },
     ],
     guideSlugs: ['leap-years', 'calendar-systems', 'how-to-calculate-age'],
-    related: ['age-calculator', 'days-between-dates', 'week-number', 'day-of-week'],
+    related: ['age-calculator', 'day-of-year', 'week-number', 'day-of-week'],
     faqs: [
       ['How do I know if a year is a leap year?', 'Check divisibility: divisible by 4 means leap year, unless it is a century year divisible by 100, which is a leap year only when also divisible by 400. The calculator above applies this automatically.'],
       ['Is 2026 a leap year?', 'No. 2026 is not divisible by 4, so it has 365 days. The next leap year is 2028.'],
       ['Why are century years not leap years?', 'Because the solar year is slightly shorter than 365.25 days. Dropping three century leap years every four centuries keeps the calendar aligned with the seasons.'],
       ['How many days are in a leap year?', '366. The extra day is 29 February.'],
       ['Does a leap year happen every 4 years?', 'Almost always — with the exception of century years that are not divisible by 400, such as 1900 and 2100.'],
+    ],
+  },
+  'quarter-calculator': {
+    answer: 'Find which quarter any date falls in, or get the exact start and end dates of any calendar or fiscal quarter. Set the fiscal year start month, see the days elapsed and remaining in the quarter, and switch between reading a date and reading a quarter.',
+    intro: [
+      'Quarters divide a year into four three-month blocks. For calendar quarters those blocks are fixed: January to March, April to June, July to September, October to December. Many organisations instead run fiscal quarters anchored to a different month — a company whose year starts in April gets fiscal quarters beginning in April, July, October, and January, and a US federal fiscal year begins in October.',
+      'The Quarter Calculator handles both. Give it a date and it reports the quarter, the fiscal year it belongs to, the quarter\'s date range, and how much of the quarter has been used. Give it a quarter instead and it returns the start date, end date, weekday of each boundary, and total day count — useful for reporting windows, invoice periods, and schedule planning.',
+    ],
+    howTo: [
+      'Choose the mode: which quarter is this date in, or which dates are in this quarter.',
+      'Set the fiscal year start month — January for calendar quarters, or any month your organisation uses.',
+      'Enter a date (first mode) or pick the quarter and fiscal year (second mode).',
+      'Select "Calculate quarter" and read the range, day counts, and progress.',
+    ],
+    sections: [
+      {
+        heading: 'Calendar Quarters vs Fiscal Quarters',
+        blocks: [
+          {
+            type: 'table',
+            headers: ['Fiscal year starts', 'Q1', 'Q2', 'Q3', 'Q4'],
+            rows: [
+              ['January (calendar)', 'Jan–Mar', 'Apr–Jun', 'Jul–Sep', 'Oct–Dec'],
+              ['April', 'Apr–Jun', 'Jul–Sep', 'Oct–Dec', 'Jan–Mar'],
+              ['July', 'Jul–Sep', 'Oct–Dec', 'Jan–Mar', 'Apr–Jun'],
+              ['October', 'Oct–Dec', 'Jan–Mar', 'Apr–Jun', 'Jul–Sep'],
+            ],
+          },
+          { type: 'p', text: 'The quarter number always counts from the fiscal year start, so "Q1" means different months depending on the anchor. When someone says Q3 without qualification, they almost always mean July to September — but a fiscal Q3 can land anywhere, which is why the calculator states the dates rather than only the label.' },
+        ],
+      },
+      {
+        heading: 'How the Quarter Calculator Works',
+        blocks: [
+          {
+            type: 'ol',
+            items: [
+              'The fiscal start month is set (January by default).',
+              'The month offset from that start determines the quarter: months 1–3 of the fiscal year are Q1, 4–6 are Q2, and so on.',
+              'The quarter\'s start is the first day of its first month; its end is the last day of its third month.',
+              'Day counts are calendar days including both endpoints; elapsed and remaining days are measured against the date you entered.',
+            ],
+          },
+          { type: 'p', text: 'Fiscal year labels follow the year in which the quarter ends, so fiscal year 2027 starting in October 2026 covers1 October 2026 to 30 September 2027 — the standard convention for October-anchored fiscal years.' },
+        ],
+      },
+      {
+        heading: 'Calendar Quarter Boundaries for 2026',
+        blocks: [
+          {
+            type: 'table',
+            headers: ['Quarter', 'Start', 'End', 'Days'],
+            rows: [
+              ['Q1 2026', '1 January 2026 (Thursday)', '31 March 2026 (Tuesday)', '90'],
+              ['Q2 2026', '1 April 2026 (Wednesday)', '30 June 2026 (Tuesday)', '91'],
+              ['Q3 2026', '1 July 2026 (Wednesday)', '30 September 2026 (Wednesday)', '92'],
+              ['Q4 2026', '1 October 2026 (Thursday)', '31 December 2026 (Thursday)', '92'],
+            ],
+          },
+          { type: 'p', text: 'Q1 is always the shortest in common years and Q2 the longest in leap years, because February sits inside it. Anything that promises equal 91-day quarters is rounding.' },
+        ],
+      },
+      {
+        heading: 'Days Remaining and Quarter Progress',
+        blocks: [
+          { type: 'p', text: 'The first mode reports elapsed and remaining days for the quarter containing your date, plus the percentage used. That is the number behind questions like "how long is left in the quarter to hit the target?" — with the remaining count including the rest of the current day\'s quarter, excluding today itself.' },
+          { type: 'p', text: 'Quarter progress pairs naturally with weekday counting: [Working Days](/calculators/working-days) tells you how many Monday-to-Friday days are actually left to work in the quarter.' },
+        ],
+      },
+      {
+        heading: 'Quarters, Months, and Weeks Compared',
+        blocks: [
+          { type: 'p', text: 'Quarters are the coarsest of the three. For week-level planning, the [Week Number Calculator](/calendar/week-number) reports the ISO week and week-year — including the split that happens when a new year begins mid-week. For monthly arithmetic, the [Date Calculator](/calculators/date-calculator) adds calendar months directly. Quarters matter when reporting, billing, and review cycles are quarterly by policy.' },
+          { type: 'p', text: 'Because a quarter is just three calendar months, it inherits all the usual month-boundary behaviour: quarters in leap years gain a day in Q1, and quarter boundaries never fall on the same weekday twice in a row.' },
+        ],
+      },
+      {
+        heading: 'Related Tools',
+        blocks: [
+          { type: 'p', text: 'Check the year itself with the [Leap Year Calculator](/calendar/leap-year), find ordinal dates with the [Day of Year Calculator](/calendar/day-of-year), and build repeating quarterly schedules with the [Recurring Date Calculator](/calculators/recurring-date-calculator).' },
+        ],
+      },
+    ],
+    guideSlugs: ['calendar-systems', 'week-numbers'],
+    related: ['week-number', 'day-of-year', 'leap-year', 'working-days'],
+    faqs: [
+      ['What quarter is October 2026 in?', 'In calendar quarters, October is the first month of Q4 2026. With a fiscal year starting in October, it is the first month of fiscal Q1 2027.'],
+      ['How many days are in a quarter?', 'Calendar quarters run 90, 91, 92, or 92 days in a common year (Q1 to Q4). Leap years add one day to Q1.'],
+      ['What is the difference between calendar and fiscal quarters?', 'Calendar quarters always start in January. Fiscal quarters start in whatever month the organisation\'s financial year begins — April, July, October, or another month.'],
+      ['How do I know which quarter a past date was in?', 'Enter the date in the first mode. The calculator returns the quarter label, its full date range, and how much of it had elapsed.'],
+      ['Does the calculator count business days in the quarter?', 'No — it counts calendar days. For the working days inside a quarter, enter the quarter start and end dates in the [Working Days Calculator](/calculators/working-days).'],
+    ],
+  },
+  'day-of-year': {
+    answer: 'See which day of the year any date is — its ordinal number out of 365 or 366 — together with the days remaining in that year, the percentage complete, leap-year status, and how many weekdays are left after the date.',
+    intro: [
+      'The ordinal day, or day of the year, numbers every date from 1 January to 31 December: 1 January is day 1, 1 March is day 60 in a common year, 31 December is day 365. It is the natural answer to "what day number is today?", and it is the basis of ordinal dates in ISO 8601 and of Julian dates used in astronomy and logistics.',
+      'The same screen answers the closely related question: how many days are left in this year. Enter a date and you get the ordinal position, the days still remaining after it, the share of the year already gone, whether the year is a leap year, and the number of weekdays after the date — handy for counting working days to the year end.',
+    ],
+    howTo: [
+      'Enter the date you want to place in the year.',
+      'Select "Calculate day of year".',
+      'Read the ordinal day out of the year total, the days remaining, and the percentage complete.',
+      'Use the weekday count for working-day planning to 31 December.',
+    ],
+    sections: [
+      {
+        heading: 'What the Ordinal Day Number Means',
+        blocks: [
+          { type: 'p', text: 'Ordinal position is simply the date\'s distance from 1 January, counting the start date as day 1. Because the count starts at 1, the ordinal is always one more than the number of days that have fully passed.' },
+          {
+            type: 'table',
+            headers: ['Date', 'Common year (365)', 'Leap year (366)'],
+            rows: [
+              ['1 January', '1', '1'],
+              ['1 March', '60', '61'],
+              ['1 October', '274', '275'],
+              ['31 December', '365', '366'],
+            ],
+          },
+          { type: 'p', text: 'The only difference between leap and common years appears after February: from 1 March onward, every ordinal in a leap year is one higher than in a common year.' },
+        ],
+      },
+      {
+        heading: 'Days Left in the Year',
+        blocks: [
+          { type: 'p', text: 'Days remaining counts from the day after your date to 31 December, so a date\'s own day is treated as used rather than remaining. On 31 December the count is zero; on 1 January it is 364 in a common year and 365 in a leap year.' },
+          { type: 'p', text: 'For counting toward a fixed year-end moment rather than a calendar date, the [Countdown Calculator](/time/countdown) runs a live timer to a target date and time, and [Days Between Dates](/calculators/days-between-dates) measures any two dates against each other.' },
+        ],
+      },
+      {
+        heading: 'Leap Years Change the Count',
+        blocks: [
+          { type: 'p', text: 'A leap year has 366 days, so it has one extra day to run out and one higher ordinal everywhere after 29 February. The calculator checks the Gregorian rule — divisible by 4, except centuries unless divisible by 400 — and states which kind of year it found.' },
+          { type: 'p', text: '2026 and 2027 are common years with 365 days. 2028 is a leap year with 366. For the full rule, see the [Leap Year Calculator](/calendar/leap-year).' },
+        ],
+      },
+      {
+        heading: 'Weekdays Remaining in the Year',
+        blocks: [
+          { type: 'p', text: 'Alongside the calendar count, the result reports how many Monday-to-Friday dates fall after your date up to 31 December. That is the honest number for year-end work: statutory holidays are not removed, so subtract those yourself or check against your local calendar.' },
+          { type: 'p', text: 'Weekday counts of this kind use the same convention as the [Working Days Calculator](/calculators/working-days) and the [Business Date Calculator](/calculators/business-date-calculator).' },
+        ],
+      },
+      {
+        heading: 'Where Ordinal Dates Appear',
+        blocks: [
+          { type: 'ul', items: [
+            'ISO 8601 ordinal dates write the year and day number together, such as 2026-275 for the 275th day of 2026.',
+            'Logistics and file naming use day-of-year to keep batches in chronological sort order without month names.',
+            'Astronomy and publishing use Julian day numbers, a continuous count that is related but not identical to the calendar ordinal.',
+          ] },
+          { type: 'p', text: 'None of these require the slash-format ambiguity that the [Date Format Converter](/converters/date-format-converter) resolves — ordinal dates carry the year and a single unambiguous number.' },
+        ],
+      },
+      {
+        heading: 'Related Tools',
+        blocks: [
+          { type: 'p', text: 'Group the remainder of the year into reporting periods with the [Quarter Calculator](/calendar/quarter-calculator), confirm the weekday with [Day of the Week](/calendar/day-of-week), and check the year length with [Leap Year](/calendar/leap-year).' },
+        ],
+      },
+    ],
+    guideSlugs: ['calendar-systems', 'leap-years'],
+    related: ['leap-year', 'quarter-calculator', 'countdown', 'week-number'],
+    faqs: [
+      ['What is the day of year for today?', 'Enter today\'s date above. In 2026, 2 October is the 275th day of the year, with 90 days remaining after it.'],
+      ['Does the day of year count include 1 January?', 'Yes. 1 January is day 1, not day 0.'],
+      ['How do I calculate day of year by hand?', 'Add the days of all preceding months, then add the day of the month. After February, remember to add one extra day in a leap year.'],
+      ['What is the difference between days left and days remaining?', 'They are the same count: the days from tomorrow through 31 December. The date you enter counts as used, not remaining.'],
+      ['Does this count working days to the end of the year?', 'The result includes a Monday-to-Friday count after your date. Public holidays are not removed; use the [Working Days Calculator](/calculators/working-days) when you need to check a specific range.'],
     ],
   },
 }

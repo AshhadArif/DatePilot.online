@@ -82,6 +82,27 @@ export const workContent: Record<string, ToolContent> = {
         ],
       },
       {
+        heading: 'How Many Business Days Are in a Year?',
+        blocks: [
+          { type: 'p', text: 'Counting Monday through Friday with no holidays removed, 2026 and 2027 each contain 261 working days. 2024 contained 262 and 2028 contains 260, because the extra leap day and the way the year starts change how many of the extra days land on weekdays.' },
+          {
+            type: 'table',
+            headers: ['Year', 'Weekdays (Mon–Fri)', 'Weekend days', 'Total days'],
+            rows: [
+              ['2024', '262', '104', '366 (leap)'],
+              ['2025', '261', '104', '365'],
+              ['2026', '261', '104', '365'],
+              ['2027', '261', '104', '365'],
+              ['2028', '260', '106', '366 (leap)'],
+              ['2029', '261', '104', '365'],
+            ],
+          },
+          { type: 'p', text: 'The baseline is easy to check: 52 weeks multiplied by 5 weekdays gives 260. A common year has one day beyond those 52 weeks and a leap year has two, so the answer is 260 plus whichever of those extra days fall Monday to Friday — which is why a leap year can produce 260, 261, or 262 working days instead of always one more.' },
+          { type: 'p', text: 'These are weekday counts, not paid working days. The figure after public holidays is lower: subtract the holidays your country and employer observe (national calendars commonly remove around eight to eleven weekday holidays), then your own leave. The tools on this page never assume a holiday list, because no single list fits every reader.' },
+          { type: 'p', text: 'For the same question about the year as a whole — ordinal position and days left after a date — see the [Day of Year Calculator](/calendar/day-of-year). To turn a year count into actual due dates, move a date by weekdays with the [Business Date Calculator](/calculators/business-date-calculator) or plan in both directions with the [Deadline Calculator](/calculators/deadline-calculator).' },
+        ],
+      },
+      {
         heading: 'Common Mistakes When Counting Working Days',
         blocks: [
           {
@@ -99,14 +120,16 @@ export const workContent: Record<string, ToolContent> = {
       {
         heading: 'Related Tools',
         blocks: [
-          { type: 'p', text: 'Count every calendar day with [Days Between Dates](/calculators/days-between-dates), find the weekday of any single date with the [Day of the Week calculator](/calendar/day-of-week), and check which week a deadline falls in with the [Week Number Calculator](/calendar/week-number).' },
+          { type: 'p', text: 'Count every calendar day with [Days Between Dates](/calculators/days-between-dates), plan a due date in either direction with the [Deadline Calculator](/calculators/deadline-calculator), move a date by weekdays with the [Business Date Calculator](/calculators/business-date-calculator), and check how many weekdays remain this year with the [Day of Year Calculator](/calendar/day-of-year).' },
         ],
       },
     ],
     guideSlugs: ['working-days', 'days-between-dates', 'day-of-week'],
-    related: ['business-date-calculator', 'days-between-dates', 'date-calculator', 'day-of-week'],
+    related: ['business-date-calculator', 'deadline-calculator', 'days-between-dates', 'day-of-year'],
     faqs: [
       ['Does this calculator exclude public holidays?', 'No. It counts Monday through Friday and excludes weekends only. Public holidays are specific to each country, state, and employer, so they must be removed manually if your calculation requires it.'],
+      ['How many business days are there in 2026?', '261 weekdays before holidays: 365 days made of 261 Mondays-to-Fridays and 104 weekend days. Subtract your public holidays for the paid working-day figure.'],
+      ['How many weekdays are in a year in general?', '52 weeks times 5 gives a baseline of 260, plus the one or two days beyond 52 weeks that fall Monday to Friday — so 261 is typical, with 260 or 262 possible depending on the year.'],
       ['Are Saturdays and Sundays working days?', 'In the standard convention used here, no. Saturday and Sunday are weekend days and are not counted. If your schedule uses different non-working days, the weekday count should be adjusted manually.'],
       ['Does this calculator count the first and last date?', 'Yes. Both endpoints are counted when they are weekdays, so Monday to Friday returns 5 working days. For an elapsed duration that excludes the starting day, subtract 1 from the result.'],
       ['Is a working day the same as a business day?', 'For weekday counting, yes — both mean Monday to Friday. In a legal or banking context a business day may additionally exclude public holidays, which this tool does not remove automatically.'],

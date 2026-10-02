@@ -67,7 +67,7 @@ export const timeContent: Record<string, ToolContent> = {
           { type: 'p', text: 'Countdown answers are often compared with calendar-day answers, and the two can differ. A countdown to 17:00 on the target date includes part of the target day, while an exclusive date difference stops at the previous midnight.' },
           { type: 'p', text: 'Use whole days when the question is "what date is it", "how many days are left", or "how many days since" — the [Days Calculator](/calculators/days-calculator) and [Days Between Dates](/calculators/days-between-dates) cover those. Use hours and minutes when the question is "how long until", which is what this tool answers. For the past-pointing version of the same live measurement — how long since a moment, ticking on screen — use the [Time Since Calculator](/time/time-since-calculator).' },
           { type: 'p', text: 'Countdowns to annual events restart themselves. Once a date has passed, choosing the same day and month in the following year starts a fresh countdown to the next occurrence — the tool does not remember whether you have counted down before. Events tied to a weekday rather than a fixed day and month behave differently: they move with the calendar, so the target date should be checked each year instead of assumed.' },
-          { type: 'p', text: 'Counting down is also usually only half of the planning question. Once the target is set, the next steps are checking its weekday with the [Day of the Week calculator](/calendar/day-of-week) and counting the weekdays that remain with the [Working Days Calculator](/calculators/working-days), because a deadline that lands on a Saturday rarely behaves like one that lands midweek.' },
+          { type: 'p', text: 'Counting down is also usually only half of the planning question. Once the target is set, the next steps are checking its weekday with the [Day of the Week calculator](/calendar/day-of-week) and counting the weekdays that remain with the [Working Days Calculator](/calculators/working-days), because a deadline that lands on a Saturday rarely behaves like one that lands midweek. When the target is the end of the year itself, the [Day of Year Calculator](/calendar/day-of-year) reports the ordinal day and the days still left in the year.' },
         ],
       },
       {
@@ -87,7 +87,7 @@ export const timeContent: Record<string, ToolContent> = {
       },
     ],
     guideSlugs: ['time-zones', 'daylight-saving-time', 'date-calculations'],
-    related: ['time-since-calculator', 'days-between-dates', 'time-difference', 'days-calculator'],
+    related: ['time-since-calculator', 'day-of-year', 'days-between-dates', 'time-difference'],
     faqs: [
       ['How do I count the days until a date?', 'Choose the target date and press "Calculate result". The answer is given in days and hours from the current moment. For a plain calendar-day count, use the [Days Between Dates calculator](/calculators/days-between-dates).'],
       ['Does the countdown update automatically?', 'No. The result is measured when you press the button. Press it again whenever you want a refreshed figure.'],

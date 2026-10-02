@@ -49,7 +49,7 @@ export const dateContent: Record<string, ToolContent> = {
         blocks: [
           { type: 'p', text: 'To move backward, enter the same kind of calculation with a negative number of days. The calculator walks back through the calendar, borrowing from the previous month when the subtraction passes day 1, and borrows a year when it passes 1 January.' },
           { type: 'p', text: '5 January 2026 minus 10 days gives 26 December 2025, because the count crosses the year boundary. The result changes year as well as date — a detail that manual counting often misses.' },
-          { type: 'p', text: 'The dedicated [Subtract Days From Date calculator](/calculators/subtract-days) covers this direction in more detail, including working back from deadlines.' },
+          { type: 'p', text: 'The dedicated [Subtract Days From Date calculator](/calculators/subtract-days) covers this direction in more detail, including working back from deadlines. When the rule involves business days, buffers, or both directions, the [Deadline Calculator](/calculators/deadline-calculator) handles the whole plan on one screen.' },
         ],
       },
       {
@@ -153,7 +153,7 @@ export const dateContent: Record<string, ToolContent> = {
       {
         heading: 'Related Date Tools',
         blocks: [
-          { type: 'p', text: 'If you already know both ends of a period, count it with [Days Between Dates](/calculators/days-between-dates). For a single direction, use [Add Days to Date](/calculators/add-days) or [Subtract Days From Date](/calculators/subtract-days). Business deadlines should be checked against [Working Days](/calculators/working-days), age questions against the [Age Calculator](/calculators/age-calculator), and planning questions against the [Day of the Week calculator](/calendar/day-of-week).' },
+          { type: 'p', text: 'If you already know both ends of a period, count it with [Days Between Dates](/calculators/days-between-dates). For a single direction, use [Add Days to Date](/calculators/add-days) or [Subtract Days From Date](/calculators/subtract-days). Planning a due date in either direction — with buffers and business-day rules — belongs to the [Deadline Calculator](/calculators/deadline-calculator), and planning a whole series of them belongs to the [Recurring Date Calculator](/calculators/recurring-date-calculator). Business deadlines should be checked against [Working Days](/calculators/working-days), age questions against the [Age Calculator](/calculators/age-calculator), and planning questions against the [Day of the Week calculator](/calendar/day-of-week).' },
         ],
       },
     ],
@@ -310,7 +310,7 @@ export const dateContent: Record<string, ToolContent> = {
         heading: 'More Ways to Compare Two Dates',
         blocks: [
           { type: 'p', text: 'A day count is only one way to express a difference. Break the same span into weeks and days with the [Days Calculator](/calculators/days-calculator), find the weekday of either endpoint with the [Day of the Week calculator](/calendar/day-of-week), or compare two moments in clock time with the [Time Difference Calculator](/time/time-difference).' },
-          { type: 'p', text: 'When the question runs in one direction instead — the date that falls before a deadline, a notice period worked backwards — the [Subtract Days From Date calculator](/calculators/subtract-days) and the [Add Days to Date calculator](/calculators/add-days) move from a date in a single step.' },
+          { type: 'p', text: 'When the question runs in one direction instead — the date that falls before a deadline, a notice period worked backwards — the [Subtract Days From Date calculator](/calculators/subtract-days) and the [Add Days to Date calculator](/calculators/add-days) move from a date in a single step, while the [Deadline Calculator](/calculators/deadline-calculator) adds business-day counting and buffers to the same move.' },
           { type: 'p', text: 'For the conventions behind endpoint counting and why two sources can disagree by a day, read [How to Calculate Days Between Dates](/guides/days-between-dates).' },
         ],
       },
@@ -416,7 +416,7 @@ export const dateContent: Record<string, ToolContent> = {
         heading: 'Common Questions About Day Counts',
         blocks: [
           { type: 'p', text: 'The three questions that come up most often are whether the starting day is counted, whether weekends are skipped, and what happens when a count crosses February. The starting day is never counted as day one — adding 1 day moves to the very next day. Weekends are always included in a plain day count. February contributes 28 or 29 days depending on the year, and the calculator checks that for you.' },
-          { type: 'p', text: 'For the wider picture, [How Date Calculations Work](/guides/date-calculations) explains endpoint conventions, unit differences, and the edge cases that make two answers disagree by a day.' },
+          { type: 'p', text: 'For the wider picture, [How Date Calculations Work](/guides/date-calculations) explains endpoint conventions, unit differences, and the edge cases that make two answers disagree by a day. When the count points at the end of the year rather than an arbitrary date, the [Day of Year Calculator](/calendar/day-of-year) reports exactly how many days remain in the year, and when the same count needs to repeat on a schedule, the [Recurring Date Calculator](/calculators/recurring-date-calculator) generates the whole series at once.' },
         ],
       },
     ],
@@ -636,9 +636,311 @@ export const dateContent: Record<string, ToolContent> = {
     related: ['add-days', 'date-calculator', 'days-between-dates', 'days-calculator'],
     faqs: [
       ['What if I subtract more days than the number of days in the starting date?', 'The calculator continues into the previous month, and into the previous year if necessary. For example, 5 January 2026 minus 10 days is 26 December 2025.'],
-      ['Can I use this to work back from a deadline?', 'Yes. If a filing is due 30 days before a hearing, enter the hearing date and subtract 30 to find the latest filing date. Check whether the rule counts calendar days or business days before relying on the result.'],
+      ['Can I use this to work back from a deadline?', 'Yes. If a filing is due 30 days before a hearing, enter the hearing date and subtract 30 to find the latest filing date. For the same question with business-day counting or a safety buffer, use the [Deadline Calculator](/calculators/deadline-calculator) in backward mode.'],
       ['Is subtracting days the same as entering a negative number of days?', 'Yes. Subtracting 30 days and adding -30 days produce the same date; both directions are handled by the same calendar arithmetic.'],
       ['How do I find what date it was a certain number of days ago?', 'Set the reference date to today and enter the number of days. For a list of common lookbacks in both directions, see the [Days Calculator](/calculators/days-calculator).'],
+    ],
+  },
+  'recurring-date-calculator': {
+    answer: 'Generate a schedule of recurring dates from any starting date. Pick a repeat rule — days, weeks, months, years, or selected weekdays — and the calculator lists every occurrence, states how it handles short months, and lets you download the schedule as CSV or an ICS calendar file.',
+    intro: [
+      'A recurring date calculator answers the questions that come up constantly in planning: what are the billing dates for the next year, which Sundays fall inside this period, when is rent due if the lease started on the 31st, or what does a twice-monthly pay schedule look like from here. Instead of moving one date at a time, it builds the entire sequence in a single pass and shows you the whole pattern at once.',
+      'Enter the first date in the series, choose how often the date should repeat, and set how many dates you need — up to 100 at a time. Optionally add a stopping date so the schedule never runs past a deadline. Each result is shown with its weekday, so a schedule that lands on a weekend is obvious before you commit to it.',
+    ],
+    howTo: [
+      'Enter the first date of the series.',
+      'Choose the repeat rule: days, weeks, months, years, or selected weekdays.',
+      'Set the interval — for example, every 14 days or every 2 months — and how many dates to generate.',
+      'Optionally set a date the schedule must stop on or before.',
+      'Select "Generate schedule", then download the result as CSV or ICS if you need it elsewhere.',
+    ],
+    sections: [
+      {
+        heading: 'How the Recurring Date Calculator Works',
+        blocks: [
+          {
+            type: 'ol',
+            items: [
+              'The first date is accepted exactly as entered.',
+              'Each following date is produced by adding the chosen interval to the original start date, not to the previous result, so rounding never drifts.',
+              'For weekday schedules, the calculator walks forward day by day and keeps only the dates that fall on the selected weekdays.',
+              'Dates are checked against the optional stop date; anything beyond it is dropped from the list.',
+            ],
+          },
+          { type: 'p', text: 'Because every occurrence is computed from the original start date, a monthly schedule does not slowly slip as months pass. The sequence stays anchored to the day of the month you chose, which matters for rent, subscriptions, and invoices.' },
+        ],
+      },
+      {
+        heading: 'Choosing the Interval',
+        blocks: [
+          {
+            type: 'table',
+            headers: ['Interval', 'How it repeats', 'Typical use'],
+            rows: [
+              ['Days', 'Every N calendar days from the start date', 'Every 14 days, project check-ins, medication schedules'],
+              ['Weeks', 'Every N weeks on the same weekday', 'Weekly meetings, training sessions, weekly reviews'],
+              ['Months', 'Same day of the month, every N months', 'Rent, subscriptions, quarterly invoices'],
+              ['Years', 'Same date every N years', 'Birthdays, anniversaries, annual renewals'],
+              ['Selected weekdays', 'Every matching weekday from the start date', 'Every Monday and Thursday, all Sundays in a period'],
+            ],
+          },
+          { type: 'p', text: 'The interval is a whole number of 1 or more. An interval of 1 with a monthly rule gives a plain monthly schedule; an interval of 3 gives a quarterly one.' },
+        ],
+      },
+      {
+        heading: 'Month-End, Leap-Day, and Short-Month Rules',
+        blocks: [
+          { type: 'p', text: 'Schedules that start on day 29, 30, or 31 run into months that do not have that day. The calculator lets you choose the behaviour instead of hiding it:' },
+          {
+            type: 'ul',
+            items: [
+              'Use the last day of the month — a 31st schedule lands on 28 February in a common year and 29 February in a leap year, then returns to the 31st.',
+              'Skip that month — the schedule keeps the original day and only emits dates in months that actually have that day, so a 31st schedule pauses in February and returns in March.',
+            ],
+          },
+          { type: 'note', text: 'Public holidays are not applied. If a generated date falls on a local holiday, shift it with the [Business Date Calculator](/calculators/business-date-calculator).' },
+        ],
+      },
+      {
+        heading: 'Worked Examples',
+        blocks: [
+          {
+            type: 'table',
+            headers: ['Scenario', 'Setting', 'What you get'],
+            rows: [
+              ['Rent due on the 31st, starting 31 January 2026', 'Months, interval 1, last-day rule', '31 Jan, 28 Feb, 31 Mar, 30 Apr, 31 May…'],
+              ['Invoice every 14 days from 1 October 2026', 'Days, interval 14', '1 Oct, 15 Oct, 29 Oct, 12 Nov, 26 Nov…'],
+              ['Every second Wednesday, 6 dates', 'Selected weekdays (Wed), start mid-week', 'Six Wednesday dates spaced two weeks apart'],
+              ['Project check-in every 10 weekdays', 'Selected weekdays Mon–Fri', 'Ten working dates, weekends skipped automatically'],
+              ['Annual renewal every year from 15 June 2026', 'Years, interval 1', '15 Jun 2026, 15 Jun 2027, 15 Jun 2028…'],
+            ],
+          },
+        ],
+      },
+      {
+        heading: 'Exporting the Schedule: CSV and ICS',
+        blocks: [
+          { type: 'p', text: 'Once a schedule is generated, two downloads appear under the result:' },
+          {
+            type: 'ul',
+            items: [
+              'CSV — a simple two-column list of date and weekday that opens in any spreadsheet, useful for payroll sheets, content calendars, and audits.',
+              'ICS — a standard iCalendar file with one all-day event per date. Import it into Google Calendar, Apple Calendar, Outlook, or virtually any calendar app, and the whole series arrives at once.',
+            ],
+          },
+          { type: 'p', text: 'Files are built in your browser from the dates on screen. Nothing is uploaded, and the export contains only the schedule you generated.' },
+        ],
+      },
+      {
+        heading: 'Recurring Dates vs Adding the Same Number of Days',
+        blocks: [
+          { type: 'p', text: 'Adding the same number of days repeatedly is not the same as a calendar interval. A 30-day sequence starting 1 January steps through 30, 59, 90… and drifts against the months, while a monthly sequence stays on the same day number. Use [Add Days to Date](/calculators/add-days) when you need one future date, and this calculator when you need the whole series.' },
+          { type: 'p', text: 'When the rule is defined in business days — for example, a review that is due 10 working days after filing — the [Business Date Calculator](/calculators/business-date-calculator) moves a single date correctly, and the [Working Days Calculator](/calculators/working-days) counts weekdays across a span.' },
+        ],
+      },
+      {
+        heading: 'Related Tools',
+        blocks: [
+          { type: 'p', text: 'Plan a single due date with the [Deadline Calculator](/calculators/deadline-calculator), see what remains until a fixed moment with the [Countdown Calculator](/time/countdown), and group a schedule into fiscal periods with the [Quarter Calculator](/calendar/quarter-calculator).' },
+        ],
+      },
+    ],
+    guideSlugs: ['add-subtract-days', 'date-calculations'],
+    related: ['add-days', 'deadline-calculator', 'working-days', 'quarter-calculator'],
+    faqs: [
+      ['Does the schedule count the first date?', 'Yes. The first date you enter is occurrence one; every later date is spaced from it, not from the previous result.'],
+      ['What happens to a monthly schedule on 29, 30, or 31 in a short month?', 'You choose: use the last day of that month, or skip the month and keep the original day for months that have it.'],
+      ['Can I limit the schedule to a date range?', 'Yes. Set a stop date and no occurrence after it will be generated. Without a stop date the calculator generates the number of dates you asked for, up to 100.'],
+      ['How do I get these dates into my calendar?', 'Generate the schedule and use the Download .ics button. The file imports into Google Calendar, Outlook, and Apple Calendar as all-day events.'],
+      ['Does it account for public holidays?', 'No. Holidays vary by country and employer, so the calculator uses the standard calendar only. Adjust individual dates with the [Business Date Calculator](/calculators/business-date-calculator) when holidays matter.'],
+    ],
+  },
+  'deadline-calculator': {
+    answer: 'Work out a deadline in one of two directions: add a number of days to a start date to find the due date, or subtract days from a due date to find the latest start. Switch between calendar days and Monday-to-Friday business days for each direction.',
+    intro: [
+      'Deadline questions come in two shapes. Forward: a contract starts today and the work is due in 30 days — what date does that land on? Backward: the report must arrive by Friday — when is the latest safe day to begin? The Deadline Calculator answers both from the same screen, because the arithmetic is the mirror of itself and the conventions that matter — calendar days versus business days — are identical in each direction.',
+      'Pick the direction, enter the anchor date and the number of days, and choose how the days are counted. The result shows the calculated date with its weekday, plus how many calendar days the span actually covers when business-day counting is used.',
+    ],
+    howTo: [
+      'Choose the direction: forward (start date to deadline) or backward (deadline to latest start).',
+      'Enter the date you know — the start date in forward mode, the due date in backward mode.',
+      'Enter the number of days and choose calendar days or business days.',
+      'Select "Calculate deadline" and read the date with its weekday.',
+      'Add a buffer of a few days before relying on a tight answer — see the buffer section below.',
+    ],
+    sections: [
+      {
+        heading: 'Forward vs Reverse Deadline Planning',
+        blocks: [
+          {
+            type: 'table',
+            headers: ['Direction', 'You know', 'You get'],
+            rows: [
+              ['Forward', 'The start date and the duration', 'The deadline the duration lands on'],
+              ['Backward', 'The deadline and the duration', 'The latest date the work can start'],
+            ],
+          },
+          { type: 'p', text: 'Both directions use the same calendar arithmetic; only the sign changes. If a rule says something is due "30 days after service", that is forward mode. "Filed no later than 30 days before the hearing" is backward mode.' },
+        ],
+      },
+      {
+        heading: 'Calendar Days vs Business Days',
+        blocks: [
+          { type: 'p', text: 'Calendar days include every day — weekends and holidays alike. Business days count Monday through Friday only. The difference is usually one or two days per weekend crossed, and it decides whether a Friday deadline becomes a Friday or the following Monday.' },
+          {
+            type: 'table',
+            headers: ['Anchor', 'Duration', 'Calendar result', 'Business result'],
+            rows: [
+              ['Friday 2 October 2026', '5 days', 'Wednesday 7 October 2026', 'Friday 9 October 2026'],
+              ['Friday 2 October 2026', '10 days', 'Monday 12 October 2026', 'Friday 16 October 2026'],
+              ['Monday 5 October 2026', '7 days', 'Monday 12 October 2026', 'Wednesday 14 October 2026'],
+            ],
+          },
+          { type: 'note', text: 'Business-day mode counts Monday to Friday. Statutory holidays are not subtracted, because holiday calendars differ by country and employer. For a deadline that must clear a holiday list, count holidays manually or check with the responsible authority.' },
+        ],
+      },
+      {
+        heading: 'How to Work Backward From a Due Date',
+        blocks: [
+          {
+            type: 'ol',
+            items: [
+              'Switch the direction to backward and enter the due date.',
+              'Enter the number of days the rule allows for the work.',
+              'Choose calendar days or business days to match the rule exactly.',
+              'Read the latest start date — then treat it as a floor, not a plan, and begin earlier if you can.',
+              'Repeat with a smaller duration to model a partial schedule if the work has internal milestones.',
+            ],
+          },
+          { type: 'p', text: 'Backward mode is the practical answer to "when should I start?". Project teams often run the calculation twice: once at the full duration to find the absolute latest start, and once with a safety margin to find the working target.' },
+        ],
+      },
+      {
+        heading: 'Worked Examples',
+        blocks: [
+          {
+            type: 'table',
+            headers: ['Question', 'Mode', 'Result'],
+            rows: [
+              ['30 calendar days from 1 October 2026', 'Forward, calendar', '31 October 2026 (Saturday)'],
+              ['10 business days from 1 October 2026', 'Forward, business', '15 October 2026 (Wednesday)'],
+              ['Report due 25 December 2026, needs 20 calendar days', 'Backward, calendar', 'Start by 5 December 2026 (Saturday)'],
+              ['Invoice due Friday 30 October 2026, 5 business days of work', 'Backward, business', 'Start by Friday 23 October 2026'],
+              ['Review due in 3 weeks from today', 'Forward, calendar (21 days)', 'Same weekday, three weeks later'],
+            ],
+          },
+        ],
+      },
+      {
+        heading: 'Buffers and Why They Matter',
+        blocks: [
+          { type: 'p', text: 'A calculation that lands exactly on the due date has no margin for a failed upload, a public holiday, or a day of illness. Add a buffer: calculate the true deadline first, then run the same inputs again with two or three extra days and use the earlier answer as your target.' },
+          { type: 'p', text: 'Buffers are especially important in backward mode, where the result is a latest-possible start. The latest possible date is rarely the sensible date.' },
+        ],
+      },
+      {
+        heading: 'Deadline, Countdown, and Days Between',
+        blocks: [
+          { type: 'p', text: 'Three related tools answer nearby questions. This calculator computes a deadline date from a duration. The [Countdown Calculator](/time/countdown) shows how much time is left until a date you already know. [Days Between Dates](/calculators/days-between-dates) measures the gap between two existing dates. For a one-step move in either direction without buffers or business-day rules, [Add Days to Date](/calculators/add-days) and [Subtract Days From Date](/calculators/subtract-days) stay the quickest option.' },
+        ],
+      },
+      {
+        heading: 'Related Tools',
+        blocks: [
+          { type: 'p', text: 'Move single dates with the [Date Calculator](/calculators/date-calculator), count weekdays across the planning window with the [Working Days Calculator](/calculators/working-days), and build recurring due dates with the [Recurring Date Calculator](/calculators/recurring-date-calculator).' },
+        ],
+      },
+    ],
+    guideSlugs: ['date-calculations', 'add-subtract-days'],
+    related: ['business-date-calculator', 'recurring-date-calculator', 'days-calculator', 'working-days'],
+    faqs: [
+      ['Is a deadline calculator the same as adding days to a date?', 'Forward mode is exactly that: start date plus a duration. The extra value is backward mode, business-day counting, and the visible weekday on the result, all of which matter for planning.'],
+      ['Do business days include Saturday and Sunday?', 'No. Business-day mode counts Monday through Friday only. Public holidays are not removed because holiday calendars differ by region and employer.'],
+      ['What if the rule says "within 30 days of receipt"?', 'Treat receipt day as day zero and use forward mode with 30 calendar days. If the rule counts the receipt day itself, subtract one day from the result and check with the responsible authority for legal matters.'],
+      ['Should I start exactly on the latest start date the calculator gives?', 'No. The backward result is an outer limit. Work backward from it with a buffer so a single setback does not push you past the due date.'],
+      ['How do I plan a deadline that repeats?', 'For monthly billing, reviews, or renewals, generate the whole series with the [Recurring Date Calculator](/calculators/recurring-date-calculator) and use this calculator for each individual due date that needs a buffer.'],
+    ],
+  },
+  'date-format-converter': {
+    answer: 'Convert any readable date into every common format at once: ISO 8601, US month-first, European day-first, compact, long form, and weekday variants. Ambiguous numeric dates are flagged instead of guessed — you choose whether 04/05/2026 means 4 May or 5 April.',
+    intro: [
+      'Dates are written differently almost everywhere. The same day can be 2026-04-05, 04/05/2026, 05/04/2026, or "April 5, 2026", and the slash formats disagree about which number is the month. That disagreement is not cosmetic: reading a date the wrong way can move a deadline by weeks or swap two people\'s event dates.',
+      'Type or paste a date in almost any common layout — ISO, slash-separated, dotted, a written month name, or the compact eight-digit form — then pick the day/month order when the numbers alone cannot settle it. The converter returns the resolved date with its weekday and every standard representation of it, ready to copy into a form, an import, or a document.',
+    ],
+    howTo: [
+      'Enter the date in any layout you have — for example 2026-04-05, 05/04/2026, or May 5 2026.',
+      'If the numbers are ambiguous (both parts 12 or smaller), choose the correct order: day first for European dates, month first for US dates.',
+      'Select "Convert date".',
+      'Copy the format you need from the results table — ISO 8601 is the safe default for systems and files.',
+    ],
+    sections: [
+      {
+        heading: 'Why Numeric Dates Are Ambiguous',
+        blocks: [
+          { type: 'p', text: 'In 03/04/2026, is the month March and the day 4th, or is the day the 3rd of April? Both readings are valid somewhere in the world. The US writes month first; most of Europe and much of Asia, Africa, and Latin America write day first; ISO 8601 puts the year first and removes the question entirely.' },
+          { type: 'note', text: 'The converter never guesses when both readings are possible. Auto-detect resolves dates it can prove — like 13/04/2026, which can only be day-first — and asks you to pick an order for the rest.' },
+        ],
+      },
+      {
+        heading: 'ISO 8601 and Why Systems Prefer It',
+        blocks: [
+          { type: 'p', text: 'ISO 8601 writes dates as YYYY-MM-DD: 2026-04-05. Sorting strings in ISO order matches sorting them chronologically, the year comes first so decades are never confused, and there is no day/month ambiguity. Databases, APIs, configuration files, and filenames all benefit from it.' },
+          { type: 'p', text: 'The compact variant (20260405) follows the same year-month-day order and is common in file naming and batch identifiers.' },
+        ],
+      },
+      {
+        heading: 'US vs European Order at a Glance',
+        blocks: [
+          {
+            type: 'table',
+            headers: ['Format', 'Pattern', 'Example (5 April 2026)', 'Example (4 May 2026)'],
+            rows: [
+              ['US (month first)', 'MM/DD/YYYY', '04/05/2026', '05/04/2026'],
+              ['European (day first)', 'DD/MM/YYYY', '05/04/2026', '04/05/2026'],
+              ['ISO 8601', 'YYYY-MM-DD', '2026-04-05', '2026-05-04'],
+              ['Long form', 'D Month YYYY', '5 April 2026', '4 May 2026'],
+            ],
+          },
+          { type: 'p', text: 'Notice that the two slash formats swap each other\'s strings — which is exactly why a date exported from one region and imported into another can silently shift by weeks.' },
+        ],
+      },
+      {
+        heading: 'How the Converter Works',
+        blocks: [
+          {
+            type: 'ol',
+            items: [
+              'The input is matched against known layouts: ISO and compact first, then numeric with separators, then written month names.',
+              'ISO and unambiguous inputs are accepted immediately, whatever order is selected.',
+              'For numeric dates where both parts are 12 or smaller, the calculator checks your chosen order — day first, month first, auto-detect, or ISO only.',
+              'The resolved date is validated against the real calendar, so 31 February is rejected rather than rolled into March.',
+              'Every supported representation of the resolved date is produced from that single validated date.',
+            ],
+          },
+        ],
+      },
+      {
+        heading: 'Choosing a Format for Your Audience',
+        blocks: [
+          { type: 'p', text: 'Use ISO 8601 in systems, filenames, logs, and anywhere dates are sorted or parsed. Use the local convention of your audience for prose and forms — and if a document crosses borders, write the month name instead of the number. The [Date and Time Formats guide](/guides/date-time-formats) explains the trade-offs in more depth.' },
+          { type: 'p', text: 'Converted dates are often inputs to another calculation. Feed the resolved date into the [Date Calculator](/calculators/date-calculator) or [Days Between Dates](/calculators/days-between-dates) once you know what it means.' },
+        ],
+      },
+      {
+        heading: 'Related Tools',
+        blocks: [
+          { type: 'p', text: 'Check the weekday of the resolved date with the [Day of the Week Calculator](/calendar/day-of-week), move it by a duration with [Add Days to Date](/calculators/add-days), and see which ordinal day of the year it is with the [Day of Year Calculator](/calendar/day-of-year).' },
+        ],
+      },
+    ],
+    guideSlugs: ['date-time-formats', 'calendar-systems'],
+    related: ['day-of-week', 'date-calculator', 'day-of-year', 'add-days'],
+    faqs: [
+      ['Which date format should I use in a spreadsheet or database?', 'ISO 8601 (YYYY-MM-DD). It sorts correctly as text, removes day/month ambiguity, and is understood by virtually every system.'],
+      ['How do I know if 04/05/2026 is April 5th or May 4th?', 'You cannot tell from the numbers alone. Select day-first or month-first to match how the date was written, or ask the source. The converter flags the ambiguity instead of guessing.'],
+      ['Can the converter read dates like "3 Oct 2026" or "October 3, 2026"?', 'Yes. Written month names are unambiguous, so they are accepted directly in either day-first or month-first phrasing.'],
+      ['Does it accept times too?', 'No. This tool converts date layouts only. For date and time values across zones, use the [Time Zone Converter](/time/time-zone-converter).'],
+      ['Why does my imported date keep shifting by months?', 'The file was probably written day-first and read month-first, or the reverse. Re-export in ISO 8601 and the shifts stop.'],
     ],
   },
 }

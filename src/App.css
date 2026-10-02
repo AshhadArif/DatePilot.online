@@ -105,6 +105,13 @@ h3 { margin-bottom: 5px; }
 .note { max-width: 680px; padding: 14px 16px; border-left: 3px solid var(--accent); background: #f7f6ee; }
 .live-note { max-width: 680px; padding: 16px 18px; border-left: 3px solid var(--teal); background: #eef4f1; }
 .result strong { white-space: pre-line; }
+.date-list { white-space: pre-line; max-height: 340px; overflow-y: auto; margin: 6px 0 12px; padding: 14px 16px; border: 1px solid var(--line); background: #f7f6ee; font-size: 15px; line-height: 1.7; color: #405050; }
+.export-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.weekday-pick { display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 24px; padding: 14px 16px; border: 1px solid var(--line); background: white; }
+.weekday-pick legend { font: 11px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); padding: 0 6px; }
+.weekday-pick label { display: flex; align-items: center; gap: 6px; font-size: 15px; color: var(--ink); }
+.method-note { max-width: 680px; margin-top: 18px; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.result .table-wrap { margin: 12px 0; }
 .legal-section { max-width: 720px; border-top: 1px solid var(--line); padding: 24px 0 4px; }
 .legal-section h2 { font-size: 27px; margin: 0 0 8px; }
 .legal-review { margin-top: 42px; padding: 18px; border-left: 3px solid var(--accent); background: #f0eee5; font-size: 14px; }

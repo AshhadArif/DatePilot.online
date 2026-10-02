@@ -3,8 +3,10 @@ import './App.css'
 import { guideContent, toolContent } from './content'
 import type { Block } from './content'
 import { DynamicBlock } from './DynamicBlocks'
+import { RecurringDateCalculator, DeadlineCalculator, QuarterCalculator, DayOfYearCalculator, DateFormatConverter } from './NewTools'
+import { addBusinessDays, today, localDate, prettyDate, weekday, shiftDays, zoneToUtc, dayGap, unit, decompose } from './dateUtils'
 
-type Tool = { slug: string; title: string; seoTitle: string; category: 'Date' | 'Calendar' | 'Time'; summary: string; method: string }
+type Tool = { slug: string; title: string; seoTitle: string; category: 'Date' | 'Calendar' | 'Time' | 'Convert'; summary: string; method: string }
 type Page = { slug: string; title: string; description: string }
 
 const tools: Tool[] = [
@@ -17,14 +19,19 @@ const tools: Tool[] = [
   { slug: 'subtract-days', title: 'Subtract Days from Date', seoTitle: 'Subtract Days From Date — Calculate a Date in the Past', category: 'Date', summary: 'Find an earlier date by subtracting days.', method: 'Month and year boundaries are handled as calendar dates.' },
   { slug: 'working-days', title: 'Working Days Calculator', seoTitle: 'Working Days Calculator — Count Business Days Between Dates', category: 'Date', summary: 'Count weekdays between two dates.', method: 'Monday through Friday count; holidays are not assumed.' },
   { slug: 'business-date-calculator', title: 'Business Date Calculator', seoTitle: 'Business Date Calculator — Add or Subtract Business Days', category: 'Date', summary: 'Move a date forward or backward by business days.', method: 'Monday through Friday count; holidays are not assumed.' },
+  { slug: 'recurring-date-calculator', title: 'Recurring Date Calculator', seoTitle: 'Recurring Date Calculator — Generate a Schedule of Dates', category: 'Date', summary: 'Generate a schedule of repeating dates.', method: 'Occurrences are spaced by calendar intervals from the first date.' },
+  { slug: 'deadline-calculator', title: 'Deadline Calculator', seoTitle: 'Deadline Calculator — Forward and Reverse Deadline Planning', category: 'Date', summary: 'Plan a deadline forward or work backward from one.', method: 'Forward adds the duration to the start; backward subtracts it from the deadline.' },
   { slug: 'day-of-week', title: 'Day of the Week Calculator', seoTitle: 'Day of the Week Calculator — What Day Was or Will Be', category: 'Calendar', summary: 'Discover the weekday for a date.', method: 'Uses the proleptic Gregorian calendar.' },
   { slug: 'week-number', title: 'Week Number Calculator', seoTitle: 'Week Number Calculator — Current ISO Week Number', category: 'Calendar', summary: 'Find an ISO 8601 week and week-year.', method: 'ISO weeks start Monday and week 1 contains the first Thursday.' },
   { slug: 'leap-year', title: 'Leap Year Calculator', seoTitle: 'Leap Year Calculator — Is This Year a Leap Year?', category: 'Calendar', summary: 'Check whether a year has 366 days.', method: 'Centuries are leap years only when divisible by 400.' },
+  { slug: 'quarter-calculator', title: 'Quarter Calculator', seoTitle: 'Quarter Calculator — Calendar and Fiscal Quarters', category: 'Calendar', summary: 'Find the quarter for a date, or dates for a quarter.', method: 'Quarters are three calendar months measured from the fiscal year start.' },
+  { slug: 'day-of-year', title: 'Day of Year Calculator', seoTitle: 'Day of Year Calculator — Ordinal Date and Days Left in Year', category: 'Calendar', summary: 'See the ordinal day and the days left in the year.', method: 'The ordinal day counts from 1 January; remaining days exclude the date itself.' },
   { slug: 'countdown', title: 'Countdown Calculator', seoTitle: 'Countdown Calculator — How Many Days Until a Date', category: 'Time', summary: 'See how much time remains until a moment.', method: 'Measures from this device clock to the target.' },
   { slug: 'time-since-calculator', title: 'Time Since Calculator', seoTitle: 'Time Since Calculator — Elapsed Time From a Date', category: 'Time', summary: 'See how much time has passed since a moment.', method: 'Measured live from this device clock.' },
   { slug: 'time-difference', title: 'Time Difference Calculator', seoTitle: 'Time Difference Calculator — Time Between Two Times', category: 'Time', summary: 'Compare two date and time values.', method: 'Reports elapsed duration between local values.' },
   { slug: 'work-hours-calculator', title: 'Work Hours Calculator', seoTitle: 'Work Hours Calculator — Shift Duration With Breaks', category: 'Time', summary: 'Total a shift with unpaid breaks.', method: 'Overnight shifts count into the next day; breaks are subtracted.' },
   { slug: 'time-zone-converter', title: 'Time Zone Converter', seoTitle: 'Time Zone Converter — Convert Time Zones & UTC Offsets', category: 'Time', summary: 'Translate a date and time between zones.', method: 'Uses browser IANA timezone data.' },
+  { slug: 'date-format-converter', title: 'Date Format Converter', seoTitle: 'Date Format Converter — ISO 8601, US, and EU Dates', category: 'Convert', summary: 'Convert a date between the common numeric formats.', method: 'The selected day/month order resolves ambiguous numeric dates.' },
 ]
 
 const guides: Page[] = [
@@ -44,33 +51,7 @@ const guides: Page[] = [
   ['calendar-systems', 'Calendar Systems Explained', 'Understand the Gregorian calendar used by these tools.'],
 ].map(([slug, title, description]) => ({ slug, title, description }))
 
-const toolPath = (tool: Tool) => tool.category === 'Calendar' ? `/calendar/${tool.slug}` : tool.category === 'Time' ? `/time/${tool.slug}` : `/calculators/${tool.slug}`
-const today = () => new Date().toISOString().slice(0, 10)
-const localDate = (value: string) => new Date(`${value}T00:00:00`)
-const prettyDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
-const weekday = (date: Date) => date.toLocaleDateString('en-US', { weekday: 'long' })
-const shiftDays = (date: Date, count: number) => { const result = new Date(date); result.setDate(result.getDate() + count); return result }
-const zoneOffset = (wall: Date, timeZone: string) => {
-  const parts = new Intl.DateTimeFormat('en-US', { timeZone, hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).formatToParts(wall)
-  const value = (type: string) => Number(parts.find((part) => part.type === type)?.value)
-  const asUtc = Date.UTC(value('year'), value('month') - 1, value('day'), value('hour') % 24, value('minute'), value('second'))
-  return asUtc - wall.getTime()
-}
-const zoneToUtc = (wall: Date, timeZone: string) => {
-  const numbers = Date.UTC(wall.getFullYear(), wall.getMonth(), wall.getDate(), wall.getHours(), wall.getMinutes())
-  const first = numbers - zoneOffset(new Date(numbers), timeZone)
-  return new Date(numbers - zoneOffset(new Date(first), timeZone))
-}
-const dayGap = (a: Date, b: Date) => Math.round((Date.UTC(b.getFullYear(), b.getMonth(), b.getDate()) - Date.UTC(a.getFullYear(), a.getMonth(), a.getDate())) / 86400000)
-const unit = (count: number, word: string) => `${count.toLocaleString('en-GB')} ${word}${count === 1 ? '' : 's'}`
-const decompose = (from: Date, to: Date) => {
-  let years = to.getFullYear() - from.getFullYear(); let months = to.getMonth() - from.getMonth(); let days = to.getDate() - from.getDate()
-  let borrowed = 0
-  while (days < 0 && borrowed < 12) { months -= 1; borrowed += 1; days += new Date(to.getFullYear(), to.getMonth() - borrowed + 1, 0).getDate() }
-  if (months < 0) { years -= 1; months += 12 }
-  const totalDays = Math.abs(dayGap(from, to))
-  return { years, months, days, totalDays, weeks: Math.floor(totalDays / 7), restDays: totalDays % 7, totalMonths: years * 12 + months }
-}
+const toolPath = (tool: Tool) => tool.category === 'Calendar' ? `/calendar/${tool.slug}` : tool.category === 'Time' ? `/time/${tool.slug}` : tool.category === 'Convert' ? `/converters/${tool.slug}` : `/calculators/${tool.slug}`
 const normalize = (path: string) => path.length > 1 ? path.replace(/\/$/, '') : path
 const stripLinks = (text: string) => text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
 const SITE_URL = 'https://datepilot.online'
@@ -85,6 +66,7 @@ const routeSeo = (path: string) => {
     '/calculators': { title: 'Date and Time Calculators', description: 'Use DatePilot calculators to add or subtract days, count working days, find age, and calculate date differences with clear methodology.' },
     '/calendar': { title: 'Calendar Tools — Weekdays, Week Numbers, Leap Years', description: 'Check weekdays, ISO week numbers, and leap years using DatePilot calendar tools with clearly stated conventions.' },
     '/time': { title: 'Time Tools — Countdown, Time Difference, Time Zone Converter', description: 'Count down to a date, compare elapsed time, and convert between time zones using DatePilot time tools.' },
+    '/converters': { title: 'Date Conversion Tools — Formats Made Clear', description: 'Convert dates between ISO 8601, US, and European formats with an explicit day and month order so ambiguous dates stay clear.' },
     '/guides': { title: 'Date and Time Guides — Calculations, Calendars, Time Zones', description: 'Practical explanations for date calculations, calendar rules, time zones, and date formats.' },
     '/faq': { title: 'Frequently Asked Questions — DatePilot', description: 'Answers about DatePilot calculations, endpoint conventions, privacy, and how date tools work.' },
     '/about': { title: 'About DatePilot — Our Approach to Date Calculations', description: 'Learn how DatePilot builds date and time tools, explains its methods, and checks calculation accuracy.' },
@@ -250,6 +232,7 @@ function Header({ go }: { go: (path: string) => void }) {
       <NavLink to="/calculators" go={navigate}>Calculators</NavLink>
       <NavLink to="/calendar" go={navigate}>Calendar</NavLink>
       <NavLink to="/time" go={navigate}>Time</NavLink>
+      <NavLink to="/converters" go={navigate}>Converters</NavLink>
       <NavLink to="/guides" go={navigate}>Guides</NavLink>
       <NavLink to="/about" go={navigate}>About</NavLink>
     </nav>
@@ -265,7 +248,7 @@ function Footer({ go }: { go: (path: string) => void }) {
       <p>Useful answers for dates, calendars, and time.</p>
     </div>
     <div className="footer-columns">
-      <div><small>Explore</small>{link('/calculators', 'Calculators')}{link('/calendar', 'Calendar')}{link('/time', 'Time')}{link('/guides', 'Guides')}{link('/faq', 'FAQ')}</div>
+      <div><small>Explore</small>{link('/calculators', 'Calculators')}{link('/calendar', 'Calendar')}{link('/time', 'Time')}{link('/converters', 'Converters')}{link('/guides', 'Guides')}{link('/faq', 'FAQ')}</div>
       <div><small>Trust & support</small>{link('/about', 'About')}{link('/contact', 'Contact')}{link('/report-an-error', 'Report an error')}</div>
       <div><small>Legal</small>{link('/privacy-policy', 'Privacy Policy')}{link('/cookie-policy', 'Cookie Policy')}{link('/terms', 'Terms of Use')}{link('/disclaimer', 'Disclaimer')}</div>
     </div>
@@ -332,6 +315,11 @@ function Calculator({ tool }: { tool: Tool }) {
   if (tool.slug === 'age-difference-calculator') return <AgeDifferenceCalculator />
   if (tool.slug === 'time-since-calculator') return <TimeSinceCalculator />
   if (tool.slug === 'work-hours-calculator') return <WorkHoursCalculator />
+  if (tool.slug === 'recurring-date-calculator') return <RecurringDateCalculator />
+  if (tool.slug === 'deadline-calculator') return <DeadlineCalculator />
+  if (tool.slug === 'quarter-calculator') return <QuarterCalculator />
+  if (tool.slug === 'day-of-year') return <DayOfYearCalculator />
+  if (tool.slug === 'date-format-converter') return <DateFormatConverter />
 
   const calculate = () => {
     setError(''); setResult('')
@@ -475,14 +463,7 @@ function BusinessDateCalculator() {
     const n = Number(count)
     if (!Number.isInteger(n)) return setError('Please enter a whole number of business days.')
     if (Math.abs(n) > 10000) return setError('Please enter 10,000 business days or fewer.')
-    const step = direction === 'after' ? 1 : -1
-    let cursor = new Date(a)
-    let remaining = Math.abs(n)
-    while (remaining > 0) {
-      cursor = shiftDays(cursor, step)
-      const day = cursor.getDay()
-      if (day > 0 && day < 6) remaining -= 1
-    }
+    const cursor = addBusinessDays(a, Math.abs(n) * (direction === 'after' ? 1 : -1))
     const label = direction === 'after' ? 'After' : 'Before'
     const spanned = Math.abs(dayGap(a, cursor))
     const first = `${label} ${unit(Math.abs(n), 'business day')}: ${weekday(cursor)}, ${prettyDate(cursor)}`
@@ -682,7 +663,7 @@ function renderBlocks(blocks: Block[], go: (path: string) => void) {
 function ToolPage({ tool, go }: { tool: Tool; go: (path: string) => void }) {
   const content = toolContent[tool.slug]
   const related = content.related.map((slug) => tools.find((item) => item.slug === slug)).filter((item): item is Tool => Boolean(item)).slice(0, 4)
-  const categoryPath = tool.category === 'Time' ? '/time' : tool.category === 'Calendar' ? '/calendar' : '/calculators'
+  const categoryPath = tool.category === 'Time' ? '/time' : tool.category === 'Calendar' ? '/calendar' : tool.category === 'Convert' ? '/converters' : '/calculators'
 
   return <main className="page" id="main-content">
     <Breadcrumbs items={[['Tools', categoryPath], [tool.title, toolPath(tool)]]} go={go} />
@@ -717,11 +698,12 @@ function ToolPage({ tool, go }: { tool: Tool; go: (path: string) => void }) {
 
 function ToolIndex({ category, go }: { category?: Tool['category']; go: (path: string) => void }) {
   const list = category ? tools.filter((tool) => tool.category === category) : tools
-  const title = category === 'Time' ? 'Put every time zone in context.' : category === 'Calendar' ? 'See the shape of the calendar.' : category === 'Date' ? 'Work with dates, without the guesswork.' : 'All the tools, in one place.'
-  const explanation = category === 'Time' ? 'Compare elapsed time, count down to a moment, and convert local times using named time zones.' : category === 'Calendar' ? 'Check weekdays, ISO week numbers, and leap years using clearly stated calendar conventions.' : category === 'Date' ? 'Plan deadlines, compare date ranges, add or subtract days, and count working days.' : 'Start with the task you need to solve, then follow the method and related guidance on each tool page.'
+  const title = category === 'Time' ? 'Put every time zone in context.' : category === 'Calendar' ? 'See the shape of the calendar.' : category === 'Date' ? 'Work with dates, without the guesswork.' : category === 'Convert' ? 'Know exactly what the date means.' : 'All the tools, in one place.'
+  const explanation = category === 'Time' ? 'Compare elapsed time, count down to a moment, and convert local times using named time zones.' : category === 'Calendar' ? 'Check weekdays, ISO week numbers, and leap years using clearly stated calendar conventions.' : category === 'Date' ? 'Plan deadlines, compare date ranges, add or subtract days, and count working days.' : category === 'Convert' ? 'Translate dates between ISO 8601, US, and European formats, and resolve ambiguous numeric dates with an explicit day and month order.' : 'Start with the task you need to solve, then follow the method and related guidance on each tool page.'
   const breadcrumbLabel = category ? `${category} tools` : 'Calculators'
+  const breadcrumbPath = category === 'Time' ? '/time' : category === 'Calendar' ? '/calendar' : category === 'Convert' ? '/converters' : '/calculators'
   return <main className="page" id="main-content">
-    <Breadcrumbs items={[[breadcrumbLabel, category ? (category === 'Time' ? '/time' : category === 'Calendar' ? '/calendar' : '/calculators') : '/calculators']]} go={go} />
+    <Breadcrumbs items={[[breadcrumbLabel, breadcrumbPath]]} go={go} />
     <p className="eyebrow accent">{category ? `${category.toUpperCase()} TOOLKIT` : 'DATEPILOT TOOLKIT'}</p>
     <h1>{title}</h1>
     <p className="lead">{explanation}</p>
@@ -927,6 +909,7 @@ function App() {
   else if (path === '/calculators') page = <ToolIndex go={go} />
   else if (path === '/calendar') page = <ToolIndex category="Calendar" go={go} />
   else if (path === '/time') page = <ToolIndex category="Time" go={go} />
+  else if (path === '/converters') page = <ToolIndex category="Convert" go={go} />
   else if (path === '/guides') page = <Guides go={go} />
   else if (path === '/faq') page = <Faq go={go} />
   else if (tool) page = <ToolPage key={tool.slug} tool={tool} go={go} />
