@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import { lastmod } from '../src/content/lastmod.ts'
 
 const root = process.cwd()
 const dist = path.join(root, 'dist')
@@ -60,16 +61,46 @@ const guideTitles = {
   'date-time-formats': 'Date and Time Formats',
   'calendar-systems': 'Calendar Systems Explained',
 }
+const guideDescriptions = {
+  'date-calculations': 'Define the calendar system, counting convention, and units before calculating: exclusive versus inclusive counts, month boundaries, leap days, and daylight saving.',
+  'how-to-calculate-age': 'Count completed anniversaries instead of dividing days by 365. Worked examples, leap-day birthdays, and month-end edge cases included.',
+  'days-between-dates': 'Exclusive versus inclusive counting, a manual calculation method, February and leap years, and when each convention applies.',
+  'add-subtract-days': 'Move forward or backward through the calendar while respecting month lengths, year boundaries, and daylight-saving days.',
+  'working-days': 'Weekend rules, endpoint inclusion, and why public holidays must be handled separately from a weekday count.',
+  'leap-years': 'The full Gregorian leap-year rule, why the century exception exists, and how leap days affect ages and date differences.',
+  'week-numbers': 'ISO 8601 week numbering, the first-Thursday rule, 52- and 53-week years, and the December to January week-year boundary.',
+  'iso-week-date': 'Read and build ISO week dates from week-year, week number, and weekday, then convert them back to calendar dates.',
+  'day-of-week': 'Why the year matters for a weekday, how the calendar repeats in 400-year cycles, and how to verify a weekday answer.',
+  'time-zones': 'Named time zones versus raw offsets, the IANA time zone database, date changes across zones, and daylight-saving transitions.',
+  'utc-vs-gmt': 'What UTC and GMT actually are, when each term is correct, and why a fixed offset is not a time zone.',
+  'daylight-saving-time': 'How spring-forward and fall-back transitions work, the missing and repeated hours, and how to schedule around them.',
+  'date-time-formats': 'ISO 8601, written months, 24-hour times, and how to choose a date format that cannot be misread.',
+  'calendar-systems': 'The proleptic Gregorian calendar, its leap-year rule, historical adoption dates, and how other calendar systems differ.',
+}
 for (const [slug, title] of Object.entries(guideTitles)) {
   routes[`/guides/${slug}`] = [
     `${title} — DatePilot Guide`,
-    `${title}. Practical explanation with examples, assumptions, and related DatePilot tools.`
+    guideDescriptions[slug] ?? `${title}. Practical explanation with examples, assumptions, and related DatePilot tools.`
   ]
 }
+
+const missingDates = Object.keys(routes).filter((route) => !lastmod[route])
+if (missingDates.length) throw new Error(`Missing lastmod dates for: ${missingDates.join(', ')}`)
 
 const template = fs.readFileSync(templatePath, 'utf8')
 for (const [route, [title, description]] of Object.entries(routes)) {
   const canonical = `${siteUrl}${route === '/' ? '/' : `${route}/`}`
+  const schemaType = route.startsWith('/guides/') ? 'Article' : /^\/(calculators|calendar|time|converters)\//.test(route) ? 'WebApplication' : 'WebPage'
+  const graph = [
+    { '@type': schemaType, '@id': `${canonical}#page`, name: title, description, url: canonical, isPartOf: { '@id': `${siteUrl}/#website` }, dateModified: lastmod[route] },
+  ]
+  if (route === '/') {
+    graph.push({
+      '@type': 'WebSite', '@id': `${siteUrl}/#website`, name: 'DatePilot', url: siteUrl,
+      potentialAction: { '@type': 'SearchAction', target: `${siteUrl}/calculators?query={search_term_string}`, 'query-input': 'required name=search_term_string' },
+    })
+  }
+  const schemaTag = `<script id="datepilot-schema" type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c')}</script>`
   const html = template
     .replace(/<title>.*?<\/title>/, `<title>${title}</title>`)
     .replace(/<meta name="description" content=".*?" \/>/, `<meta name="description" content="${description}" />`)
@@ -79,8 +110,28 @@ for (const [route, [title, description]] of Object.entries(routes)) {
     .replace(/<meta name="twitter:title" content=".*?" \/>/, `<meta name="twitter:title" content="${title}" />`)
     .replace(/<meta name="twitter:description" content=".*?" \/>/, `<meta name="twitter:description" content="${description}" />`)
     .replace(/<link rel="canonical" href=".*?" \/>/, `<link rel="canonical" href="${canonical}" />`)
+    .replace('</head>', `  ${schemaTag}\n  </head>`)
   const target = route === '/' ? dist : path.join(dist, route.slice(1))
   fs.mkdirSync(target, { recursive: true })
   fs.writeFileSync(path.join(target, 'index.html'), html)
 }
-console.log(`Generated ${Object.keys(routes).length} route HTML shells in dist/`)
+
+const notFoundHtml = template
+  .replace(/<title>.*?<\/title>/, '<title>Page Not Found — DatePilot</title>')
+  .replace(/<meta name="description" content=".*?" \/>/, '<meta name="description" content="This DatePilot page does not exist. Browse the date calculators, calendar tools, time tools, and guides instead." />')
+  .replace(/<link rel="canonical" href=".*?" \/>/, '')
+  .replace(/<meta property="og:url" content=".*?" \/>/, '')
+  .replace(/<script id="datepilot-schema"[\s\S]*?<\/script>\s*/, '')
+  .replace('<meta name="theme-color" content="#174b4a" />', '<meta name="robots" content="noindex, follow" />\n    <meta name="theme-color" content="#174b4a" />')
+fs.writeFileSync(path.join(dist, '404.html'), notFoundHtml)
+
+const sitemap = [
+  '<?xml version="1.0" encoding="UTF-8"?>',
+  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+  ...Object.keys(routes).map((route) => `  <url><loc>${siteUrl}${route === '/' ? '/' : `${route}/`}</loc><lastmod>${lastmod[route]}</lastmod></url>`),
+  '</urlset>',
+  '',
+].join('\n')
+fs.writeFileSync(path.join(dist, 'sitemap.xml'), sitemap)
+
+console.log(`Generated ${Object.keys(routes).length} route HTML shells, 404.html, and sitemap.xml in dist/`)

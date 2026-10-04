@@ -46,10 +46,10 @@ export const ageContent: Record<string, ToolContent> = {
           {
             type: 'ol',
             items: [
-              'Enter the date of birth in the first field, using the date picker or by typing the date directly.',
-              'Check the target date. It is set to today, which gives the age right now — change it only if you are measuring on a different date.',
-              'Select "Calculate result".',
-              'Read the result as completed years, completed months, and remaining days, in that order.',
+              'Count the completed years between the birth date and the target date.',
+              'If the birthday has not yet been reached in the target year, take one year back off that count.',
+              'Count the completed months since that last anniversary.',
+              'Count the days since the most recent completed month.',
             ],
           },
           { type: 'p', text: 'The order matters. The years are counted first because they are complete anniversaries of the birth date; the months and days are what has happened since the most recent of those anniversaries. This is why the result never exceeds the number of whole years between the two dates, and why it changes only when a birthday or a month boundary passes.' },

@@ -277,7 +277,7 @@ export const calendarContent: Record<string, ToolContent> = {
       {
         heading: '29 February and Leap-Day Birthdays',
         blocks: [
-          { type: 'p', text: '29 February appears only in leap years, roughly four times per century. People born on it have a real birthday only in leap years; in other years the date does not exist.' },
+          { type: 'p', text: '29 February appears only in leap years, about 24 times every century, because leap years come roughly every four years with century exceptions. People born on it have a real birthday only in leap years; in other years the date does not exist.' },
           { type: 'p', text: 'Conventions differ for what happens on 28 February or 1 March in a non-leap year, and the answer depends on the rule being applied — a legal jurisdiction, an employer, or a calculator\'s own convention. The [Age Calculator](/calculators/age-calculator) documents the convention it uses: in a non-leap year the next birthday is reached on 1 March, so on 28 February the reported age is one day short of the next whole year.' },
           { type: 'p', text: 'Whether a given year contains that birthday at all is exactly what this calculator answers.' },
         ],
@@ -349,7 +349,7 @@ export const calendarContent: Record<string, ToolContent> = {
               'Day counts are calendar days including both endpoints; elapsed and remaining days are measured against the date you entered.',
             ],
           },
-          { type: 'p', text: 'Fiscal year labels follow the year in which the quarter ends, so fiscal year 2027 starting in October 2026 covers1 October 2026 to 30 September 2027 — the standard convention for October-anchored fiscal years.' },
+          { type: 'p', text: 'Fiscal year labels follow the year in which the quarter ends, so fiscal year 2027 starting in October 2026 covers 1 October 2026 to 30 September 2027 — the standard convention for October-anchored fiscal years.' },
         ],
       },
       {
@@ -365,7 +365,7 @@ export const calendarContent: Record<string, ToolContent> = {
               ['Q4 2026', '1 October 2026 (Thursday)', '31 December 2026 (Thursday)', '92'],
             ],
           },
-          { type: 'p', text: 'Q1 is always the shortest in common years and Q2 the longest in leap years, because February sits inside it. Anything that promises equal 91-day quarters is rounding.' },
+          { type: 'p', text: 'In a common year Q1 is the shortest quarter at 90 days, because February sits inside it; in a leap year that extra day brings Q1 up to 91, level with Q2. The longest quarters are Q3 and Q4 at 92 days in either case. Anything that promises four equal quarters is rounding.' },
         ],
       },
       {
@@ -379,7 +379,7 @@ export const calendarContent: Record<string, ToolContent> = {
         heading: 'Quarters, Months, and Weeks Compared',
         blocks: [
           { type: 'p', text: 'Quarters are the coarsest of the three. For week-level planning, the [Week Number Calculator](/calendar/week-number) reports the ISO week and week-year — including the split that happens when a new year begins mid-week. For monthly arithmetic, the [Date Calculator](/calculators/date-calculator) adds calendar months directly. Quarters matter when reporting, billing, and review cycles are quarterly by policy.' },
-          { type: 'p', text: 'Because a quarter is just three calendar months, it inherits all the usual month-boundary behaviour: quarters in leap years gain a day in Q1, and quarter boundaries never fall on the same weekday twice in a row.' },
+          { type: 'p', text: 'Because a quarter is just three calendar months, it inherits all the usual month-boundary behaviour: quarters in leap years gain a day in Q1, and consecutive boundaries can repeat the same weekday — 1 April and 1 July 2026 are both Wednesdays — because a three-month span shifts by 90, 91, or 92 days rather than a fixed step.' },
         ],
       },
       {

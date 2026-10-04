@@ -68,7 +68,7 @@ export const guideContent: Record<string, GuideContent> = {
       ['Impact on date calculations', 'Leap days affect age calculations (someone born on 29 February has a birthday every 4 years), date differences (a span crossing 29 February is one day longer), and annual planning (February has 29 days instead of 28). Any calculation crossing February should account for whether the year is a leap year.'],
       ['Historical context', 'The Julian calendar (used before the Gregorian reform) had a simpler rule: every 4 years is a leap year. This created an error of about 11 minutes per year, which accumulated to 10 days by the 1500s. The Gregorian reform corrected this with the century exception. Different countries adopted the Gregorian calendar at different times.'],
     ],
-    toolSlugs: ['leap-year', 'days-between-dates', 'calendar-systems', 'day-of-year'],
+    toolSlugs: ['leap-year', 'days-between-dates', 'age-calculator', 'day-of-year'],
   },
   'week-numbers': {
     answer: 'Week numbers organize dates into seven-day periods, but the result depends entirely on which convention you use. DatePilot uses ISO 8601, the international standard for week numbering.',
@@ -79,7 +79,7 @@ export const guideContent: Record<string, GuideContent> = {
       ['December/January boundary', 'The most confusing part of ISO week numbering is the year boundary. Example: 29 December 2025 (Monday) through 4 January 2026 (Sunday) is all in ISO week 1 of 2026. The Thursday of this week is 1 January 2026. So 29 December 2025 is in week 1 of 2026, not week 52 of 2025.'],
       ['When to use ISO weeks', 'ISO weeks are used in business, manufacturing, software development, and financial reporting. They provide a consistent way to reference weeks across years. If your team or industry uses a different convention (e.g., weeks starting on Sunday), make sure everyone uses the same system.'],
     ],
-    toolSlugs: ['week-number', 'day-of-week', 'iso-week-date', 'quarter-calculator'],
+    toolSlugs: ['week-number', 'day-of-week', 'day-of-year', 'quarter-calculator'],
   },
   'iso-week-date': {
     answer: 'ISO week dates provide a complete date representation using a week-year, week number, and weekday. The system is designed for consistent week-based scheduling and reporting.',
@@ -90,7 +90,7 @@ export const guideContent: Record<string, GuideContent> = {
       ['Practical uses', 'ISO week dates are used in: business scheduling (weekly reports, payroll periods), manufacturing (production schedules), software development (sprint planning, release cycles), financial reporting (fiscal weeks), and logistics (delivery schedules). The key advantage is consistency across years.'],
       ['Converting to calendar date', 'To find the calendar date from an ISO week date: (1) Find the Thursday of the ISO week. (2) That Thursday is always in the correct week-year. (3) Count backward to Monday (day 1) or forward to Sunday (day 7). This conversion is what the Week Number Calculator automates.'],
     ],
-    toolSlugs: ['week-number', 'calendar-systems'],
+    toolSlugs: ['week-number', 'day-of-week'],
   },
   'day-of-week': {
     answer: 'Finding a weekday is a straightforward calendar lookup, but the year always matters because the same month and day falls on different weekdays in different years.',
@@ -100,8 +100,9 @@ export const guideContent: Record<string, GuideContent> = {
       ['Historical dates and calendar systems', 'For dates before the Gregorian calendar was adopted (1582 in Catholic countries, 1752 in Britain, 1918 in Russia), the proleptic Gregorian result may differ from the historical weekday. If you need the historical weekday, use the calendar system that was in effect at that time and place.'],
       ['Using weekday results for planning', 'Weekday information helps with: scheduling recurring meetings (e.g., "every third Wednesday"), calculating working days (weekdays only), understanding historical events (e.g., "what day of the week was the battle?"), and planning events on specific days.'],
       ['Related calculations', 'The weekday is the foundation for several other calculations: working days (counting weekdays), week numbers (ISO weeks start on Monday), and date arithmetic (knowing when a weekday falls helps plan around weekends).'],
+      ['The anchor method for a quick answer', 'Find any weekday by anchoring to one you know. 1 January 2026 was a Thursday, and 15 October 2026 is day 288 of that year, so the gap from the anchor is 287 days. Divide by 7 and take the remainder: 287 mod 7 is 0, so the weekday does not shift and 15 October 2026 is also a Thursday. A remainder of 1 moves the weekday forward one day, and so on. The DatePilot calculator performs the same step with calendar arithmetic instead of manual counting.'],
     ],
-    toolSlugs: ['day-of-week', 'working-days', 'calendar-systems'],
+    toolSlugs: ['day-of-week', 'working-days', 'week-number'],
   },
   'time-zones': {
     answer: 'A time zone is not just a UTC offset — it is a set of rules that govern how a region represents instants of time locally, including historical changes and daylight-saving transitions.',
@@ -111,8 +112,9 @@ export const guideContent: Record<string, GuideContent> = {
       ['Date changes across time zones', 'Converting a late local time can move the result into the next (or previous) calendar day. For example, 23:00 in New York (UTC-5) is 04:00 the next day in London (UTC+0 during winter). This matters for deadlines, meetings, and travel schedules.'],
       ['Daylight-saving transitions', 'DST rules change local clock readings twice a year. In spring, clocks move forward (e.g., 2:00 AM becomes 3:00 AM), losing one hour. In autumn, clocks move back (e.g., 2:00 AM becomes 1:00 AM), gaining one hour. These transitions affect scheduling and elapsed-time calculations.'],
       ['Common pitfalls', 'Using a city\'s current offset for a date in another season. Forgetting that the calendar date can change. Not checking whether DST is active on the specific date. Assuming "GMT" and "UTC" are interchangeable in all contexts. Using fixed offsets instead of named zones for scheduling.'],
+      ['Crossing the international date line', 'The Pacific runs from UTC+12 to UTC-12, so two places with familiar clock readings can still sit a calendar day apart. 10:00 on Wednesday in Auckland (UTC+13 during New Zealand summer) is 11:00 on Tuesday in Honolulu (UTC-10, no daylight saving). The day name for the same event is therefore different on each side of the line, which is why cross-Pacific deadlines should always carry a date, not just a time.'],
     ],
-    toolSlugs: ['time-zone-converter', 'time-difference', 'utc-vs-gmt'],
+    toolSlugs: ['time-zone-converter', 'time-difference', 'countdown'],
   },
   'utc-vs-gmt': {
     answer: 'UTC (Coordinated Universal Time) is the modern time standard. GMT (Greenwich Mean Time) is a historical term often used informally to mean the same zero offset. For technical purposes, use UTC.',
@@ -122,8 +124,9 @@ export const guideContent: Record<string, GuideContent> = {
       ['When to use GMT', 'GMT is commonly used in: broadcast media, civil time references in the UK and some other countries, and informal conversations. Do not use "GMT" as a timezone identifier in software — use "Etc/UTC" or a named IANA zone instead.'],
       ['Offsets are not time zones', 'A fixed offset (like UTC+5) does not include daylight-saving rules or historical changes. A named timezone (like "Asia/Karachi") includes the full rule set. For scheduling, always use named zones, not fixed offsets.'],
       ['Practical example', 'When arranging an international meeting: (1) Record the named local timezone for each participant. (2) Convert to UTC for the reference instant. (3) Convert back to each participant\'s local time for the specific date. This avoids ambiguity during DST transitions.'],
+      ['The UK is not on UTC all year', 'UK civil time follows British Summer Time (UTC+1) from late March to late October and GMT (UTC+0) the rest of the year. Labelling a summer UK appointment as "GMT" places it one hour early for anyone using the offset literally. Write the offset with the date, or name the IANA zone "Europe/London", so the daylight-saving rules are applied automatically.'],
     ],
-    toolSlugs: ['time-zone-converter', 'time-difference', 'daylight-saving-time'],
+    toolSlugs: ['time-zone-converter', 'time-difference', 'time-since-calculator'],
   },
   'daylight-saving-time': {
     answer: 'Daylight-saving rules change local clock readings in many regions, typically twice a year. They can make a local hour repeat or disappear, even though time itself continues to move forward.',
@@ -145,8 +148,9 @@ export const guideContent: Record<string, GuideContent> = {
       ['Written months for human readability', 'For human-facing text, use written months: "3 April 2026" or "April 3, 2026." This removes ambiguity without requiring the reader to know ISO 8601. Avoid pure numeric formats (03/04/2026) in international contexts.'],
       ['Time format considerations', 'Use the 24-hour clock for precision: 14:30 is unambiguous, while 2:30 PM requires the reader to check AM/PM. Include the timezone for remote audiences: "14:30 UTC" or "14:30 Eastern Time." For international scheduling, always include the timezone abbreviation or offset.'],
       ['Choosing a format for your project', 'Pick one format and document it in your team\'s style guide. Use the same format consistently across all documents, calendars, and communications. For data, use ISO 8601. For human text, use written months with the 24-hour clock.'],
+      ['Machine-readable timestamps', 'APIs and data files usually use RFC 3339 timestamps such as 2026-04-03T14:30:00Z or 2026-04-03T14:30:00+02:00, the internet profile of ISO 8601. The trailing Z means UTC. Keep the offset attached to the time: a date and time without an offset is not a moment in time, so two systems reading the same text can land hours apart.'],
     ],
-    toolSlugs: ['date-calculator', 'time-zone-converter', 'utc-vs-gmt', 'date-format-converter'],
+    toolSlugs: ['date-calculator', 'time-zone-converter', 'time-difference', 'date-format-converter'],
   },
   'calendar-systems': {
     answer: 'A calendar system defines how dates are named and arranged. DatePilot uses the proleptic Gregorian calendar, which is the standard civil calendar used by most of the world today.',

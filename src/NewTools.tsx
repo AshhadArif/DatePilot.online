@@ -67,7 +67,7 @@ function RecurringDateCalculator() {
           <option value="weekdays">Selected weekdays</option>
         </select>
       </label>
-      {kind !== 'weekdays' && <label className="field"><span>Interval</span><input type="number" min="1" value={interval} onChange={(event) => setInterval(event.target.value)} /></label>}
+      <label className="field"><span>Interval</span><input type="number" min="1" value={interval} onChange={(event) => setInterval(event.target.value)} /></label>
       <label className="field"><span>Number of dates</span><input type="number" min="1" max="100" value={count} onChange={(event) => setCount(event.target.value)} /></label>
       <label className="field"><span>Stop on or before (optional)</span><input type="date" value={end} onChange={(event) => setEnd(event.target.value)} /></label>
       {(kind === 'months' || kind === 'years') && <label className="field"><span>If the day does not exist</span>
@@ -95,7 +95,7 @@ function RecurringDateCalculator() {
         <button className="reset-btn" type="button" onClick={() => downloadText('datepilot-schedule.ics', buildIcs(dates, 'Recurring date (DatePilot)'), 'text/calendar')}>Download .ics</button>
       </div>
     </div>}
-    <p className="method-note">Occurrences are spaced by calendar intervals from the first date; holidays are not applied.</p>
+    <p className="method-note">{kind === 'weekdays' ? 'Interval counts whole weeks from the first date, so interval 2 with Wednesday selected repeats every second Wednesday. Holidays are not applied.' : 'Occurrences are spaced by calendar intervals from the first date; holidays are not applied.'}</p>
   </div>
 }
 
@@ -103,6 +103,7 @@ function DeadlineCalculator() {
   const [mode, setMode] = useState<'forward' | 'backward'>('forward')
   const [date, setDate] = useState(today())
   const [days, setDays] = useState('10')
+  const [buffer, setBuffer] = useState('0')
   const [basis, setBasis] = useState<'calendar' | 'business'>('calendar')
   const [result, setResult] = useState('')
   const [error, setError] = useState('')
@@ -115,16 +116,23 @@ function DeadlineCalculator() {
     if (!Number.isInteger(n)) return setError('Please enter a whole number of days.')
     if (n < 0) return setError('Please enter 0 days or more.')
     if (n > 10000) return setError('Please enter 10,000 days or fewer.')
-    const moved = basis === 'business' ? addBusinessDays(anchor, mode === 'forward' ? n : -n) : shiftDays(anchor, mode === 'forward' ? n : -n)
+    const b = Number(buffer)
+    if (!Number.isInteger(b)) return setError('Please enter a whole number of buffer days.')
+    if (b < 0) return setError('Please enter a buffer of 0 days or more.')
+    if (b > 3650) return setError('Please enter a buffer of 3,650 days or fewer.')
+    const direction = mode === 'forward' ? 1 : -1
+    const counted = basis === 'business' ? addBusinessDays(anchor, direction * n) : shiftDays(anchor, direction * n)
+    const moved = shiftDays(counted, direction * b)
     const spanned = Math.abs(Math.round((Date.UTC(moved.getFullYear(), moved.getMonth(), moved.getDate()) - Date.UTC(anchor.getFullYear(), anchor.getMonth(), anchor.getDate())) / 86400000))
     const label = mode === 'forward' ? 'Deadline' : 'Latest start'
     const first = `${label}: ${weekday(moved)}, ${prettyDate(moved)}`
     const second = basis === 'business' ? `${unit(n, 'business day')} ${mode === 'forward' ? 'after' : 'before'} the ${mode === 'forward' ? 'start' : 'deadline'} · ${unit(spanned, 'calendar day')} spanned`
       : `${unit(n, 'calendar day')} ${mode === 'forward' ? 'after' : 'before'} the ${mode === 'forward' ? 'start' : 'deadline'}`
-    setResult(`${first}\n${second}`)
+    const third = b > 0 ? `Safety buffer: ${unit(b, 'calendar day')} ${mode === 'forward' ? 'added after the count' : 'subtracted before the count'}` : ''
+    setResult([first, second, third].filter(Boolean).join('\n'))
   }
 
-  const reset = () => { setMode('forward'); setDate(today()); setDays('10'); setBasis('calendar'); setResult(''); setError('') }
+  const reset = () => { setMode('forward'); setDate(today()); setDays('10'); setBuffer('0'); setBasis('calendar'); setResult(''); setError('') }
 
   return <div className="calculator">
     <div className="form-grid">
@@ -136,6 +144,7 @@ function DeadlineCalculator() {
       </label>
       <label className="field"><span>{mode === 'forward' ? 'Start date' : 'Deadline date'}</span><input type="date" value={date} onChange={(event) => setDate(event.target.value)} /></label>
       <label className="field"><span>Days</span><input type="number" min="0" value={days} onChange={(event) => setDays(event.target.value)} /></label>
+      <label className="field"><span>Safety buffer (calendar days)</span><input type="number" min="0" value={buffer} onChange={(event) => setBuffer(event.target.value)} /></label>
       <label className="field"><span>Count</span>
         <select value={basis} onChange={(event) => setBasis(event.target.value as 'calendar' | 'business')}>
           <option value="calendar">Calendar days</option>
@@ -148,7 +157,7 @@ function DeadlineCalculator() {
       <button className="reset-btn" onClick={reset} type="button">Reset</button>
     </div>
     {error && <p className="error" role="alert">{error}</p>}
-    {result && <div className="result" aria-live="polite"><span className="eyebrow accent">YOUR RESULT</span><strong>{result}</strong><p>{basis === 'business' ? 'Monday through Friday count; holidays are not assumed.' : 'Both directions use standard calendar arithmetic.'}</p></div>}
+    {result && <div className="result" aria-live="polite"><span className="eyebrow accent">YOUR RESULT</span><strong>{result}</strong><p>{basis === 'business' ? 'Monday through Friday count; holidays are not assumed.' : 'Both directions use standard calendar arithmetic.'}{Number(buffer) > 0 ? ' The safety buffer is counted in calendar days on top of the day count.' : ''}</p></div>}
   </div>
 }
 

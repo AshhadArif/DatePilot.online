@@ -1,10 +1,11 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import './App.css'
 import { guideContent, toolContent } from './content'
 import type { Block } from './content'
 import { DynamicBlock } from './DynamicBlocks'
 import { RecurringDateCalculator, DeadlineCalculator, QuarterCalculator, DayOfYearCalculator, DateFormatConverter } from './NewTools'
-import { addBusinessDays, today, localDate, prettyDate, weekday, shiftDays, zoneToUtc, dayGap, unit, decompose } from './dateUtils'
+import { addBusinessDays, addMonthsClamped, today, localDate, prettyDate, weekday, shiftDays, zoneToUtc, dayGap, unit, decompose } from './dateUtils'
+import { lastmod } from './content/lastmod'
 
 type Tool = { slug: string; title: string; seoTitle: string; category: 'Date' | 'Calendar' | 'Time' | 'Convert'; summary: string; method: string }
 type Page = { slug: string; title: string; description: string }
@@ -55,8 +56,14 @@ const toolPath = (tool: Tool) => tool.category === 'Calendar' ? `/calendar/${too
 const normalize = (path: string) => path.length > 1 ? path.replace(/\/$/, '') : path
 const stripLinks = (text: string) => text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
 const SITE_URL = 'https://datepilot.online'
+const CONTACT_EMAIL = 'bazminoadsense2@gmail.com'
+const OPERATOR = 'Fahad'
 
-const routeSeo = (path: string) => {
+const reviewedLabel = (iso: string) => new Date(`${iso}T00:00:00`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+const reviewedLine = (path: string) => lastmod[path] ? <p className="doc-reviewed">Last reviewed: {reviewedLabel(lastmod[path])}</p> : null
+
+type Seo = { title: string; description: string; type: string; notFound?: boolean }
+const routeSeo = (path: string): Seo => {
   const tool = tools.find((item) => toolPath(item) === path)
   const guide = guides.find((item) => `/guides/${item.slug}` === path)
   if (tool) return { title: tool.seoTitle, description: stripLinks(toolContent[tool.slug]?.answer ?? tool.summary), type: 'WebApplication' }
@@ -77,7 +84,7 @@ const routeSeo = (path: string) => {
     '/disclaimer': { title: 'Disclaimer — DatePilot', description: 'DatePilot provides general calculations, not official or legal advice. Read important disclaimers.' },
     '/report-an-error': { title: 'Report an Error — DatePilot', description: 'Found an incorrect calculation, broken link, or accessibility problem? Report it to DatePilot.' },
   }
-  const seo = pages[path] ?? { title: 'Page Not Found', description: 'This DatePilot page does not exist.' }
+  const seo = pages[path] ?? { title: 'Page Not Found — DatePilot', description: 'This DatePilot page does not exist.', notFound: true }
   return { ...seo, type: 'WebPage' }
 }
 
@@ -95,17 +102,26 @@ function updateSeo(path: string) {
   setMeta('name', 'twitter:card', 'summary_large_image')
   setMeta('name', 'twitter:title', seo.title)
   setMeta('name', 'twitter:description', seo.description)
-  setMeta('name', 'twitter:image', `${SITE_URL}/og-image.svg`)
+  setMeta('name', 'twitter:image', `${SITE_URL}/og-image.png`)
   setMeta('property', 'og:type', 'website')
   setMeta('property', 'og:title', seo.title)
   setMeta('property', 'og:description', seo.description)
   setMeta('property', 'og:url', canonical)
-  setMeta('property', 'og:image', `${SITE_URL}/og-image.svg`)
+  setMeta('property', 'og:image', `${SITE_URL}/og-image.png`)
   setMeta('property', 'og:site_name', 'DatePilot')
 
   let link = document.head.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
-  if (!link) { link = document.createElement('link'); link.rel = 'canonical'; document.head.appendChild(link) }
-  link.href = canonical
+  const notFound = seo.notFound === true
+  if (notFound) {
+    setMeta('name', 'robots', 'noindex, follow')
+    document.head.querySelector('meta[property="og:url"]')?.remove()
+    if (link) { link.remove(); link = null }
+  } else {
+    setMeta('name', 'robots', 'index, follow')
+    setMeta('property', 'og:url', canonical)
+    if (!link) { link = document.createElement('link'); link.rel = 'canonical'; document.head.appendChild(link) }
+    link.href = canonical
+  }
 
   let schema = document.head.querySelector('#datepilot-schema') as HTMLScriptElement | null
   if (!schema) { schema = document.createElement('script'); schema.id = 'datepilot-schema'; schema.type = 'application/ld+json'; document.head.appendChild(schema) }
@@ -114,6 +130,8 @@ function updateSeo(path: string) {
   const graph: Record<string, unknown>[] = [
     { '@type': schemaType, '@id': `${canonical}#page`, name: seo.title, description: seo.description, url: canonical, isPartOf: { '@id': `${SITE_URL}/#website` } }
   ]
+  const reviewed = lastmod[path]
+  if (reviewed) graph[0].dateModified = reviewed
 
   if (path === '/') {
     graph.push({
@@ -212,7 +230,7 @@ function useRoute() {
   const [path, setPath] = useState(normalize(window.location.pathname))
   useEffect(() => { const listener = () => setPath(normalize(window.location.pathname)); window.addEventListener('popstate', listener); return () => window.removeEventListener('popstate', listener) }, [])
   useEffect(() => { updateSeo(path) }, [path])
-  const go = useCallback((next: string) => { window.history.pushState({}, '', next); setPath(normalize(next)); window.scrollTo({ top: 0, behavior: 'smooth' }) }, [])
+  const go = useCallback((next: string) => { window.history.pushState({}, '', next); setPath(normalize(next.split('?')[0] || '/')); window.scrollTo({ top: 0, behavior: 'smooth' }) }, [])
   return { path, go }
 }
 
@@ -236,7 +254,7 @@ function Header({ go }: { go: (path: string) => void }) {
       <NavLink to="/guides" go={navigate}>Guides</NavLink>
       <NavLink to="/about" go={navigate}>About</NavLink>
     </nav>
-    <NavLink to="/calculators" go={navigate} className="find-button">Find a tool <small>⌘ K</small></NavLink>
+    <NavLink to="/calculators?query=" go={navigate} className="find-button">Find a tool <small>⌘ K</small></NavLink>
   </header>
 }
 
@@ -252,7 +270,7 @@ function Footer({ go }: { go: (path: string) => void }) {
       <div><small>Trust & support</small>{link('/about', 'About')}{link('/contact', 'Contact')}{link('/report-an-error', 'Report an error')}</div>
       <div><small>Legal</small>{link('/privacy-policy', 'Privacy Policy')}{link('/cookie-policy', 'Cookie Policy')}{link('/terms', 'Terms of Use')}{link('/disclaimer', 'Disclaimer')}</div>
     </div>
-    <small className="footer-note">Built for clarity. No advertising is part of the calculation.</small>
+        <small className="footer-note">Built for clarity. Your inputs stay in your browser.</small>
   </footer>
 }
 
@@ -263,7 +281,7 @@ function Card({ tool, go }: { tool: Tool; go: (path: string) => void }) {
 function Home({ go }: { go: (path: string) => void }) {
   const [query, setQuery] = useState('')
   const matches = tools.filter((item) => `${item.title} ${item.summary}`.toLowerCase().includes(query.toLowerCase()))
-  return <main id="main-content">
+  return <main id="main-content" tabIndex={-1}>
     <section className="hero">
       <div>
         <p className="eyebrow accent">DATE, CALENDAR & TIME UTILITY</p>
@@ -281,7 +299,7 @@ function Home({ go }: { go: (path: string) => void }) {
     <section className="finder">
       <p className="eyebrow">START WITH A QUESTION</p>
       <h2>What are you working out?</h2>
-      <label><span>⌕</span><input id="finder" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search date, week, age, timezone..." /></label>
+      <label><span>⌕</span><input id="finder" type="search" aria-label="Search DatePilot tools" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search date, week, age, timezone..." /></label>
       {query && <div className="matches">{matches.length ? matches.map((item) => <NavLink key={item.slug} to={toolPath(item)} go={go}>{item.title}<small>{item.category}</small></NavLink>) : <p>No matching tool yet. Try "date", "week", or "time".</p>}</div>}
     </section>
     <section className="section">
@@ -306,6 +324,7 @@ function Calculator({ tool }: { tool: Tool }) {
   const [start, setStart] = useState(today())
   const [end, setEnd] = useState(today())
   const [amount, setAmount] = useState('10')
+  const [moveUnit, setMoveUnit] = useState<'days' | 'weeks' | 'months' | 'years'>('days')
   const [year, setYear] = useState(String(new Date().getFullYear()))
   const [result, setResult] = useState('')
   const [error, setError] = useState('')
@@ -330,9 +349,14 @@ function Calculator({ tool }: { tool: Tool }) {
       return setResult(value % 400 === 0 || (value % 4 === 0 && value % 100 !== 0) ? `${value} is a leap year with 366 days.` : `${value} is not a leap year. It has 365 days.`)
     }
     if (Number.isNaN(a.getTime())) return setError('Please enter a valid start date.')
-    if (tool.slug === 'add-days') return setResult(prettyDate(shiftDays(a, n)))
-    if (tool.slug === 'subtract-days') return setResult(prettyDate(shiftDays(a, -n)))
-    if (tool.slug === 'date-calculator') return setResult(prettyDate(shiftDays(a, n)))
+    if (tool.slug === 'add-days' || tool.slug === 'subtract-days' || tool.slug === 'date-calculator') {
+      if (Number.isNaN(n)) return setError('Please enter a valid number to add.')
+      const delta = tool.slug === 'subtract-days' ? -n : n
+      const moved = moveUnit === 'months' ? addMonthsClamped(a, delta)
+        : moveUnit === 'years' ? addMonthsClamped(a, delta * 12)
+          : shiftDays(a, moveUnit === 'weeks' ? delta * 7 : delta)
+      return setResult(`${prettyDate(moved)} (${weekday(moved)})`)
+    }
     if (tool.slug === 'days-calculator') {
       if (Number.isNaN(n)) return setError('Please enter a valid number of days.')
       const count = Math.abs(n)
@@ -370,12 +394,17 @@ function Calculator({ tool }: { tool: Tool }) {
       return setResult(`${count} working days`)
     }
     if (tool.slug === 'countdown') {
-      const remaining = new Date(`${end}T17:00`).getTime() - Date.now()
-      return setResult(remaining > 0 ? `${Math.floor(remaining / 86400000)} days, ${Math.floor((remaining % 86400000) / 3600000)} hours remaining` : 'That date has passed.')
+      const target = new Date(`${end}T17:00`)
+      if (Number.isNaN(target.getTime())) return setError('Please enter a valid target date.')
+      const remaining = target.getTime() - Date.now()
+      if (remaining <= 0) return setResult(`The 17:00 target on ${prettyDate(target)} has passed.`)
+      const days = Math.floor(remaining / 86400000)
+      const hours = Math.floor((remaining % 86400000) / 3600000)
+      return setResult(`${days} days, ${hours} hours remaining until 17:00 on ${prettyDate(target)}, your local time`)
     }
   }
 
-  const reset = () => { setStart(today()); setEnd(today()); setAmount('10'); setYear(String(new Date().getFullYear())); setResult(''); setError('') }
+  const reset = () => { setStart(today()); setEnd(today()); setAmount('10'); setMoveUnit('days'); setYear(String(new Date().getFullYear())); setResult(''); setError('') }
 
   const field = (label: string, value: string, setter: (value: string) => void, type = 'date') => (
     <label className="field"><span>{label}</span><input type={type} value={value} onChange={(event) => setter(event.target.value)} /></label>
@@ -390,7 +419,14 @@ function Calculator({ tool }: { tool: Tool }) {
     <div className="form-grid">
       {tool.slug === 'leap-year'
         ? <label className="field"><span>Calendar year</span><input type="number" value={year} onChange={(event) => setYear(event.target.value)} min="1" /></label>
-        : <>{tool.slug !== 'countdown' && field(startLabel, start, setStart)}{needsEnd && field(endLabel, end, setEnd)}{needsDays && <label className="field"><span>Days</span><input type="number" value={amount} onChange={(event) => setAmount(event.target.value)} /></label>}</>
+        : <>{tool.slug !== 'countdown' && field(startLabel, start, setStart)}{needsEnd && field(endLabel, end, setEnd)}{needsDays && <label className="field"><span>{moveUnit === 'days' ? 'Days' : moveUnit === 'weeks' ? 'Weeks' : moveUnit === 'months' ? 'Months' : 'Years'}</span><input type="number" value={amount} onChange={(event) => setAmount(event.target.value)} /></label>}{['add-days', 'subtract-days', 'date-calculator'].includes(tool.slug) && <label className="field"><span>Unit</span>
+          <select value={moveUnit} onChange={(event) => setMoveUnit(event.target.value as 'days' | 'weeks' | 'months' | 'years')}>
+            <option value="days">Days</option>
+            <option value="weeks">Weeks</option>
+            <option value="months">Months</option>
+            <option value="years">Years</option>
+          </select>
+        </label>}</>
       }
     </div>
     <div className="calculator-actions">
@@ -665,12 +701,13 @@ function ToolPage({ tool, go }: { tool: Tool; go: (path: string) => void }) {
   const related = content.related.map((slug) => tools.find((item) => item.slug === slug)).filter((item): item is Tool => Boolean(item)).slice(0, 4)
   const categoryPath = tool.category === 'Time' ? '/time' : tool.category === 'Calendar' ? '/calendar' : tool.category === 'Convert' ? '/converters' : '/calculators'
 
-  return <main className="page" id="main-content">
+  return <main className="page" id="main-content" tabIndex={-1}>
     <Breadcrumbs items={[['Tools', categoryPath], [tool.title, toolPath(tool)]]} go={go} />
     <p className="eyebrow accent">{tool.category.toUpperCase()} TOOL</p>
     <h1>{tool.title}</h1>
+    {reviewedLine(toolPath(tool))}
     <p className="lead">{content.answer}</p>
-    <Calculator tool={tool} />
+          <Calculator key={tool.slug} tool={tool} />
     <section className="seo-content">
       {content.intro.map((paragraph) => <p key={paragraph}><RichText text={paragraph} go={go} /></p>)}
       <h2>How to Use the {tool.title}</h2>
@@ -697,16 +734,32 @@ function ToolPage({ tool, go }: { tool: Tool; go: (path: string) => void }) {
 }
 
 function ToolIndex({ category, go }: { category?: Tool['category']; go: (path: string) => void }) {
-  const list = category ? tools.filter((tool) => tool.category === category) : tools
+  const [query, setQuery] = useState(() => new URLSearchParams(window.location.search).get('query') ?? '')
+  const searchRef = useRef<HTMLInputElement>(null)
+  useEffect(() => { if (new URLSearchParams(window.location.search).has('query')) searchRef.current?.focus() }, [])
+  const base = category ? tools.filter((tool) => tool.category === category) : tools
+  const needle = query.trim().toLowerCase()
+  const list = needle ? base.filter((tool) => `${tool.title} ${tool.summary} ${tool.category}`.toLowerCase().includes(needle)) : base
   const title = category === 'Time' ? 'Put every time zone in context.' : category === 'Calendar' ? 'See the shape of the calendar.' : category === 'Date' ? 'Work with dates, without the guesswork.' : category === 'Convert' ? 'Know exactly what the date means.' : 'All the tools, in one place.'
   const explanation = category === 'Time' ? 'Compare elapsed time, count down to a moment, and convert local times using named time zones.' : category === 'Calendar' ? 'Check weekdays, ISO week numbers, and leap years using clearly stated calendar conventions.' : category === 'Date' ? 'Plan deadlines, compare date ranges, add or subtract days, and count working days.' : category === 'Convert' ? 'Translate dates between ISO 8601, US, and European formats, and resolve ambiguous numeric dates with an explicit day and month order.' : 'Start with the task you need to solve, then follow the method and related guidance on each tool page.'
   const breadcrumbLabel = category ? `${category} tools` : 'Calculators'
   const breadcrumbPath = category === 'Time' ? '/time' : category === 'Calendar' ? '/calendar' : category === 'Convert' ? '/converters' : '/calculators'
-  return <main className="page" id="main-content">
+  return <main className="page" id="main-content" tabIndex={-1}>
     <Breadcrumbs items={[[breadcrumbLabel, breadcrumbPath]]} go={go} />
     <p className="eyebrow accent">{category ? `${category.toUpperCase()} TOOLKIT` : 'DATEPILOT TOOLKIT'}</p>
     <h1>{title}</h1>
+    {reviewedLine(breadcrumbPath)}
     <p className="lead">{explanation}</p>
+    <div className="tool-search">
+      <label className="field" htmlFor="tool-search"><span>Search tools</span>
+        <input ref={searchRef} id="tool-search" type="search" autoComplete="off" placeholder="Try age, deadline, week number, time zone" value={query} onChange={(event) => setQuery(event.target.value)} />
+      </label>
+      <p className="method-note" aria-live="polite">
+        {needle
+          ? (list.length ? `${list.length} ${list.length === 1 ? 'tool' : 'tools'} matching "${query.trim()}"` : `No tool matches "${query.trim()}". Try a shorter word such as "date", "week", or "time".`)
+          : `${base.length} tools`}
+      </p>
+    </div>
     <div className="tool-grid">{list.map((tool) => <Card key={tool.slug} tool={tool} go={go} />)}</div>
     <section className="seo-content">
       <h2>Choose a tool by the question you need to answer</h2>
@@ -717,7 +770,7 @@ function ToolIndex({ category, go }: { category?: Tool['category']; go: (path: s
 }
 
 function Guides({ go }: { go: (path: string) => void }) {
-  return <main className="page" id="main-content">
+  return <main className="page" id="main-content" tabIndex={-1}>
     <Breadcrumbs items={[['Guides', '/guides']]} go={go} />
     <p className="eyebrow accent">FIELD NOTES</p>
     <h1>Understand the rules behind the result.</h1>
@@ -730,20 +783,24 @@ function Guides({ go }: { go: (path: string) => void }) {
 
 function GuidePage({ guide, go }: { guide: Page; go: (path: string) => void }) {
   const content = guideContent[guide.slug]
-  return <main className="page article" id="main-content">
+  const relatedTools = content.toolSlugs.map((slug) => tools.find((item) => item.slug === slug)).filter((tool): tool is Tool => Boolean(tool))
+  const sharedWith = guides.filter((g) => g.slug !== guide.slug && content.toolSlugs.some((ts) => guideContent[g.slug]?.toolSlugs.includes(ts))).slice(0, 3)
+  const continueWith = sharedWith.length ? sharedWith : guides.filter((g) => g.slug !== guide.slug).slice(0, 3)
+  return <main className="page article" id="main-content" tabIndex={-1}>
     <Breadcrumbs items={[['Guides', '/guides'], [guide.title, `/guides/${guide.slug}`]]} go={go} />
     <p className="eyebrow accent">DATEPILOT FIELD NOTE</p>
     <h1>{guide.title}</h1>
+    {reviewedLine(`/guides/${guide.slug}`)}
     <p className="lead">{content.answer}</p>
     {content.sections.map(([heading, paragraph]) => <section className="seo-content" key={heading}><h2>{heading}</h2><p>{paragraph}</p></section>)}
-    <section className="seo-content">
+    {relatedTools.length > 0 && <section className="seo-content">
       <h2>Related DatePilot Tools</h2>
-      <div className="link-grid">{content.toolSlugs.map((slug) => { const tool = tools.find((item) => item.slug === slug); return tool ? <NavLink className="related" key={slug} to={toolPath(tool)} go={go}>{tool.title} ↗</NavLink> : null })}</div>
-    </section>
+      <div className="link-grid">{relatedTools.map((tool) => <NavLink className="related" key={tool.slug} to={toolPath(tool)} go={go}>{tool.title} ↗</NavLink>)}</div>
+    </section>}
     <section className="seo-content">
       <h2>Continue Reading</h2>
       <div className="link-grid">
-        {guides.filter((g) => g.slug !== guide.slug && content.toolSlugs.some((ts) => guideContent[g.slug]?.toolSlugs.includes(ts))).slice(0, 3).map((g) => <NavLink className="related" key={g.slug} to={`/guides/${g.slug}`} go={go}>{g.title} ↗</NavLink>)}
+        {continueWith.map((g) => <NavLink className="related" key={g.slug} to={`/guides/${g.slug}`} go={go}>{g.title} ↗</NavLink>)}
       </div>
     </section>
     <p style={{ marginTop: '32px' }}><NavLink className="primary" to="/calculators" go={go}>Explore the calculators <span>→</span></NavLink></p>
@@ -751,7 +808,7 @@ function GuidePage({ guide, go }: { guide: Page; go: (path: string) => void }) {
 }
 
 function Faq({ go }: { go: (path: string) => void }) {
-  return <main className="page article" id="main-content">
+  return <main className="page article" id="main-content" tabIndex={-1}>
     <Breadcrumbs items={[['FAQ', '/faq']]} go={go} />
     <p className="eyebrow accent">DATEPILOT FAQ</p>
     <h1>Common questions about dates and time.</h1>
@@ -795,6 +852,7 @@ function TrustPage({ kind, go }: { kind: string; go: (p: string) => void }) {
     about: {
       title: 'About DatePilot',
       sections: [
+        ['Who runs DatePilot', `DatePilot is operated and maintained by ${OPERATOR}. The site is a personal project: the tools, explanations, and editorial decisions behind it are all handled here. Questions, correction reports, and accessibility issues go to ${CONTACT_EMAIL} through the Contact page.`],
         ['What DatePilot is', 'DatePilot is a focused date, calendar, and time utility resource for people planning work, checking dates, comparing times, and learning the rules behind everyday calendar questions. The site is designed around a small set of useful tools rather than a large collection of unrelated calculators.'],
         ['Our approach to accuracy', 'We make calculations inspectable. Inputs are labeled, conventions are stated, and the explanation beside a result describes what it includes. DatePilot content is reviewed against reproducible examples and edge cases such as leap days, month boundaries, weekdays, and time zones.'],
         ['How DatePilot is built', 'DatePilot is built as a static web application. Calculator logic runs entirely in your browser using standard JavaScript date APIs and the browser\'s IANA timezone database. No data is sent to a server.'],
@@ -807,7 +865,7 @@ function TrustPage({ kind, go }: { kind: string; go: (p: string) => void }) {
       sections: [
         ['Why contact us', 'Contact DatePilot to report an incorrect calculation, incorrect explanation, outdated information, broken link, accessibility issue, privacy question, or other technical problem. Correction reports are especially useful because they help us investigate reproducible cases.'],
         ['What to include', 'Include the page URL, the inputs you entered, the result you expected, the calendar or timezone convention involved, and a short description of the problem. Do not include sensitive personal information that is not needed to investigate the issue.'],
-        ['How to reach us', 'Email us at support@datepilot.online with your report or question. We aim to respond within 5 business days. For urgent accessibility issues, please include "Accessibility" in the subject line.'],
+        ['How to reach us', `Email us at ${CONTACT_EMAIL} with your report or question. We aim to respond within 5 business days. For urgent accessibility issues, please include "Accessibility" in the subject line.`],
         ['Response time', 'We review all messages and aim to respond within 5 business days. Calculation correction reports are prioritized because they may affect other users.'],
       ]
     },
@@ -815,13 +873,13 @@ function TrustPage({ kind, go }: { kind: string; go: (p: string) => void }) {
       title: 'Privacy Policy',
       sections: [
         ['Calculator behavior', 'All DatePilot calculators run entirely in your browser. The dates, times, and other values you enter are processed locally using JavaScript. No calculator inputs are transmitted to, stored on, or accessed by any server.'],
-        ['Cookies', 'DatePilot may use essential cookies required for the site to function. If analytics or advertising services are enabled in the future, additional cookies may be used. Any such cookies will be described in this policy and the Cookie Policy before they are activated.'],
-        ['Analytics', 'DatePilot may use privacy-respecting analytics to understand aggregate usage patterns such as which pages are visited. Analytics data does not identify you personally and is not used to track you across other sites.'],
-        ['Advertising', 'DatePilot may display third-party advertisements in the future. If advertising is enabled, ad networks may use cookies or similar technologies to serve ads. You will be able to manage advertising cookies through the Cookie Policy and your browser settings.'],
-        ['Third-party services', 'DatePilot may use third-party services for hosting, analytics, or advertising. These services may collect technical information such as your IP address, browser type, and the pages you visit, subject to their own privacy policies.'],
-        ['Your choices', 'You can manage cookies through your browser settings. Blocking essential cookies may prevent the site from functioning correctly. You can opt out of personalized advertising where available through your browser or advertising opt-out tools.'],
+        ['Cookies', 'DatePilot does not currently set any cookies of its own, and no analytics or advertising cookies are in use today. If analytics or advertising are enabled later, this policy and the Cookie Policy will describe those cookies before they are activated, and consent will be collected first where the EU user consent policy requires it.'],
+        ['Analytics', 'DatePilot does not currently run analytics of any kind. If privacy-respecting analytics are added, they will be used only to understand aggregate usage such as which pages are visited, will not identify you personally, and will not be used to track you across other sites.'],
+        ['Advertising', 'DatePilot does not currently display advertising. If advertising is added, the advertising networks involved may use cookies or similar technologies to serve and measure ads, and this policy will be updated before that happens. Google, as a third-party vendor, may use cookies to serve ads on this site, and you can review how Google uses data in advertising at policies.google.com/privacy/partners.'],
+        ['Third-party services and hosting', 'DatePilot fonts are hosted on this domain, so font files are not loaded from third-party font services. The site is hosted by a hosting provider that processes standard request logs (IP address, browser type, pages requested, and timestamps) for security, abuse prevention, and operations, subject to that provider\'s privacy policy.'],
+        ['Your choices', 'You can manage cookies through your browser settings. You can opt out of personalized advertising where available through your browser or advertising opt-out tools. Because calculators run locally, you can also use them with JavaScript-restricted input settings without data leaving your browser.'],
         ['Children\'s privacy', 'DatePilot is not directed at children under 13 and does not knowingly collect personal information from children.'],
-        ['Changes to this policy', 'This policy may be updated as DatePilot adds or changes features. The date at the top of this page indicates when it was last revised.'],
+        ['Changes to this policy', 'This policy may be updated as DatePilot adds or changes features. The date shown at the top of this page indicates when it was last reviewed.'],
         ['Contact', 'For privacy questions, contact us using the methods on the Contact page.'],
       ]
     },
@@ -829,12 +887,13 @@ function TrustPage({ kind, go }: { kind: string; go: (p: string) => void }) {
       title: 'Cookie Policy',
       sections: [
         ['What cookies are', 'Cookies are small text files placed on your device by websites you visit. They help the site remember your preferences and understand how the site is used.'],
-        ['Essential cookies', 'DatePilot may use essential cookies required for the site to function, such as remembering your preferences or maintaining session state. These cookies cannot be disabled without breaking site functionality.'],
-        ['Analytics cookies', 'If analytics are enabled, DatePilot may use cookies to understand aggregate usage patterns. These cookies do not personally identify you and are used only to improve the site.'],
-        ['Advertising cookies', 'If advertising is enabled in the future, ad networks may place cookies to serve relevant ads and measure ad performance. You will be able to manage these cookies through your browser settings.'],
-        ['Managing cookies', 'You can control and delete cookies through your browser settings. Each browser has its own instructions. Blocking cookies may affect site functionality.'],
-        ['Third-party cookies', 'Third-party services used by DatePilot (such as analytics or advertising providers) may set their own cookies. These are governed by the third party\'s own cookie policy.'],
-        ['Changes', 'This policy may be updated as DatePilot changes its cookie usage. The date at the top indicates the last revision.'],
+        ['Cookies used today', 'DatePilot does not currently set any cookies: there is no session state, no analytics, and no advertising code on the site, so nothing is written to your cookie store by DatePilot.'],
+        ['Essential cookies', 'If essential cookies are ever required for the site to function, they will be listed here by name and purpose. At the time of the last review, none are set.'],
+        ['Analytics cookies', 'No analytics cookies are set. If analytics are enabled in the future, this section will describe them before they are activated.'],
+        ['Advertising cookies', 'No advertising cookies are set. If advertising is enabled in the future, advertising networks may place cookies to serve and measure ads, and consent will be collected first where the EU user consent policy requires it.'],
+        ['Managing cookies', 'You can control and delete cookies through your browser settings. Each browser has its own instructions. Blocking cookies may affect site functionality on sites that rely on them.'],
+        ['Third-party cookies', 'Third-party services used by DatePilot in the future (such as analytics or advertising providers) may set their own cookies, which are governed by that third party\'s own cookie policy.'],
+        ['Changes', 'This policy may be updated as DatePilot changes its cookie usage. The date shown at the top indicates the last revision.'],
       ]
     },
     terms: {
@@ -863,7 +922,7 @@ function TrustPage({ kind, go }: { kind: string; go: (p: string) => void }) {
       title: 'Report an Error',
       sections: [
         ['What to report', 'Report incorrect calculations, inaccurate explanations, broken links, accessibility barriers, privacy concerns, or any other problem you find on DatePilot.'],
-        ['How to report', 'Email us at support@datepilot.online with the details below.'],
+        ['How to report', `Email us at ${CONTACT_EMAIL} with the details below.`],
         ['What to include', 'Please include: (1) the page URL where you found the problem, (2) the inputs you used if it is a calculation error, (3) the result you expected and why, (4) the result DatePilot gave you, and (5) a short description of the issue.'],
         ['Accessibility issues', 'If you are reporting an accessibility barrier, please include "Accessibility" in the subject line so we can prioritize your report.'],
         ['What happens next', 'We review all reports and aim to respond within 5 business days. Calculation errors are prioritized. If we confirm an error, we will fix it and update the affected page.'],
@@ -872,22 +931,23 @@ function TrustPage({ kind, go }: { kind: string; go: (p: string) => void }) {
   }
 
   const page = content[kind]
-  if (!page) return <main className="page article" id="main-content"><h1>Page not found.</h1></main>
+  if (!page) return <main className="page article" id="main-content" tabIndex={-1}><h1>Page not found.</h1></main>
 
   const breadcrumbLabel = page.title.replace('DatePilot — ', '').replace(' — DatePilot', '')
 
-  return <main className="page article" id="main-content">
+  return <main className="page article" id="main-content" tabIndex={-1}>
     <Breadcrumbs items={[[breadcrumbLabel, `/${kind}`]]} go={go} />
     <p className="eyebrow accent">DATEPILOT</p>
     <h1>{page.title}</h1>
+    {reviewedLine(`/${kind}`)}
     {page.sections.map(([heading, paragraph]) => <section className="seo-content legal-section" key={heading}><h2>{heading}</h2><p>{paragraph}</p></section>)}
-    {kind === 'contact' && <div className="legal-review"><p><strong>Email:</strong> support@datepilot.online</p><p><strong>Response time:</strong> Within 5 business days</p></div>}
-    {kind === 'report-an-error' && <div className="legal-review"><p><strong>Email:</strong> support@datepilot.online</p><p><strong>Subject line tip:</strong> Include "Accessibility" for accessibility issues</p></div>}
+    {kind === 'contact' && <div className="legal-review"><p><strong>Email:</strong> <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p><p><strong>Response time:</strong> Within 5 business days</p></div>}
+    {kind === 'report-an-error' && <div className="legal-review"><p><strong>Email:</strong> <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p><p><strong>Subject line tip:</strong> Include "Accessibility" for accessibility issues</p></div>}
   </main>
 }
 
 function NotFound({ go }: { go: (path: string) => void }) {
-  return <main className="page article" id="main-content">
+  return <main className="page article" id="main-content" tabIndex={-1}>
     <p className="eyebrow accent">404</p>
     <h1>Page not found.</h1>
     <p>That DatePilot page does not exist. Return to the tools or browse the guides to find what you need.</p>
@@ -903,6 +963,18 @@ function App() {
   const { path, go } = useRoute()
   const tool = tools.find((item) => toolPath(item) === path)
   const guide = guides.find((item) => `/guides/${item.slug}` === path)
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
+        if (path !== '/calculators') go('/calculators?query=')
+        else document.getElementById('tool-search')?.focus()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [path, go])
 
   let page: React.ReactNode = <NotFound go={go} />
   if (path === '/') page = <Home go={go} />

@@ -1,6 +1,15 @@
 RewriteEngine On
-RewriteCond %{HTTPS} !=on
+
+# Force HTTPS + non-www in a single redirect hop
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
 RewriteRule ^ https://datepilot.online%{REQUEST_URI} [R=301,L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.html [L]
+
+# Block internal docs from being served
+RewriteRule ^internal(/|$) - [F,L]
+
+# Block planning docs from being served
+RewriteRule ^docs(/|$) - [F,L]
+
+# Real 404 for unknown paths (no SPA fallback): keeps status codes honest for crawlers
+ErrorDocument 404 /404.html

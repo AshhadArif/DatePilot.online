@@ -1,4 +1,8 @@
-export const today = () => new Date().toISOString().slice(0, 10)
+export const today = () => {
+  const now = new Date()
+  const pad = (value: number) => String(value).padStart(2, '0')
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
+}
 export const localDate = (value: string) => new Date(`${value}T00:00:00`)
 export const prettyDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
 export const weekday = (date: Date) => date.toLocaleDateString('en-US', { weekday: 'long' })
@@ -74,11 +78,13 @@ export const generateOccurrences = (options: {
   const inside = (date: Date) => !endDate || dayGap(endDate, date) <= 0
   if (kind === 'weekdays') {
     const wanted = weekdays.length ? weekdays : [1, 2, 3, 4, 5]
+    const period = Math.max(1, Math.floor(interval))
     let cursor = new Date(start)
     let guard = 0
     while (dates.length < limit && guard < 40000) {
       if (endDate && dayGap(endDate, cursor) > 0) break
-      if (wanted.includes(cursor.getDay())) dates.push(new Date(cursor))
+      const week = Math.floor(dayGap(start, cursor) / 7)
+      if (wanted.includes(cursor.getDay()) && week % period === 0) dates.push(new Date(cursor))
       cursor = shiftDays(cursor, 1)
       guard += 1
     }

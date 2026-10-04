@@ -9,9 +9,10 @@ export const dateContent: Record<string, ToolContent> = {
     ],
     howTo: [
       'Choose the starting date. It defaults to today.',
-      'Enter the number of days to add. Use a negative number, such as -30, to subtract days instead.',
+      'Enter the number to add. Use a negative number, such as -30, to move backwards instead.',
+      'Pick the unit: days (the default), weeks, months, or years. Months and years use real calendar months, so 1 month from 31 January lands in February rather than on 3 March.',
       'Select "Calculate result".',
-      'Read the resulting calendar date. If you need the weekday as well, check the [Day of the Week calculator](/calendar/day-of-week).',
+      'Read the resulting calendar date together with the weekday it falls on.',
     ],
     sections: [
       {
@@ -80,7 +81,7 @@ export const dateContent: Record<string, ToolContent> = {
               ['Years', 'A calendar year, 365 or 366 days', '1 year from 29 February 2024 lands in a non-leap year'],
             ],
           },
-          { type: 'p', text: 'This calculator works in days, so a "month" is never silently treated as 30 days. If you need to add calendar months or years instead, say "one month from today", the result depends on the length of that particular month, and you should check the [Date Calculator Examples](/calculators/add-days) or work it out month by month.' },
+          { type: 'p', text: 'This calculator defaults to days, so a "month" is never silently treated as 30 days. If you need to add calendar months or years instead, say "one month from today", switch the unit in the [Date Calculator](/calculators/date-calculator): the result then depends on the length of that particular month, and a 31-day date clamps to the last day of a shorter month.' },
           { type: 'note', text: 'Adding weeks is the one shortcut that is always safe: adding 7, 14, or 21 days is exactly the same as adding 1, 2, or 3 weeks.' },
         ],
       },
@@ -97,7 +98,7 @@ export const dateContent: Record<string, ToolContent> = {
             ],
           },
           { type: 'p', text: 'The anniversary method is the one that agrees with real life: subscriptions renew on the same day of the month, babies turn one month old on the same date, and contract periods run in whole calendar months. The average-month method is only a rough decimal for statistics, and it drifts further from the calendar answer the longer the span.' },
-          { type: 'p', text: 'This calculator works in days precisely because of this ambiguity: adding 30 days is always exactly 30 days, while "one month" is 28, 29, 30, or 31 days depending on where the span starts. To count the gap between two dates in months, use the [Days Between Dates calculator](/calculators/days-between-dates), which reports both the day count and the anniversary-based month breakdown.' },
+          { type: 'p', text: 'Days are the default mode precisely because of this ambiguity: adding 30 days is always exactly 30 days, while "one month" is 28, 29, 30, or 31 days depending on where the span starts. When the question really is in months, switch the unit to months and the calculator uses whole calendar months with end-of-month clamping — 1 month from 31 January gives 28 February, not 3 March. To count the gap between two dates in months, use the [Days Between Dates calculator](/calculators/days-between-dates), which reports both the day count and the anniversary-based month breakdown.' },
         ],
       },
       {
@@ -141,7 +142,7 @@ export const dateContent: Record<string, ToolContent> = {
           {
             type: 'ul',
             items: [
-              'Assuming every month has 30 days. February has 28 or 29, and four months have 31.',
+              'Assuming every month has 30 days. February has 28 or 29, and seven months have 31.',
               'Counting the starting date as day one. Adding 1 day to a date moves to the very next day; it does not include the start date in the count.',
               'Forgetting the year changes. Anything that crosses 31 December moves into the following year.',
               'Mixing up days and months. "30 days from now" and "one month from now" only agree when the start month happens to be 30 days long.',
@@ -438,7 +439,7 @@ export const dateContent: Record<string, ToolContent> = {
     ],
     howTo: [
       'Select the starting date. It defaults to today.',
-      'Enter a whole number of days to add.',
+      'Enter a whole number to add, and pick the unit — days, weeks, months, or years.',
       'Select "Calculate result".',
       'Check the resulting month, year, and weekday, especially if the span crosses February or 31 December.',
       'If the date must be a working day, count business days instead with the [Working Days Calculator](/calculators/working-days).',
@@ -558,7 +559,7 @@ export const dateContent: Record<string, ToolContent> = {
     ],
     howTo: [
       'Select the reference date — the date you are counting backward from.',
-      'Enter the number of days to subtract as a positive number.',
+      'Enter a positive number to subtract, and pick the unit — days, weeks, months, or years.',
       'Select "Calculate result".',
       'Check the resulting month and year, since a backward count often crosses into the previous year.',
     ],
@@ -711,7 +712,7 @@ export const dateContent: Record<string, ToolContent> = {
               ['Rent due on the 31st, starting 31 January 2026', 'Months, interval 1, last-day rule', '31 Jan, 28 Feb, 31 Mar, 30 Apr, 31 May…'],
               ['Invoice every 14 days from 1 October 2026', 'Days, interval 14', '1 Oct, 15 Oct, 29 Oct, 12 Nov, 26 Nov…'],
               ['Every second Wednesday, 6 dates', 'Selected weekdays (Wed), start mid-week', 'Six Wednesday dates spaced two weeks apart'],
-              ['Project check-in every 10 weekdays', 'Selected weekdays Mon–Fri', 'Ten working dates, weekends skipped automatically'],
+              ['Project check-in, 10 dates on weekdays', 'Selected weekdays Mon–Fri, count 10', 'Ten working dates, weekends skipped automatically'],
               ['Annual renewal every year from 15 June 2026', 'Years, interval 1', '15 Jun 2026, 15 Jun 2027, 15 Jun 2028…'],
             ],
           },
@@ -823,7 +824,7 @@ export const dateContent: Record<string, ToolContent> = {
             headers: ['Question', 'Mode', 'Result'],
             rows: [
               ['30 calendar days from 1 October 2026', 'Forward, calendar', '31 October 2026 (Saturday)'],
-              ['10 business days from 1 October 2026', 'Forward, business', '15 October 2026 (Wednesday)'],
+              ['10 business days from 1 October 2026', 'Forward, business', '15 October 2026 (Thursday)'],
               ['Report due 25 December 2026, needs 20 calendar days', 'Backward, calendar', 'Start by 5 December 2026 (Saturday)'],
               ['Invoice due Friday 30 October 2026, 5 business days of work', 'Backward, business', 'Start by Friday 23 October 2026'],
               ['Review due in 3 weeks from today', 'Forward, calendar (21 days)', 'Same weekday, three weeks later'],

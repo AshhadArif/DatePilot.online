@@ -76,7 +76,7 @@ export const workContent: Record<string, ToolContent> = {
       {
         heading: 'Working Days vs. Calendar Days',
         blocks: [
-          { type: 'p', text: 'Calendar days count everything; working days count only weekdays. The difference grows with the length of the range: over a month, roughly two fifths of the calendar days are weekend days, so a 30-day period typically contains about 22 working days.' },
+            { type: 'p', text: 'Calendar days count everything; working days count only weekdays. The difference grows with the length of the range: over a month, about two days in seven are weekend days, so a 30-day period typically contains about 22 working days.' },
           { type: 'p', text: 'Choose calendar days for elapsed time, ages, and countdowns — the [Days Between Dates calculator](/calculators/days-between-dates) is the right tool. Choose working days for delivery estimates, project durations, notice periods, and anything where people are not expected to work on weekends.' },
           { type: 'p', text: 'Mixing the two conventions is the most common source of a wrong deadline. If a contract says "within 10 business days", a calendar-day answer will always be too early — and when the question is the date you land on rather than a count, move a date by weekdays with the [Business Date Calculator](/calculators/business-date-calculator).' },
         ],
@@ -241,7 +241,7 @@ export const workContent: Record<string, ToolContent> = {
     guideSlugs: ['working-days', 'days-between-dates', 'add-subtract-days', 'date-calculations'],
     related: ['working-days', 'days-between-dates', 'add-days', 'date-calculator'],
     faqs: [
-      ['Does this calculator exclude public holidays?', 'No. It counts Monday through Friday only, exactly like DatePilot\'s other working-day tools. Holidays are specific to each country, state, and employer, so remove them manually when your calculation requires it.'],
+      ['Does this calculator exclude public holidays?', 'No. Every step is a Monday-to-Friday day: weekend days are skipped, but no public holiday is removed automatically. If your deadline treats a holiday as free time, subtract those dates yourself before or after running the count.'],
       ['Does it count the start date?', 'No. The walk begins on the day after your start date (or the day before, when subtracting). The start date is the reference point, not part of the count. This differs from the Working Days Calculator, which counts both endpoints of a range.'],
       ['What if the start date falls on a weekend?', 'The count simply begins with the next weekday in the chosen direction. Starting on Saturday and adding 1 business day lands on Monday, because Saturday and Sunday are never counted as steps.'],
       ['Is 10 business days always 14 calendar days?', 'No. It is 14 calendar days when you start on a weekday and the window contains two full weekends. Start on a Saturday or Sunday and the same count spans fewer calendar days. The result reports the exact span every time.'],

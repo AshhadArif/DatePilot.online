@@ -11,7 +11,5 @@ RewriteRule ^internal(/|$) - [F,L]
 # Block planning docs from being served
 RewriteRule ^docs(/|$) - [F,L]
 
-# SPA fallback: unknown paths serve index.html
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.html [L]
+# Real 404 for unknown paths (no SPA fallback): keeps status codes honest for crawlers
+ErrorDocument 404 /404.html
