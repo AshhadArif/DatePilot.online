@@ -205,6 +205,11 @@ export const timeContent: Record<string, ToolContent> = {
       ['Does daylight saving change the answer?', 'The elapsed duration between two real moments is unaffected by clock changes, and the calculation works from timestamps. The clock labels on either side may shift by an hour around a transition.'],
       ['What if the first value is later than the second?', 'The result is still reported as a positive duration, with a note that the first value is the later moment.'],
     ],
+    sources: [
+      ['NIST — What Time is It? FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/what-time-it-faqs'],
+      ['BIPM — SI Brochure, time and frequency', 'https://www.bipm.org/en/measurement-units'],
+      ['ISO — ISO 8601 date and time format', 'https://www.iso.org/iso-8601-date-and-time-format.html'],
+    ],
   },
 
   'time-zone-converter': {
@@ -325,6 +330,10 @@ export const timeContent: Record<string, ToolContent> = {
       ['Does daylight saving affect the conversion?', 'Yes. The offset for a zone changes when its clocks move, and zones change on different dates. The converter evaluates the rule for the date you enter rather than assuming a fixed offset.'],
       ['Why is my zone not a whole number of hours from UTC?', 'Some zones are offset by 30 or 45 minutes — India is UTC+5:30, for example. Named zones handle this correctly, which is why abbreviations and rough offsets should not be used for conversion.'],
     ],
+    sources: [
+      ['IANA — Time Zone Database', 'https://www.iana.org/time-zones'],
+      ['RFC 3339 — Date and Time on the Internet: Timestamps', 'https://www.rfc-editor.org/info/rfc3339'],
+    ],
   },
 
   'time-since-calculator': {
@@ -426,6 +435,10 @@ export const timeContent: Record<string, ToolContent> = {
       ['Why do the two lines sometimes disagree?', 'The calendar line counts whole calendar dates crossed; the total line counts clock time. If the start time is late in the day, one calendar date may have passed without 24 hours having elapsed.'],
       ['Can I measure time until a future date?', 'No — that is a countdown. Use the [Countdown Calculator](/time/countdown) for future targets; it reports the time remaining instead of time passed.'],
       ['Does it count leap days?', 'Yes. The total line counts every elapsed day, including 29 February, and the calendar line counts anniversaries rather than dividing by 365.'],
+    ],
+    sources: [
+      ['NIST — What Time is It? FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/what-time-it-faqs'],
+      ['BIPM — SI Brochure, time and frequency', 'https://www.bipm.org/en/measurement-units'],
     ],
   },
 
@@ -562,6 +575,10 @@ export const timeContent: Record<string, ToolContent> = {
       ['What are decimal hours?', 'Hours expressed as a decimal number of hours: 7 hours 30 minutes = 7.50, 8 hours 15 minutes = 8.25. Divide the minutes by 60 to convert. Timesheets and payroll systems prefer this format because the values add directly.'],
       ['Why does the calculator reject my times?', 'It reports an error when the clock-in equals the clock-out (usually a typo) or when the break is as long as or longer than the shift itself. Re-enter the times and calculate again.'],
       ['Does it calculate overtime or pay?', 'No. It reports hours worked only — no rates, overtime thresholds, or rounding rules. Apply your contract\'s rules to the raw hours it returns.'],
+    ],
+    sources: [
+      ['US Department of Labor — Wage and Hour Division', 'https://www.dol.gov/agencies/whd'],
+      ['US Bureau of Labor Statistics — Work schedules', 'https://www.bls.gov/opub/ted/2021/what-does-it-mean-to-work-full-time.htm'],
     ],
   },
 }

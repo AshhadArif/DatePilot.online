@@ -167,6 +167,11 @@ export const dateContent: Record<string, ToolContent> = {
       ['Is adding days the same as adding hours?', 'No. This calculator works with calendar days, midnight to midnight. During a daylight saving change a calendar day can be 23 or 25 elapsed hours, so for time-based differences use the [Time Difference Calculator](/time/time-difference).'],
       ['How do I calculate a date without a calculator?', 'Break the interval at each month boundary: count the remaining days in the start month, add the full months in between, then add the days used in the final month. Always check whether the span crosses February and 31 December.'],
     ],
+    sources: [
+      ['NIST — What Time is It? FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/what-time-it-faqs'],
+      ['US Naval Observatory — Introduction to Calendars', 'https://aa.usno.navy.mil/faq/calendars'],
+      ['ISO — ISO 8601 date and time format', 'https://www.iso.org/iso-8601-date-and-time-format.html'],
+    ],
   },
 
   'days-between-dates': {
@@ -326,6 +331,11 @@ export const dateContent: Record<string, ToolContent> = {
       ['Does this count weekends and holidays?', 'Yes. Every calendar day counts, including Saturdays, Sundays, and public holidays. If you need to exclude weekends, use the [Working Days Calculator](/calculators/working-days).'],
       ['How does it handle leap years?', 'The calculation follows the Gregorian calendar, so February contributes 29 days in a leap year and 28 otherwise. Any span that crosses 29 February is counted correctly without adjustment.'],
     ],
+    sources: [
+      ['NIST — What Time is It? FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/what-time-it-faqs'],
+      ['US Naval Observatory — Introduction to Calendars', 'https://aa.usno.navy.mil/faq/calendars'],
+      ['ISO — ISO 8601 date and time format', 'https://www.iso.org/iso-8601-date-and-time-format.html'],
+    ],
   },
 
   'days-calculator': {
@@ -428,6 +438,10 @@ export const dateContent: Record<string, ToolContent> = {
       ['Does a days calculator include weekends?', 'Yes. Plain day counts include Saturdays, Sundays, and holidays. Only working-day or business-day calculations exclude weekends, and those are handled by the [Working Days Calculator](/calculators/working-days).'],
       ['Is a day count the same as a date difference?', 'They are two directions of the same measurement. A day count starts from a known date and asks which date you reach; a date difference starts from two known dates and asks how far apart they are. Use [Days Between Dates](/calculators/days-between-dates) for the second case.'],
       ['What happens when the count crosses a leap year?', 'February contributes 29 days in a leap year and 28 otherwise, so the calculator lands on the correct date without any manual adjustment.'],
+    ],
+    sources: [
+      ['NIST — What Time is It? FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/what-time-it-faqs'],
+      ['US Naval Observatory — Introduction to Calendars', 'https://aa.usno.navy.mil/faq/calendars'],
     ],
   },
 
@@ -549,6 +563,11 @@ export const dateContent: Record<string, ToolContent> = {
       ['Is adding 30 days the same as adding one month?', 'No. One calendar month is between 28 and 31 days depending on the month, while 30 days is always 30 days. From 1 January, 30 days later is 31 January, but one month later is 1 February.'],
       ['Does daylight saving affect the result?', 'No. The calculator works with calendar days rather than elapsed hours, so a 23-hour or 25-hour day still counts as exactly one day.'],
     ],
+    sources: [
+      ['NIST — What Time is It? FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/what-time-it-faqs'],
+      ['US Naval Observatory — Introduction to Calendars', 'https://aa.usno.navy.mil/faq/calendars'],
+      ['ISO — ISO 8601 date and time format', 'https://www.iso.org/iso-8601-date-and-time-format.html'],
+    ],
   },
 
   'subtract-days': {
@@ -605,10 +624,42 @@ export const dateContent: Record<string, ToolContent> = {
         ],
       },
       {
+        heading: 'Worked Example: 3 March 2026 Minus 45 Days',
+        blocks: [
+          { type: 'p', text: 'Long subtractions are a series of borrows, one month at a time. Take 3 March 2026 (a Tuesday) minus 45 days. The calculator does it in a single pass, but walking through the same steps by hand shows exactly where each group of days goes:' },
+          {
+            type: 'ol',
+            items: [
+              'Borrow back to the start of March: 3 days takes you to 28 February 2026, leaving 45 − 3 = 42 days still to subtract.',
+              'February 2026 has 28 days because 2026 is not a leap year, so 27 more days reaches 1 February — 42 − 27 = 15 days left.',
+              'January has 31 days, so 15 days back from 1 February lands on 17 January 2026.',
+              'No year change is needed because the result stays inside 2026, but a count starting later in the year would cross 31 December as well.',
+            ],
+          },
+          { type: 'p', text: 'The answer is Saturday 17 January 2026. A quick check catches most mistakes: 45 days is 6 weeks and 3 days, so the result must be exactly three weekdays before the start — three weekdays before Tuesday is Saturday.' },
+        ],
+      },
+      {
+        heading: 'Subtracting Months and Years: End-of-Month Clamping',
+        blocks: [
+          { type: 'p', text: 'When the unit is months or years instead of days, there is no partial-month borrowing: the day of the month is kept where it exists and clamped to the last valid day where it does not. 31 March 2026 minus 1 month is 28 February 2026, because February 2026 has no 31st. The same subtraction in a leap year clamps one day later: 31 March 2028 minus 1 month is 29 February 2028.' },
+          { type: 'p', text: 'Clamping also crosses years cleanly. 31 January 2026 minus 1 month is 31 December 2025 — the day number survives and only the month changes — while 29 February 2024 minus 1 year falls back to 28 February 2023, because 2023 has no 29th. Whole-year subtractions follow the same leap-year rule as day counts: a span that crosses 29 February is one day longer than the identical span in a common year.' },
+          { type: 'note', text: 'Months and days are not interchangeable going backwards either: 31 March 2026 minus 30 days is 1 March 2026, while minus 1 month is 28 February 2026 — a two-day difference from the same starting date.' },
+        ],
+      },
+      {
         heading: 'Days Before Today',
         blocks: [
           { type: 'p', text: 'To find a date in the recent past, set the reference date to today and subtract the number of days. The [Days Calculator](/calculators/days-calculator) shows both directions at once — the date before today and the date after today — which is usually faster when you are working around a fixed point such as a contract date or a report period.' },
           { type: 'p', text: 'Working backwards is also the natural way to find the start of a period. If you know a review covers the last 90 days and ends today, subtracting 90 gives the first day of the window.' },
+        ],
+      },
+      {
+        heading: 'Verifying a Subtraction and Working Backwards From Deadlines',
+        blocks: [
+          { type: 'p', text: 'Every subtraction can be checked by running it in reverse: add the same number of days back to the result and you must arrive at the original date. If 3 March 2026 minus 45 days gives 17 January 2026, then 17 January 2026 plus 45 days must give 3 March 2026. The weekday offers a second, faster check — a span of N days always shifts the weekday by N mod 7, so 45 days, which is 6 weeks and 3 days, moves the weekday back exactly three places.' },
+          { type: 'p', text: 'Counting backwards is also a real-world pattern, not just a checking trick. Shipping and transit rules often describe a window in one direction and are answered in the other: goods that must arrive within 14 days of dispatch, or a consignment that arrived today after 21 days in transit, both start from a known date and count backwards. Notice periods work the same way — a filing due 30 days before a hearing, a lease break that requires a quarter of notice — as do lookback windows such as the first day of a 90-day reporting period that ends today.' },
+          { type: 'p', text: 'When the rule is written in business days instead of calendar days, or needs a safety buffer, use the [Deadline Calculator](/calculators/deadline-calculator); it performs the same backward move with weekday-only counting.' },
         ],
       },
       {
@@ -640,6 +691,14 @@ export const dateContent: Record<string, ToolContent> = {
       ['Can I use this to work back from a deadline?', 'Yes. If a filing is due 30 days before a hearing, enter the hearing date and subtract 30 to find the latest filing date. For the same question with business-day counting or a safety buffer, use the [Deadline Calculator](/calculators/deadline-calculator) in backward mode.'],
       ['Is subtracting days the same as entering a negative number of days?', 'Yes. Subtracting 30 days and adding -30 days produce the same date; both directions are handled by the same calendar arithmetic.'],
       ['How do I find what date it was a certain number of days ago?', 'Set the reference date to today and enter the number of days. For a list of common lookbacks in both directions, see the [Days Calculator](/calculators/days-calculator).'],
+      ['How do I verify that a subtraction is correct?', 'Add the same number of days back to the result: if 3 March 2026 minus 45 days is 17 January 2026, then 17 January 2026 plus 45 days must return 3 March 2026. You can also check the weekday — 45 days is 6 weeks and 3 days, so the weekday must have moved back by exactly three.'],
+      ['Is subtracting 30 days the same as subtracting one month?', 'No. Thirty days is always 30 calendar days, while one calendar month is 28, 29, 30, or 31 days depending on where you start. From 31 March 2026, 30 days back is 1 March 2026, but one month back clamps to 28 February 2026 because February has no 31st.'],
+    ],
+    sources: [
+      ['NIST — Leap Seconds FAQs (leap years and leap seconds)', 'https://www.nist.gov/pml/time-and-frequency-division/leap-seconds-faqs'],
+      ['NIST — What Time is It? FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/what-time-it-faqs'],
+      ['Royal Museums Greenwich — What is Greenwich Mean Time?', 'https://www.rmg.co.uk/stories/time/greenwich-mean-time-gmt'],
+      ['IANA — Time Zone Database', 'https://www.iana.org/time-zones'],
     ],
   },
   'recurring-date-calculator': {
@@ -740,6 +799,37 @@ export const dateContent: Record<string, ToolContent> = {
         ],
       },
       {
+        heading: 'Interval Semantics: What Every N Actually Means',
+        blocks: [
+          { type: 'p', text: 'Each interval counts from the first date rather than from the previous occurrence, and each unit behaves differently. An interval of days counts every calendar day, weekends included: every 14 days is always exactly 14 days apart, so the weekday of each occurrence never changes. Weeks behave the same way — every 2 weeks is 14 days — which is why a weekly pattern always keeps its weekday.' },
+          { type: 'p', text: 'Months and years are calendar units, so their length follows the calendar: every 1 month means the same day number next month, subject to the short-month rules above, and every 1 year means the same date next year, with 29 February clamped in non-leap years. Day intervals and month intervals therefore drift apart — a 30-day sequence slides through the calendar, while a monthly sequence stays on the same day number.' },
+          { type: 'p', text: 'All of this is date-only arithmetic: each occurrence is a whole calendar day from midnight to midnight. Clock changes for daylight saving do not shift a date-only schedule by an hour, and time zones stay irrelevant until a specific time of day is attached to the event. That is what keeps a generated series stable across the transitions that complicate timestamped schedules.' },
+        ],
+      },
+      {
+        heading: 'Selected-Weekday Schedules in Practice',
+        blocks: [
+          { type: 'p', text: 'A weekday rule answers a different question from an interval rule: instead of "every N days", it asks for every date that falls on one of the selected weekdays. Choose Monday and Thursday for a twice-weekly pattern, or Monday to Friday to build a working-days-only series that skips weekends automatically.' },
+          { type: 'p', text: 'The interval field sets the spacing. An interval of 1 with a Wednesday rule emits every Wednesday; an interval of 2 keeps every second Wednesday, which is exactly 14 days apart and therefore always lands on a Wednesday again. Because every occurrence is anchored to the first date, a Wednesday-based series can never wander onto a Thursday — the weekday column on each row makes that easy to verify at a glance.' },
+          { type: 'note', text: 'Weekday schedules still include public holidays: the rule knows about weekdays, not about national holidays. Shift individual dates with the [Business Date Calculator](/calculators/business-date-calculator).' },
+        ],
+      },
+      {
+        heading: 'Common Recurring-Date Mistakes',
+        blocks: [
+          {
+            type: 'ul',
+            items: [
+              'Rebuilding the schedule from the previous occurrence instead of the first date. Chaining "plus one month" from a clamped 28 February takes you to 28 March and keeps you there; computing every date from 31 January returns you to the 31st as soon as the month has one.',
+              'Using 30-day steps as a monthly rule. A 30-day sequence slides forward through the calendar and never matches a billing date anchored to the month.',
+              'Forgetting the leap-day clamp. A 29 February anchor has a 29th only in leap years — decide up front whether those occurrences clamp to 28 February or are skipped.',
+              'Assuming holidays are excluded. Day and weekday schedules still land on public holidays; adjust those dates separately.',
+              'Letting a schedule run past its intended end. Set a stop date so the export cannot contain occurrences after the contract or project finishes.',
+            ],
+          },
+        ],
+      },
+      {
         heading: 'Related Tools',
         blocks: [
           { type: 'p', text: 'Plan a single due date with the [Deadline Calculator](/calculators/deadline-calculator), see what remains until a fixed moment with the [Countdown Calculator](/time/countdown), and group a schedule into fiscal periods with the [Quarter Calculator](/calendar/quarter-calculator).' },
@@ -754,6 +844,14 @@ export const dateContent: Record<string, ToolContent> = {
       ['Can I limit the schedule to a date range?', 'Yes. Set a stop date and no occurrence after it will be generated. Without a stop date the calculator generates the number of dates you asked for, up to 100.'],
       ['How do I get these dates into my calendar?', 'Generate the schedule and use the Download .ics button. The file imports into Google Calendar, Outlook, and Apple Calendar as all-day events.'],
       ['Does it account for public holidays?', 'No. Holidays vary by country and employer, so the calculator uses the standard calendar only. Adjust individual dates with the [Business Date Calculator](/calculators/business-date-calculator) when holidays matter.'],
+      ['Is the ICS export a standard calendar format?', 'Yes. The file follows the iCalendar format defined by RFC 5545, the same standard used by Google Calendar, Apple Calendar, and Outlook. Each generated date becomes an all-day event, so the whole series imports in one step — and the file is built in your browser from the dates on screen.'],
+      ['Do clock changes or time zones affect the schedule?', 'No. Every occurrence is a date running midnight to midnight, so daylight saving transitions — which move clock times, not calendar dates — leave the series unchanged. Time zones only matter once you attach a specific time of day to an event, which is a job for the [Time Zone Converter](/time/time-zone-converter).'],
+    ],
+    sources: [
+      ['RFC 5545 — Internet Calendaring and Scheduling Core Object Specification (iCalendar)', 'https://www.rfc-editor.org/info/rfc5545'],
+      ['ISO — ISO 8601 date and time format', 'https://www.iso.org/iso-8601-date-and-time-format.html'],
+      ['IANA — Time Zone Database', 'https://www.iana.org/time-zones'],
+      ['NIST — Leap Seconds FAQs (leap years and leap seconds)', 'https://www.nist.gov/pml/time-and-frequency-division/leap-seconds-faqs'],
     ],
   },
   'deadline-calculator': {
@@ -833,10 +931,61 @@ export const dateContent: Record<string, ToolContent> = {
         ],
       },
       {
+        heading: 'Step-by-Step: Planning in Both Directions',
+        blocks: [
+          { type: 'h3', text: 'Forward: start 1 October 2026, 10 business days to deliver' },
+          {
+            type: 'ol',
+            items: [
+              'Set the direction to forward and enter Thursday 1 October 2026 as the start date.',
+              'Enter 10 and choose business days. The count skips Saturday and Sunday, so Friday 2 October is day 1.',
+              'Monday 5 October through Friday 9 October adds days 2 to 6; the following Monday to Thursday adds days 7 to 10.',
+              'The deadline is Thursday 15 October 2026 — already a working day, so no rolling is needed.',
+            ],
+          },
+          { type: 'p', text: 'Run the same span in calendar mode and it lands on Sunday 11 October 2026 — four days earlier than the business-day answer, because calendar counting never skips the two weekends inside the span.' },
+          { type: 'h3', text: 'Backward: report due Friday 30 October 2026, 15 business days of work' },
+          {
+            type: 'ol',
+            items: [
+              'Set the direction to backward and enter the due date, Friday 30 October 2026.',
+              'Enter 15 and choose business days, then count backwards over weekdays only: Thursday 29 October is day 1.',
+              'Days 2 to 5 walk back to Friday 23 October, days 6 to 10 continue to Friday 16 October, and the last five reach Friday 9 October 2026.',
+              'Treat Friday 9 October as the latest date the work can begin, not the date to begin it.',
+            ],
+          },
+          { type: 'p', text: 'The mirror check confirms both directions agree: start forward from Friday 9 October with the same 15 business days and you land back on Friday 30 October. Project teams usually run the calculation twice — once at full duration for the absolute latest start, and once with a safety margin for the working target.' },
+        ],
+      },
+      {
+        heading: 'When the Result Lands on a Weekend or Month End',
+        blocks: [
+          { type: 'p', text: 'In calendar mode the calculator does not move a date that falls on a Saturday or Sunday — it reports it as it is, weekday included, so you can see the problem immediately. Whether a real deadline then rolls forward to the next working day, rolls back to the previous one, or simply stands is decided by the wording of the rule or by local practice, not by arithmetic. Business-day mode sidesteps the question: counting only Monday to Friday can never produce a weekend date.' },
+          { type: 'p', text: 'Month ends behave differently again. A 30-day count from 1 October 2026 ends on Saturday 31 October, and a count running from a 31-day month into a shorter one lands on that month\'s last day — there is no 31 February. If a rule says "by the end of the month", calculate the last day of that month explicitly rather than adding 30 days to the start.' },
+          { type: 'p', text: 'Project schedules add two conventions of their own. Work normally starts the working day after its predecessor finishes, and plans carry float — slack between the calculated date and the date the team targets — so the calculator answer is the latest acceptable date rather than the goal. All-day deadlines are midnight-to-midnight; a cut-off such as "5 pm on the due date" is a time-of-day convention this tool does not apply.' },
+        ],
+      },
+      {
         heading: 'Buffers and Why They Matter',
         blocks: [
           { type: 'p', text: 'A calculation that lands exactly on the due date has no margin for a failed upload, a public holiday, or a day of illness. Add a buffer: calculate the true deadline first, then run the same inputs again with two or three extra days and use the earlier answer as your target.' },
           { type: 'p', text: 'Buffers are especially important in backward mode, where the result is a latest-possible start. The latest possible date is rarely the sensible date.' },
+        ],
+      },
+      {
+        heading: 'Common Deadline Mistakes',
+        blocks: [
+          {
+            type: 'ul',
+            items: [
+              'Counting the start day as day one, which makes the deadline one day early. The convention here is start day = day zero, so 10 days from 1 October 2026 lands on 11 October, not 10 October.',
+              'Assuming public holidays are removed. Business-day mode counts Monday to Friday only — no holiday list is applied, because holidays differ by country, state, and employer. Check the calendar that applies to your rule.',
+              'Mixing 30 days with one month. They agree only when the start month happens to have 30 days left in it.',
+              'Ignoring the weekday of a calendar-mode result. A Saturday deadline may be unusable; the result line shows the weekday so you can catch it before it matters.',
+              'Starting exactly on the latest start date. The backward answer is an outer limit — build in a buffer before you rely on it.',
+              'Forgetting the year change. A deadline counted from December often lands in January, and any rule spanning a year must handle 29 February.',
+            ],
+          },
         ],
       },
       {
@@ -860,6 +1009,14 @@ export const dateContent: Record<string, ToolContent> = {
       ['What if the rule says "within 30 days of receipt"?', 'Treat receipt day as day zero and use forward mode with 30 calendar days. If the rule counts the receipt day itself, subtract one day from the result and check with the responsible authority for legal matters.'],
       ['Should I start exactly on the latest start date the calculator gives?', 'No. The backward result is an outer limit. Work backward from it with a buffer so a single setback does not push you past the due date.'],
       ['How do I plan a deadline that repeats?', 'For monthly billing, reviews, or renewals, generate the whole series with the [Recurring Date Calculator](/calculators/recurring-date-calculator) and use this calculator for each individual due date that needs a buffer.'],
+      ['Does the count include the start date?', 'No. The start date is day zero: 10 days from Thursday 1 October 2026 lands on 11 October, not 10 October. If a rule or statute counts the receipt day itself as day one, the effective deadline moves one day earlier — check the wording of the rule for legal matters.'],
+      ['What happens if the deadline lands on a weekend or holiday?', 'In calendar mode the date is reported as it falls, with its weekday, so a Saturday result is visible immediately; whether it then rolls forward to Monday depends on the rule. Business-day mode never produces a weekend date. Public holidays are not removed in either mode, so verify them against the calendar that applies to you.'],
+    ],
+    sources: [
+      ['ISO — ISO 8601 date and time format', 'https://www.iso.org/iso-8601-date-and-time-format.html'],
+      ['IANA — Time Zone Database', 'https://www.iana.org/time-zones'],
+      ['NIST — What Time is It? FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/what-time-it-faqs'],
+      ['Royal Museums Greenwich — What is Greenwich Mean Time?', 'https://www.rmg.co.uk/stories/time/greenwich-mean-time-gmt'],
     ],
   },
   'date-format-converter': {
@@ -928,6 +1085,47 @@ export const dateContent: Record<string, ToolContent> = {
         ],
       },
       {
+        heading: 'Dates and Times Together: ISO 8601 and RFC 3339',
+        blocks: [
+          { type: 'p', text: 'When a date carries a time, ISO 8601 joins the two with a capital T: 2026-11-04T09:30:00. A zone marker then fixes the instant — Z for UTC, or an offset such as +01:00 for local time — so 2026-11-04T09:30:00Z and 2026-11-04T10:30:00+01:00 describe the same moment in two different local readings.' },
+          { type: 'p', text: 'RFC 3339, the Internet Engineering Task Force profile of ISO 8601, is the form you meet in APIs, logs, and JSON payloads. It narrows ISO 8601 to one complete, unambiguous layout — four-digit year, full date, 24-hour clock, and a mandatory zone — so two programs can never disagree about what a timestamp means. Calendar files follow the same philosophy: RFC 5545 stores an all-day date in the basic ISO form without separators, for example 20261104 for 4 November 2026.' },
+          { type: 'p', text: 'This converter works on the date portion of any of those layouts. To move a full timestamp between zones, use the [Time Zone Converter](/time/time-zone-converter) — it applies the offset arithmetic that a date-only tool deliberately skips.' },
+        ],
+      },
+      {
+        heading: 'Format Comparison: Which Layout to Use Where',
+        blocks: [
+          { type: 'p', text: 'Written-month forms — 4 November 2026 or November 4, 2026 — are the safest for human readers, because there is no pair of numbers to misread. The numeric forms are compact, which is exactly what makes them risky across borders.' },
+          {
+            type: 'table',
+            headers: ['Format', 'Pattern', 'Example (4 November 2026)', 'Best used for', 'Risk'],
+            rows: [
+              ['ISO 8601 extended', 'YYYY-MM-DD', '2026-11-04', 'Databases, APIs, filenames, sorting', 'Low — year first, no ambiguity'],
+              ['ISO 8601 basic', 'YYYYMMDD', '20261104', 'File names, batch IDs, calendar files', 'Low — harder for humans to scan'],
+              ['US month first', 'MM/DD/YYYY', '11/04/2026', 'US forms and correspondence', 'High outside the US'],
+              ['European day first', 'DD/MM/YYYY', '04/11/2026', 'UK, EU and most other forms', 'High outside those regions'],
+              ['Written month', 'D Month YYYY', '4 November 2026', 'Contracts, cross-border documents', 'Low — unambiguous in that language'],
+            ],
+          },
+          { type: 'p', text: 'Sorting is the quiet advantage of ISO: the year comes first and every field is fixed width, so plain text sorting of ISO dates is already chronological. Lexicographic sorting of 11/04/2026 and 04/11/2026 mixes them up completely, which is why exports and filenames are safer in YYYY-MM-DD.' },
+        ],
+      },
+      {
+        heading: 'Common Date Data-Entry and Import Mistakes',
+        blocks: [
+          {
+            type: 'ul',
+            items: [
+              'Reading a slashed date in the wrong order. 03/04/2026 is 4 March to a US reader and 3 April to most others — a 30-day error that no validation catches.',
+              'Letting a spreadsheet guess the layout. Importing 04.05.2026 into a workbook set to a US locale stores 4 May; format the column as text, or export ISO, before importing.',
+              'Two-digit years. 01/02/03 can be read as 2001, 2002, or 2003 depending on the system\'s pivot year. Four-digit years remove the question entirely.',
+              'Accepting rolled-over dates. Some tools silently turn 2026-02-30 into 2 March; this converter rejects the input instead, so a typo surfaces immediately.',
+              'Assuming a filename sorts chronologically. report-4-5-2026.txt does not order by date; report-2026-05-04.txt does.',
+            ],
+          },
+        ],
+      },
+      {
         heading: 'Related Tools',
         blocks: [
           { type: 'p', text: 'Check the weekday of the resolved date with the [Day of the Week Calculator](/calendar/day-of-week), move it by a duration with [Add Days to Date](/calculators/add-days), and see which ordinal day of the year it is with the [Day of Year Calculator](/calendar/day-of-year).' },
@@ -942,6 +1140,13 @@ export const dateContent: Record<string, ToolContent> = {
       ['Can the converter read dates like "3 Oct 2026" or "October 3, 2026"?', 'Yes. Written month names are unambiguous, so they are accepted directly in either day-first or month-first phrasing.'],
       ['Does it accept times too?', 'No. This tool converts date layouts only. For date and time values across zones, use the [Time Zone Converter](/time/time-zone-converter).'],
       ['Why does my imported date keep shifting by months?', 'The file was probably written day-first and read month-first, or the reverse. Re-export in ISO 8601 and the shifts stop.'],
+      ['Why do databases and filenames prefer YYYY-MM-DD?', 'Because it is the only common layout where text order matches chronological order: the year leads and every component is fixed width, so sorting strings sorts dates. It is also the ISO 8601 standard form, so any system that parses it knows exactly what it received — no day/month guessing, no locale settings.'],
+      ['What is the difference between ISO 8601 and RFC 3339?', 'ISO 8601 is the international standard covering dates, times, and intervals in many representations. RFC 3339 is the IETF profile that selects one of them for Internet protocols: a complete date, a capital T, a 24-hour time, and a mandatory Z or numeric offset. If you store API timestamps, RFC 3339 is the form to write.'],
+    ],
+    sources: [
+      ['ISO — ISO 8601 date and time format', 'https://www.iso.org/iso-8601-date-and-time-format.html'],
+      ['RFC 3339 — Date and Time on the Internet: Timestamps', 'https://www.rfc-editor.org/info/rfc3339'],
+      ['RFC 5545 — Internet Calendaring and Scheduling Core Object Specification (iCalendar)', 'https://www.rfc-editor.org/info/rfc5545'],
     ],
   },
 }

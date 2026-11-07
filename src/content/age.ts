@@ -175,7 +175,13 @@ export const ageContent: Record<string, ToolContent> = {
       ['Can I calculate age in months and days only?', 'The result is always given in years, months, and days together, because that is the form that stays unambiguous. If you want a single total, ask the [Days Between Dates calculator](/calculators/days-between-dates) for the days between the birth date and the target date.'],
       ['How are leap-day birthdays handled?', 'In a leap year the birthday is 29 February. In a non-leap year this calculator reaches the next birthday on 1 March, so on 28 February the reported age is one day short of the next whole year. The same day-of-month rule applies to anyone born on the 30th or 31st: a completed month is only counted once the day of the month has been reached again.'],
     ],
+    sources: [
+      ['NIST — What Time is It? FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/what-time-it-faqs'],
+      ['US Naval Observatory — Introduction to Calendars', 'https://aa.usno.navy.mil/faq/calendars'],
+      ['Royal Museums Greenwich — Which years are leap years?', 'https://www.rmg.co.uk/stories/time/which-years-are-leap-years-can-you-have-leap-seconds'],
+    ],
   },
+
   'age-difference-calculator': {
     answer: 'An age difference calculator finds the gap between two birth dates in years, months, and days, and reports the total calendar days between them. Enter any two dates of birth — the order does not matter — to see who is older and by exactly how much.',
     intro: [
@@ -282,6 +288,10 @@ export const ageContent: Record<string, ToolContent> = {
       ['Why does another calculator differ by a day?', 'Usually the leap-day or month-borrow convention. DatePilot counts a month only once the day-of-month is reached again, and reaches 29 February birthdays on 1 March in non-leap years. Check the other tool\'s stated rule and adjust by one day if needed.'],
       ['Does the total-days line include leap days?', 'Yes. Every calendar day between the two dates is counted, including 29 February. That is why a five-year gap can total 1,826 days rather than 1,825.'],
       ['Can I enter dates in the future?', 'Yes. Both fields are plain calendar dates, so the tool works for planned dates too — for example, the gap between two expected dates. The earlier date is always reported as the older side.'],
+    ],
+    sources: [
+      ['NIST — What Time is It? FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/what-time-it-faqs'],
+      ['US Naval Observatory — Introduction to Calendars', 'https://aa.usno.navy.mil/faq/calendars'],
     ],
   },
 }

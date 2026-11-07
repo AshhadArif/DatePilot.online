@@ -50,6 +50,9 @@ const guides: Page[] = [
   ['daylight-saving-time', 'Daylight Saving Time Explained', 'Learn how clock changes affect local times.'],
   ['date-time-formats', 'Date and Time Formats', 'Choose a format that avoids ambiguity across regions.'],
   ['calendar-systems', 'Calendar Systems Explained', 'Understand the Gregorian calendar used by these tools.'],
+  ['leap-seconds', 'Leap Seconds Explained', 'Why leap seconds were added, how UTC handles them, and why they are ending in 2027.'],
+  ['unix-time', 'Unix Time Explained', 'How epoch timestamps count seconds since 1970, the 2038 problem, and leap-second handling.'],
+  ['week-numbering-systems', 'Week Numbering Systems Explained', 'ISO 8601 versus US conventions, first-day-of-week, week 1 rules, and 52- versus 53-week years.'],
 ].map(([slug, title, description]) => ({ slug, title, description }))
 
 const toolPath = (tool: Tool) => tool.category === 'Calendar' ? `/calendar/${tool.slug}` : tool.category === 'Time' ? `/time/${tool.slug}` : tool.category === 'Convert' ? `/converters/${tool.slug}` : `/calculators/${tool.slug}`
@@ -723,6 +726,12 @@ function ToolPage({ tool, go }: { tool: Tool; go: (path: string) => void }) {
       <h2>Related Guides</h2>
       <div className="link-grid">{content.guideSlugs.map((slug) => { const guide = guides.find((item) => item.slug === slug); return guide ? <NavLink className="related" key={slug} to={`/guides/${slug}`} go={go}>{guide.title} ↗</NavLink> : null })}</div>
     </section>
+    {content.sources && content.sources.length > 0 && <section className="seo-content">
+      <h2>Standards and sources behind this tool</h2>
+      <ul className="source-list">
+        {content.sources.map(([label, url]) => <li key={url}><a href={url} target="_blank" rel="noopener noreferrer">{label}</a></li>)}
+      </ul>
+    </section>}
     {content.faqs.length > 0 && <section className="seo-content">
       <h2>Frequently Asked Questions</h2>
       {content.faqs.map(([question, answer]) => <div key={question} className="faq-item">
@@ -792,7 +801,24 @@ function GuidePage({ guide, go }: { guide: Page; go: (path: string) => void }) {
     <h1>{guide.title}</h1>
     {reviewedLine(`/guides/${guide.slug}`)}
     <p className="lead">{content.answer}</p>
-    {content.sections.map(([heading, paragraph]) => <section className="seo-content" key={heading}><h2>{heading}</h2><p>{paragraph}</p></section>)}
+    {content.sections.map(([heading, paragraph]) => <section className="seo-content" key={heading}>
+      <h2>{heading}</h2>
+      {paragraph.split('\n\n').map((chunk) => <p key={chunk}><RichText text={chunk} go={go} /></p>)}
+    </section>)}
+    {content.faq && content.faq.length > 0 && <section className="seo-content">
+      <h2>Frequently Asked Questions</h2>
+      {content.faq.map(([question, answer]) => <div key={question} className="faq-item">
+        <h3>{question}</h3>
+        <p><RichText text={answer} go={go} /></p>
+      </div>)}
+    </section>}
+    {content.sources && content.sources.length > 0 && <section className="seo-content">
+      <h2>Sources and further reading</h2>
+      <p>These standards, databases, and reference works back up the rules explained on this page. Each link opens the original source.</p>
+      <ul className="source-list">
+        {content.sources.map(([label, url]) => <li key={url}><a href={url} target="_blank" rel="noopener noreferrer">{label}</a></li>)}
+      </ul>
+    </section>}
     {relatedTools.length > 0 && <section className="seo-content">
       <h2>Related DatePilot Tools</h2>
       <div className="link-grid">{relatedTools.map((tool) => <NavLink className="related" key={tool.slug} to={toolPath(tool)} go={go}>{tool.title} ↗</NavLink>)}</div>

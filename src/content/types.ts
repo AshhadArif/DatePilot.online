@@ -11,6 +11,8 @@ export type Block =
 
 export type Section = { heading: string; blocks: Block[] }
 
+export type SourceLink = [label: string, url: string]
+
 export type ToolContent = {
   answer: string
   intro: string[]
@@ -19,10 +21,13 @@ export type ToolContent = {
   guideSlugs: string[]
   related: string[]
   faqs: [string, string][]
+  sources?: SourceLink[]
 }
 
 export type GuideContent = {
   answer: string
   sections: [string, string][]
   toolSlugs: string[]
+  faq?: [string, string][]
+  sources?: SourceLink[]
 }

@@ -37,6 +37,9 @@ export const calendarContent: Record<string, ToolContent> = {
           },
           { type: 'p', text: 'For example, if 1 January 2026 is a Thursday, then 8 January, 15 January, and every subsequent multiple of 7 is also a Thursday. A date 10 days later is Thursday plus 10, which wraps around the seven-day cycle to Sunday.' },
           { type: 'p', text: 'The hard part is step one — total days — because February and the 31-day months vary. Calendar algorithms such as Zeller\'s congruence solve it arithmetically, and this calculator uses the equivalent date-based approach.' },
+          { type: 'h3', text: 'Worked example' },
+          { type: 'p', text: 'Take 7 November 2026. From Thursday 1 January 2026 the date is the 311th day of the year, so 310 days separate the two dates. 310 ÷ 7 leaves a remainder of 2, so step forward two weekdays from Thursday: Friday, Saturday. 7 November 2026 is a Saturday.' },
+          { type: 'p', text: 'Verification matters as much as the calculation. Three strategies catch almost every mistake: compare against a weekday you already trust, such as today\'s date read from a clock; run the method a second way — the remainder approach above, the doomsday method below, or a printed calendar — and require both answers to agree; and apply the sanity rules, which never fail: adding 7 days never changes a weekday, adding 1 day always moves to the next one, and any date that exists in both years falls on the same weekday exactly 400 years apart.' },
         ],
       },
       {
@@ -81,6 +84,50 @@ export const calendarContent: Record<string, ToolContent> = {
           { type: 'p', text: 'The calendar rules behind this, including which century years are leap years, are set out in the [Leap Year Calculator](/calendar/leap-year).' },
         ],
       },
+      {
+        heading: 'The 400-Year Gregorian Cycle',
+        blocks: [
+          { type: 'p', text: 'Weekday patterns repeat because the Gregorian calendar itself repeats. A 400-year span contains exactly 146,097 days: 400 × 365 ordinary days plus 97 leap days, because every 400-year cycle contains 97 leap years — one every four years, minus the three century years that are not divisible by 400.' },
+          { type: 'p', text: '146,097 ÷ 7 = 20,871 weeks with no remainder, so four centuries are a whole number of weeks. Every date therefore returns to the same weekday after 400 years: 1 January 2000 was a Saturday, so 1 January 2400 is a Saturday too, and 1 January 1600 was a Saturday as well. The same total defines the average Gregorian year, 146,097 ÷ 400 = 365.2425 days.' },
+          { type: 'p', text: 'A shorter 28-year repeat also holds inside stretches of years with no skipped century leap year — 1901 to 2099 is the classic example, where 1 January 1998 and 1 January 2026 are both Thursdays. The rule you can rely on anywhere, though, is the 400-year cycle: two dates exactly 400 years apart that exist in both years always share a weekday.' },
+        ],
+      },
+      {
+        heading: 'The Doomsday Method: Anchor Days',
+        blocks: [
+          { type: 'p', text: 'The fastest manual method is John Conway\'s doomsday algorithm. Each year has one "doomsday" weekday shared by an easy-to-remember list of dates: the last day of February (28 February in a common year, 29 February in a leap year), 4/4, 6/6, 8/8, 10/10, 12/12, 5/9, 9/5, 7/11 and 11/7 — written as month/day.' },
+          {
+            type: 'ol',
+            items: [
+              'Find the century anchor: the 1900s anchor is Wednesday, the 2000s Tuesday, the 2100s Sunday, the 2200s Friday, the 2300s Wednesday and the 2400s Tuesday — a pattern that repeats every 400 years (the 1600s anchor is Tuesday as well).',
+              'Add the year\'s last two digits and the number of complete fours inside them, then take the remainder on division by 7.',
+              'Count that many days forward from the anchor; that weekday is the year\'s doomsday.',
+              'Move to the nearest doomsday date on a calendar and count day by day to the date you want.',
+            ],
+          },
+          { type: 'p', text: 'Worked example, 2026: 26 + 6 = 32, and 32 ÷ 7 leaves 4. Tuesday plus 4 days is Saturday, so every doomsday date in 2026 falls on a Saturday — including 11 July (7/11) and 7 November (11/7).4 July is exactly one week before 11 July, so Independence Day 2026 is a Saturday too, which is a quick way to check the whole year.' },
+          { type: 'p', text: 'Worked example across centuries, 4 July 1776: the 1700s share their anchor with the 2100s, because anchors repeat every 400 years, so the anchor is Sunday. 76 + 19 = 95, and 95 ÷ 7 leaves 4; Sunday plus 4 days is Thursday. That makes 11 July 1776 a Thursday and 4 July 1776 a Thursday as well — matching the historical record for the declaration of independence.' },
+        ],
+      },
+      {
+        heading: 'Worked Examples Across the Centuries',
+        blocks: [
+          { type: 'p', text: 'The same rules cover proleptic dates from before the Gregorian reform and dates centuries apart. Each row can be re-derived from an anchor day:' },
+          {
+            type: 'table',
+            headers: ['Date', 'Weekday', 'Cross-check'],
+            rows: [
+              ['4 July 1776', 'Thursday', 'Doomsday of 1776 is Thursday; 4 July is one week before 7/11'],
+              ['20 July 1969', 'Sunday', 'Apollo 11 landing, a widely documented Sunday'],
+              ['1 January 1900', 'Monday', '28 February 1900 was a Wednesday; 58 days earlier is Monday'],
+              ['1 January 2000', 'Saturday', '29 February 2000 was a Tuesday; 59 days earlier is Saturday'],
+              ['1 January 2100', 'Friday', '28 February 2100 is a Sunday; 58 days earlier is Friday'],
+              ['1 January 2400', 'Saturday', 'Exactly 400 years after 1 January 2000'],
+            ],
+          },
+          { type: 'p', text: 'Two rows also test the century leap rule: 1900 and 2100 are common years with no 29 February, while 2000 and 2400 are leap years. Whether the year contains that day is exactly what the [Leap Year Calculator](/calendar/leap-year) decides, and it is the input every method here depends on.' },
+        ],
+      },
     ],
     guideSlugs: ['day-of-week', 'calendar-systems', 'week-numbers'],
     related: ['week-number', 'leap-year', 'days-between-dates', 'working-days'],
@@ -89,6 +136,13 @@ export const calendarContent: Record<string, ToolContent> = {
       ['Is the weekday the same in every time zone?', 'Yes. A calendar date has one weekday worldwide. A moment near midnight can be a different date in another zone, but each of those dates keeps its own fixed weekday.'],
       ['Why does my birthday fall on a different weekday every year?', 'A common year has 365 days — 52 weeks and 1 day — so the anniversary moves forward one weekday. In the year after a leap year it can move by two.'],
       ['What about dates before the Gregorian calendar was adopted?', 'This calculator works proleptically, applying Gregorian rules to all dates. For dates before a country switched calendars, the historical weekday may differ by several days.'],
+      ['What is the doomsday method?', 'A mental shortcut devised by John Conway. Each year has one "doomsday" weekday shared by memorable dates such as the last day of February, 4/4, 6/6, 8/8, 10/10 and 12/12. You derive it from the century anchor plus a small sum, then count day by day to your target date.'],
+      ['Do weekdays repeat on a cycle?', 'Yes. The Gregorian calendar repeats exactly every 400 years — 146,097 days, which is 20,871 whole weeks — so any date that exists in both years falls on the same weekday 400 years apart. Inside periods with no skipped century leap year, such as 1901–2099, the pattern also repeats every 28 years.'],
+    ],
+    sources: [
+      ['US Naval Observatory — Julian Date Converter', 'https://aa.usno.navy.mil/data/JulianDate'],
+      ['US Naval Observatory — Introduction to Calendars', 'https://aa.usno.navy.mil/faq/calendars'],
+      ['Royal Museums Greenwich — Why seven days in a week?', 'https://www.rmg.co.uk/stories/time/why-12-months-year-seven-days-week-or-60-minutes-hour'],
     ],
   },
 
@@ -190,6 +244,49 @@ export const calendarContent: Record<string, ToolContent> = {
           { type: 'p', text: 'The deeper rules, including the ISO week-date format 2026-W40-1, are explained in [ISO week date](/guides/iso-week-date).' },
         ],
       },
+      {
+        heading: '52-Week and 53-Week Years',
+        blocks: [
+          { type: 'p', text: 'Every year has 52 or 53 ISO weeks, and the rule is short: a year has 53 weeks when 1 January falls on a Thursday, or on a Wednesday in a leap year. 1 January 2026 is a Thursday, so 2026 has 53 weeks; 1 January 2027 is a Friday, so 2027 has only 52.' },
+          {
+            type: 'table',
+            headers: ['Year', '1 January falls on', 'ISO weeks'],
+            rows: [
+              ['2020', 'Wednesday (leap year)', '53'],
+              ['2025', 'Wednesday', '52'],
+              ['2026', 'Thursday', '53'],
+              ['2027', 'Friday', '52'],
+              ['2032', 'Thursday', '53'],
+            ],
+          },
+          { type: 'p', text: 'The long-run average is 52.1775 weeks per year: 400 years contain exactly 20,871 weeks, and 71 of those 400 years are 53-week years. A 53-week year simply extends at the end, so its final week runs from late December into early January — which is exactly why 1 January 2027 sits in week 53 of 2026 while still being day 1 of 2027.' },
+        ],
+      },
+      {
+        heading: 'Spreadsheet Pitfalls: WEEKNUM vs ISOWEEKNUM',
+        blocks: [
+          { type: 'p', text: 'Spreadsheets ship two different week-numbering systems behind similar-looking functions. Excel\'s WEEKNUM defaults to "system 1": the week containing 1 January is week 1, and weeks start on Sunday. ISO 8601 numbering — Monday start, week 1 is the week containing the year\'s first Thursday — comes from ISOWEEKNUM, or from WEEKNUM with return type 21.' },
+          {
+            type: 'table',
+            headers: ['Formula', 'Returns for 1 January 2027', 'What it means'],
+            rows: [
+              ['=WEEKNUM(DATE(2027,1,1))', '1', 'Week 1 of system 1 — the week containing 1 January'],
+              ['=ISOWEEKNUM(DATE(2027,1,1))', '53', 'ISO week 53 of week-year 2026'],
+              ['=WEEKNUM(DATE(2027,1,1),21)', '53', 'The same ISO answer via return type 21'],
+            ],
+          },
+          { type: 'p', text: 'The gap between 1 and 53 at a year boundary is the classic off-by-one: default WEEKNUM never moves a January date into the previous year, so it disagrees with every ISO-based report during the first days of January — and again in late December, when ISO numbering has already crossed into the next week-year. A second trap is grouping rows by calendar year plus week number: 1 January 2027 belongs to week-year 2026, so group on the week-year returned here, not on the date\'s calendar year.' },
+          { type: 'note', text: 'When a dashboard and this calculator disagree at New Year, check which system the dashboard uses before assuming either one is wrong.' },
+        ],
+      },
+      {
+        heading: 'Fiscal Weeks and Retail Calendars',
+        blocks: [
+          { type: 'p', text: 'Some organisations ignore month lengths entirely and count the year in whole weeks: 52 weeks, or 364 days, with a 53rd week added occasionally to keep the calendar aligned. The best-known example is the retail 4-5-4 calendar, whose months run four, five and four weeks so that comparable months always contain the same number of weekends.' },
+          { type: 'p', text: 'In that layout each quarter is exactly 13 weeks — 91 days — so four quarters total 364 days, and the leftover day forces a 53rd week roughly every five to six years; the National Retail Federation lists 2017 and 2023 as recent 53-week retail years. Fiscal weeks like these are a different system from ISO weeks: a date can sit in ISO week 1 of 2027 while still being inside fiscal week 52 of a retail year that began in late January or February.' },
+          { type: 'p', text: 'Whichever system you use, label the year as well as the number. The [Week Number Calculator](/calendar/week-number) at the top of this page returns both, and the [Day of the Week calculator](/calendar/day-of-week) gives the weekday inside any week you pick.' },
+        ],
+      },
     ],
     guideSlugs: ['week-numbers', 'iso-week-date', 'day-of-week'],
     related: ['day-of-week', 'quarter-calculator', 'leap-year', 'day-of-year'],
@@ -199,6 +296,15 @@ export const calendarContent: Record<string, ToolContent> = {
       ['Why does my date show week 53?', 'Because its year has 53 ISO weeks, which happens when 1 January is a Thursday, or a Wednesday in a leap year. 2026 is such a year.'],
       ['Do weeks start on Sunday or Monday?', 'In ISO 8601, Monday. Some regional calendars start on Sunday, which produces different week numbers near year boundaries.'],
       ['What does ISO week 2026-W40 mean?', 'It is the ISO week-date format: year, W for week, and the week number — here week 40 of 2026, which runs from Monday 28 September to Sunday 4 October 2026.'],
+      ['Why does Excel show a different week number?', 'Excel\'s WEEKNUM defaults to a system where the week containing 1 January is week 1 and weeks start on Sunday. ISO 8601 uses Monday-start weeks anchored on the year\'s first Thursday. Use ISOWEEKNUM, or WEEKNUM(date, 21), to match this calculator.'],
+      ['Are there always 52 weeks in a year?', 'No. A year has 52 or 53 ISO weeks — 53 when 1 January is a Thursday, or a Wednesday in a leap year. Across 400 years the average is 52.1775 weeks, and exactly 71 of those 400 years contain 53 weeks.'],
+    ],
+    sources: [
+      ['ISO — ISO 8601 date and time format', 'https://www.iso.org/iso-8601-date-and-time-format.html'],
+      ['ISO — ISO 8601-1:2019 Date and time', 'https://www.iso.org/standard/70907.html'],
+      ['Microsoft Support — WEEKNUM function', 'https://support.microsoft.com/en-us/excel/functions/weeknum-function'],
+      ['Microsoft Support — ISOWEEKNUM function', 'https://support.microsoft.com/en-us/excel/functions/isoweeknum-function'],
+      ['National Retail Federation — 4-5-4 Calendar', 'https://nrf.com/resources/4-5-4-calendar'],
     ],
   },
 
@@ -272,6 +378,7 @@ export const calendarContent: Record<string, ToolContent> = {
             ],
           },
           { type: 'p', text: 'All of the site\'s calculators handle this automatically — see the [Age Calculator](/calculators/age-calculator) and [Days Between Dates](/calculators/days-between-dates) for the two most common cases.' },
+          { type: 'p', text: 'Worked example: the span from 1 January 2000 to 1 January 2001 is 366 days because it crosses 29 February 2000, while 1 January 1900 to 1 January 1901 is only 365 days, because 1900 had no leap day. That single-day difference is what makes age, contract, and interval calculations drift when a leap day sits inside the range.' },
         ],
       },
       {
@@ -297,6 +404,39 @@ export const calendarContent: Record<string, ToolContent> = {
           { type: 'p', text: 'For the calendar system these rules belong to, including how other cultures structure their years, see [Calendar Systems](/guides/calendar-systems).' },
         ],
       },
+      {
+        heading: 'The Century Exception in Numbers',
+        blocks: [
+          { type: 'p', text: 'The three-rule test is arithmetic bookkeeping for the solar year. A tropical year is approximately 365.2422 days long, so a calendar that adds a leap day every four years averages 365.25 days — about 0.0078 days too long each year. Over a century that surplus is a little more than three quarters of a day, which is why the Julian calendar was roughly ten days out of step by 1582.' },
+          { type: 'p', text: 'The Gregorian average is 365 + 1/4 − 1/100 + 1/400 = 365.2425 days: add a day every four years, skip three every four centuries, and the leftover fraction comes to 365.2425. Set against the approximate tropical year of 365.2422 days, the residual is about 0.0003 days per year — on the order of one day every few thousand years, far slower than any civil drift that matters.' },
+          { type: 'p', text: 'In practice the century rule deletes three leap days every 400 years: 1700, 1800 and 1900 were skipped, 2100, 2200 and 2300 will be, while 2000 and 2400 keep theirs. That is the entire difference between the Julian and Gregorian leap-year rules.' },
+        ],
+      },
+      {
+        heading: 'Worked Examples: 1900, 2000, 2100, 2400',
+        blocks: [
+          { type: 'p', text: 'Run each year through the rules in order — divisible by 4, then by 100, then by 400 — and the pattern is clear:' },
+          {
+            type: 'table',
+            headers: ['Year', '÷ 4', '÷ 100', '÷ 400', 'Result', 'Checked fact'],
+            rows: [
+              ['1900', 'Yes', 'Yes', 'No', 'Common year, 365 days', '28 February 1900 was a Wednesday; there was no 29 February'],
+              ['2000', 'Yes', 'Yes', 'Yes', 'Leap year, 366 days', '29 February 2000 was a Tuesday'],
+              ['2100', 'Yes', 'Yes', 'No', 'Common year, 365 days', '1 March 2100 falls on a Monday'],
+              ['2400', 'Yes', 'Yes', 'Yes', 'Leap year, 366 days', '29 February 2400 falls on a Tuesday'],
+            ],
+          },
+          { type: 'p', text: '2100 is the next year the exception changes anything: it is the first skipped leap year since 1900, so 29 February 2100 never happens and 1 March arrives one weekday later than a leap-year calendar would place it. 2400 restores the pattern at the close of the 400-year cycle, and the whole sequence then repeats.' },
+        ],
+      },
+      {
+        heading: 'From Julian to Gregorian',
+        blocks: [
+          { type: 'p', text: 'The Julian calendar, established by Julius Caesar in 46 BCE, intercalated a leap day every fourth year for an average of 365.25 days — simple, but about 0.0078 days per year longer than the tropical year. Centuries of that surplus pushed the seasons away from their dates until, by the sixteenth century, the calendar ran around ten days ahead of the equinox.' },
+          { type: 'p', text: 'Pope Gregory XIII\'s reform of 1582, announced in the papal bull Inter gravissimas, fixed both problems at once: it dropped ten calendar days and added the century rule. In the papal states, Thursday 4 October 1582 under the Julian calendar was followed immediately by Friday 15 October 1582 under the Gregorian one — ten dates vanished, but the weekdays themselves never broke, because the days ran continuously through the jump.' },
+          { type: 'p', text: 'Adoption then spread slowly across Europe and the world: Catholic countries in 1582, Britain and its colonies in 1752 with an eleven-day drop (Wednesday 2 September was followed by Thursday 14 September), Russia in 1918, and Greece in 1923. Through every switch the seven-day week continued uninterrupted — see the [Day of the Week calculator](/calendar/day-of-week) — and the leap-day rule settled into the three-step test above.' },
+        ],
+      },
     ],
     guideSlugs: ['leap-years', 'calendar-systems', 'how-to-calculate-age'],
     related: ['age-calculator', 'day-of-year', 'week-number', 'day-of-week'],
@@ -306,6 +446,15 @@ export const calendarContent: Record<string, ToolContent> = {
       ['Why are century years not leap years?', 'Because the solar year is slightly shorter than 365.25 days. Dropping three century leap years every four centuries keeps the calendar aligned with the seasons.'],
       ['How many days are in a leap year?', '366. The extra day is 29 February.'],
       ['Does a leap year happen every 4 years?', 'Almost always — with the exception of century years that are not divisible by 400, such as 1900 and 2100.'],
+      ['When does the century rule matter next?', 'In 2100. It is divisible by 100 but not by 400, so it will be a common year of 365 days and 29 February 2100 will not exist. The previous skipped leap years were 1900, 1800 and 1700; the next century years that will count are 2400 and 2800.'],
+      ['How accurate is the Gregorian leap year rule?', 'The calendar averages 365.2425 days against an approximate tropical year of 365.2422 days. The gap of about 0.0003 days per year adds up to roughly one day every few thousand years — accurate enough for civil purposes for millennia, so no further adjustment is planned.'],
+    ],
+    sources: [
+      ['US Naval Observatory — Leap Years', 'https://aa.usno.navy.mil/faq/leap_years'],
+      ['US Naval Observatory — Introduction to Calendars', 'https://aa.usno.navy.mil/faq/calendars'],
+      ['NIST — Leap Seconds FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/leap-seconds-faqs'],
+      ['Royal Museums Greenwich — Which years are leap years?', 'https://www.rmg.co.uk/stories/time/which-years-are-leap-years-can-you-have-leap-seconds'],
+      ['Britannica — Gregorian calendar', 'https://www.britannica.com/topic/Gregorian-calendar'],
     ],
   },
   'quarter-calculator': {
@@ -388,6 +537,49 @@ export const calendarContent: Record<string, ToolContent> = {
           { type: 'p', text: 'Check the year itself with the [Leap Year Calculator](/calendar/leap-year), find ordinal dates with the [Day of Year Calculator](/calendar/day-of-year), and build repeating quarterly schedules with the [Recurring Date Calculator](/calculators/recurring-date-calculator).' },
         ],
       },
+      {
+        heading: 'Worked Example: A Fiscal Year Starting in April',
+        blocks: [
+          { type: 'p', text: 'Set the fiscal start month to April and the calculator rebuilds the year around that anchor. For a fiscal year whose first quarter begins on 1 April 2026:' },
+          {
+            type: 'table',
+            headers: ['Quarter', 'Start', 'End', 'Days'],
+            rows: [
+              ['Q1', '1 April 2026 (Wednesday)', '30 June 2026 (Tuesday)', '91'],
+              ['Q2', '1 July 2026 (Wednesday)', '30 September 2026 (Wednesday)', '92'],
+              ['Q3', '1 October 2026 (Thursday)', '31 December 2026 (Thursday)', '92'],
+              ['Q4', '1 January 2027 (Friday)', '31 March 2027 (Wednesday)', '90'],
+            ],
+          },
+          { type: 'p', text: 'The four quarters total 365 days, but they are not equal: Q4 is short because 2027 is a common year with a 28-day February, and Q1 is long because it contains 30-day June instead of February. Fiscal labelling then varies by convention — the United States federal fiscal year runs 1 October to 30 September and is named for the calendar year in which it ends. If an April-anchored organisation labels the same way, the quarter above belongs to fiscal year 2027, the year ending 31 March 2027, even though it starts in 2026. Always state the dates, not just the label.' },
+        ],
+      },
+      {
+        heading: 'Day Counts per Quarter and the 91-Day Assumption',
+        blocks: [
+          { type: 'p', text: 'Calendar quarters are never all the same length. February alone makes Q1 the shortest, and the leap day sometimes repairs it:' },
+          {
+            type: 'table',
+            headers: ['Quarter', 'Common year', 'Leap year'],
+            rows: [
+              ['Q1 (Jan–Mar)', '90', '91'],
+              ['Q2 (Apr–Jun)', '91', '91'],
+              ['Q3 (Jul–Sep)', '92', '92'],
+              ['Q4 (Oct–Dec)', '92', '92'],
+            ],
+          },
+          { type: 'p', text: 'The most common planning mistake is assuming every quarter has 91 days. Four quarters of 91 days total 364 — one day short of a common year and two short of a leap year — so any schedule built on 91-day quarters drifts behind the real quarter ends year after year. The second mistake is comparing periods of unequal length without normalising: a 92-day Q3 carries about two percent more calendar days than a 90-day Q1, which visibly distorts per-day revenue, utilisation, and run-rate figures.' },
+          { type: 'p', text: 'Use the calculator\'s actual day counts for any per-day metric, or convert the totals to a daily rate before comparing quarters.' },
+        ],
+      },
+      {
+        heading: 'How Quarter Boundaries Shift Reporting',
+        blocks: [
+          { type: 'p', text: 'Quarter ends move through the week: 31 March 2026 is a Tuesday, 31 March 2027 is a Wednesday, and the date shifts again the year after. Each shift changes how many working days sit inside the close window, how long a quarter-end review takes, and whether a cut-off lands on a weekend.' },
+          { type: 'p', text: 'Boundaries also move across holidays and month-length patterns, so "the same quarter last year" is not automatically comparable. Q1 2026 has 90 days and Q1 2027 has 90 as well, but Q1 2028 — which contains a leap-day February — has 91. Year-over-year comparisons should therefore be normalised per day or aligned to equal-length windows.' },
+          { type: 'p', text: 'Organisations that report by week anchor these windows to Monday or Sunday instead, which is where [ISO week numbers](/calendar/week-number) and the [Working Days Calculator](/calculators/working-days) come in: count the business days between the boundaries the calculator hands you.' },
+        ],
+      },
     ],
     guideSlugs: ['calendar-systems', 'week-numbers'],
     related: ['week-number', 'day-of-year', 'leap-year', 'working-days'],
@@ -397,6 +589,14 @@ export const calendarContent: Record<string, ToolContent> = {
       ['What is the difference between calendar and fiscal quarters?', 'Calendar quarters always start in January. Fiscal quarters start in whatever month the organisation\'s financial year begins — April, July, October, or another month.'],
       ['How do I know which quarter a past date was in?', 'Enter the date in the first mode. The calculator returns the quarter label, its full date range, and how much of it had elapsed.'],
       ['Does the calculator count business days in the quarter?', 'No — it counts calendar days. For the working days inside a quarter, enter the quarter start and end dates in the [Working Days Calculator](/calculators/working-days).'],
+      ['Why is Q1 shorter than the other quarters?', 'Because February sits inside it. In a common year, January plus February plus March give Q1 only 90 days, against 91, 92 and 92 for Q2 to Q4. A leap year adds 29 February and lifts Q1 to 91 days — the same length as Q2.'],
+      ['Can a fiscal quarter be exactly 13 weeks?', 'Yes — 13 weeks is 91 days. Week-based calendars, such as the retail 4-5-4 calendar, build quarters from whole weeks: 13 weeks times four is 52 weeks, or 364 days, so a 53rd week is added roughly every five to six years to keep the year aligned.'],
+    ],
+    sources: [
+      ['USAGov — The federal budget process', 'https://www.usa.gov/federal-budget-process'],
+      ['US Treasury — Accounting and Budget FAQs', 'https://home.treasury.gov/subfooter/faqs/accounting-budget-faqs'],
+      ['National Retail Federation — 4-5-4 Calendar', 'https://nrf.com/resources/4-5-4-calendar'],
+      ['Congressional Research Service — Basic Federal Budgeting Terminology', 'https://www.congress.gov/crs-product/98-410'],
     ],
   },
   'day-of-year': {
@@ -459,12 +659,55 @@ export const calendarContent: Record<string, ToolContent> = {
             'Astronomy and publishing use Julian day numbers, a continuous count that is related but not identical to the calendar ordinal.',
           ] },
           { type: 'p', text: 'None of these require the slash-format ambiguity that the [Date Format Converter](/converters/date-format-converter) resolves — ordinal dates carry the year and a single unambiguous number.' },
+          { type: 'h3', text: 'File naming and log sorting in practice' },
+          { type: 'p', text: 'A daily export named report_2026-115.csv sorts before report_2026-275.csv in any alphabetical listing, because fixed-width numbers sort the same way the digits they stand for do. Daily log and backup files work the same way — backup_2026_275.log lands in date order without anyone parsing its name. Two details matter: pad the ordinal to three digits, so day 5 is 005 and not 5, and always keep the year in the name, because the ordinal alone restarts at 001 every January.' },
         ],
       },
       {
         heading: 'Related Tools',
         blocks: [
           { type: 'p', text: 'Group the remainder of the year into reporting periods with the [Quarter Calculator](/calendar/quarter-calculator), confirm the weekday with [Day of the Week](/calendar/day-of-week), and check the year length with [Leap Year](/calendar/leap-year).' },
+        ],
+      },
+      {
+        heading: 'ISO 8601 Ordinal Dates (YYYY-DDD)',
+        blocks: [
+          { type: 'p', text: 'ISO 8601 allows a date to be written as the year followed by the day number: a four-digit year, a hyphen, and a three-digit ordinal padded with leading zeros. 1 January is 001, 31 December is 365 in a common year and 366 in a leap year.' },
+          {
+            type: 'table',
+            headers: ['Ordinal', 'Date', 'Year type'],
+            rows: [
+              ['2026-001', '1 January 2026', 'Common'],
+              ['2026-115', '25 April 2026', 'Common'],
+              ['2026-275', '2 October 2026', 'Common'],
+              ['2026-365', '31 December 2026', 'Common'],
+              ['2028-060', '29 February 2028', 'Leap'],
+            ],
+          },
+          { type: 'p', text: 'Because every value is the same width, ordinal dates sort in true chronological order as plain text — 2026-115 comes before 2026-275 with no date parsing — and they carry no month/day ambiguity at all, which is the problem the [Date Format Converter](/converters/date-format-converter) exists to solve. The basic form drops the hyphen (2026115) but keeps the same fixed width.' },
+        ],
+      },
+      {
+        heading: 'Worked Examples: Counting Day of Year by Hand',
+        blocks: [
+          { type: 'p', text: 'Add the lengths of all preceding months, then the day of the month. For 15 June 2026: 31 (January) + 28 (February) + 31 (March) + 30 (April) + 31 (May) = 151, plus 15 = day 166. For 4 July 2026 the six-month total is 181, so the date is day 185.' },
+          { type: 'p', text: 'In a leap year every ordinal from 1 March onward gains one day: 4 July 2028 is day 186. Two popular reference points move with that shift — day 100 falls on 10 April in a common year but 9 April in a leap year, and Christmas is day 359 in a common year and day 360 in a leap year.' },
+          { type: 'p', text: 'The reverse direction works as well: January through August 2026 total 243 days, so day 271 is 271 − 243 = 28 September — the Monday that starts ISO week 40 of 2026.' },
+        ],
+      },
+      {
+        heading: 'Day of Year vs Week Number',
+        blocks: [
+          { type: 'p', text: 'Ordinal day and ISO week number answer different questions. The ordinal counts from 1 January with no reference to weeks at all; the week number follows the first-Thursday rule and can belong to an entirely different year.' },
+          {
+            type: 'ul',
+            items: [
+              '1 January 2027 is day 1 of 2027 but ISO week 53 of 2026 — the ordinal resets while the week-year has not.',
+              'Week 40 of 2026 runs from Monday 28 September (day 271) to Sunday 4 October (day 277): seven consecutive ordinal days, always.',
+              '31 December 2026 is day 365 and week 53, whereas 1 January 2026 was day 1 and week 1 — the extreme ends of the ordinal scale inside one week-year\'s numbering.',
+            ],
+          },
+          { type: 'p', text: 'Use ordinal dates when you need a position within the year; use the [Week Number Calculator](/calendar/week-number) when you need reporting weeks. Mixing the two up is the usual reason a "week 1" appears to show up in December.' },
         ],
       },
     ],
@@ -476,6 +719,14 @@ export const calendarContent: Record<string, ToolContent> = {
       ['How do I calculate day of year by hand?', 'Add the days of all preceding months, then add the day of the month. After February, remember to add one extra day in a leap year.'],
       ['What is the difference between days left and days remaining?', 'They are the same count: the days from tomorrow through 31 December. The date you enter counts as used, not remaining.'],
       ['Does this count working days to the end of the year?', 'The result includes a Monday-to-Friday count after your date. Public holidays are not removed; use the [Working Days Calculator](/calculators/working-days) when you need to check a specific range.'],
+      ['What is the ISO ordinal date for 25 April 2026?', '2026-115. The format is the year, a hyphen, and the three-digit day number: 25 April is the 115th day of 2026, because January through March total 90 days. In a leap year the same date would be day 116.'],
+      ['What day of the year is Christmas?', 'Day 359 in a common year and day 360 in a leap year. The first eleven months total 334 days in a common year and 335 in a leap year, so 334 + 25 = 359 — with the leap day pushing it to 360.'],
+    ],
+    sources: [
+      ['ISO — ISO 8601 date and time format', 'https://www.iso.org/iso-8601-date-and-time-format.html'],
+      ['ISO — ISO 8601-1:2019 Date and time', 'https://www.iso.org/standard/70907.html'],
+      ['NIST — Timekeeping and clocks FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/timekeeping-and-clocks-faqs'],
+      ['US Naval Observatory — Julian Date Converter', 'https://aa.usno.navy.mil/data/JulianDate'],
     ],
   },
 }

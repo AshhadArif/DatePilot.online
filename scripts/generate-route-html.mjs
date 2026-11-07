@@ -60,6 +60,9 @@ const guideTitles = {
   'daylight-saving-time': 'Daylight Saving Time Explained',
   'date-time-formats': 'Date and Time Formats',
   'calendar-systems': 'Calendar Systems Explained',
+  'leap-seconds': 'Leap Seconds Explained',
+  'unix-time': 'Unix Time Explained',
+  'week-numbering-systems': 'Week Numbering Systems Explained',
 }
 const guideDescriptions = {
   'date-calculations': 'Define the calendar system, counting convention, and units before calculating: exclusive versus inclusive counts, month boundaries, leap days, and daylight saving.',
@@ -76,6 +79,9 @@ const guideDescriptions = {
   'daylight-saving-time': 'How spring-forward and fall-back transitions work, the missing and repeated hours, and how to schedule around them.',
   'date-time-formats': 'ISO 8601, written months, 24-hour times, and how to choose a date format that cannot be misread.',
   'calendar-systems': 'The proleptic Gregorian calendar, its leap-year rule, historical adoption dates, and how other calendar systems differ.',
+  'leap-seconds': 'Why leap seconds keep UTC aligned with Earth\'s rotation, the 1972 system, the decision to end them, and what it means for computing.',
+  'unix-time': 'How epoch timestamps count seconds since 1 January 1970, seconds versus milliseconds, the 2038 problem, and leap-second handling.',
+  'week-numbering-systems': 'ISO 8601 versus US conventions, first-day-of-week, week 1 rules, and 52- versus 53-week years.',
 }
 for (const [slug, title] of Object.entries(guideTitles)) {
   routes[`/guides/${slug}`] = [

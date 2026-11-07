@@ -135,7 +135,12 @@ export const workContent: Record<string, ToolContent> = {
       ['Is a working day the same as a business day?', 'For weekday counting, yes — both mean Monday to Friday. In a legal or banking context a business day may additionally exclude public holidays, which this tool does not remove automatically.'],
       ['Why does my answer differ by one day from another source?', 'Endpoint convention. One count includes the first date, the other excludes it. Compare whether each source counts both endpoints, and adjust by one day to match.'],
     ],
+    sources: [
+      ['US Department of Labor — Wage and Hour Division', 'https://www.dol.gov/agencies/whd'],
+      ['US Bureau of Labor Statistics — Work schedules', 'https://www.bls.gov/opub/ted/2021/what-does-it-mean-to-work-full-time.htm'],
+    ],
   },
+
   'business-date-calculator': {
     answer: 'A business date calculator moves a date forward or backward by a set number of working days, skipping every Saturday and Sunday, and returns the resulting calendar date. It answers questions like "what date is 10 business days from today?" for deadlines, contracts, and delivery estimates.',
     intro: [
@@ -246,6 +251,10 @@ export const workContent: Record<string, ToolContent> = {
       ['What if the start date falls on a weekend?', 'The count simply begins with the next weekday in the chosen direction. Starting on Saturday and adding 1 business day lands on Monday, because Saturday and Sunday are never counted as steps.'],
       ['Is 10 business days always 14 calendar days?', 'No. It is 14 calendar days when you start on a weekday and the window contains two full weekends. Start on a Saturday or Sunday and the same count spans fewer calendar days. The result reports the exact span every time.'],
       ['How is this different from the Working Days Calculator?', 'That tool answers "how many weekdays are in this range?" and returns a count. This tool answers "which date do I land on if I skip weekends?" and returns a date. Use whichever direction your question points.'],
+    ],
+    sources: [
+      ['US Department of Labor — Wage and Hour Division', 'https://www.dol.gov/agencies/whd'],
+      ['US Bureau of Labor Statistics — Work schedules', 'https://www.bls.gov/opub/ted/2021/what-does-it-mean-to-work-full-time.htm'],
     ],
   },
 }

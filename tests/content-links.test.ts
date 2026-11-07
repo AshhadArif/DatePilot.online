@@ -11,9 +11,10 @@ const normalize = (url: string) => (url.length > 1 ? url.replace(/\/$/, '') : ur
 const sitemapPaths = new Set(Object.keys(lastmod))
 
 const toolSlugs = [...read('src/App.tsx').matchAll(/slug: '([a-z0-9-]+)', title/g)].map((match) => match[1])
-const guideSlugs = [...read('src/content/guides.ts').matchAll(/^ {2}'([a-z0-9-]+)': \{/gm)].map((match) => match[1])
+const guideSlugs = [...read('src/App.tsx').matchAll(/^ {2}\['([a-z0-9-]+)', '/gm)].map((match) => match[1])
+const guideFiles = fs.readdirSync(path.join(root, 'src/content/guides')).filter((file) => file.endsWith('.ts') && file !== 'index.ts').map((file) => `src/content/guides/${file}`)
 
-const contentFiles = ['dates.ts', 'age.ts', 'work.ts', 'calendar.ts', 'time.ts', 'guides.ts'].map((file) => `src/content/${file}`)
+const contentFiles = ['dates.ts', 'age.ts', 'work.ts', 'calendar.ts', 'time.ts'].map((file) => `src/content/${file}`).concat(guideFiles)
 
 test('lastmod covers every route with a valid review date', () => {
   assert.ok(sitemapPaths.has('/'), 'lastmod must contain the homepage')
@@ -78,14 +79,27 @@ test('every guideSlugs entry points at a real guide', () => {
 
 test('every guide toolSlugs entry points at a real tool', () => {
   const invalid: string[] = []
-  const text = read('src/content/guides.ts')
-  for (const match of text.matchAll(/toolSlugs: \[([^\]]*)\]/g)) {
-    for (const raw of match[1].split(',')) {
-      const slug = raw.trim().replace(/'/g, '')
-      if (slug && !toolSlugs.includes(slug)) invalid.push(`guides.ts: toolSlugs -> ${slug}`)
+  for (const file of guideFiles) {
+    const text = read(file)
+    for (const match of text.matchAll(/toolSlugs: \[([^\]]*)\]/g)) {
+      for (const raw of match[1].split(',')) {
+        const slug = raw.trim().replace(/'/g, '')
+        if (slug && !toolSlugs.includes(slug)) invalid.push(`${file}: toolSlugs -> ${slug}`)
+      }
     }
   }
   assert.deepEqual(invalid, [], `invalid tool slugs in guides:\n${invalid.join('\n')}`)
+})
+
+test('guide routes, App registry, and content files stay in sync', () => {
+  const files = guideFiles.map((file) => file.split('/').pop()!.replace(/\.ts$/, ''))
+  assert.deepEqual(guideSlugs.slice().sort(), files.slice().sort(), 'App.tsx guide registry must match src/content/guides/*.ts files')
+  for (const slug of guideSlugs) {
+    const text = read(`src/content/guides/${slug}.ts`)
+    assert.match(text, /export const content: GuideContent = \{/, `guide ${slug} must export content`)
+    assert.match(text, /answer: '/, `guide ${slug} must have an answer`)
+    assert.ok((text.match(/^ {4}\['/gm) ?? []).length >= 5, `guide ${slug} needs at least 5 sections`)
+  }
 })
 
 test('robots.txt allows crawling of public pages and blocks internal work areas', () => {
