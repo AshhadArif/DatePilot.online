@@ -57,6 +57,13 @@ const guides: Page[] = [
 
 const toolPath = (tool: Tool) => tool.category === 'Calendar' ? `/calendar/${tool.slug}` : tool.category === 'Time' ? `/time/${tool.slug}` : tool.category === 'Convert' ? `/converters/${tool.slug}` : `/calculators/${tool.slug}`
 const normalize = (path: string) => path.length > 1 ? path.replace(/\/$/, '') : path
+const withSlash = (to: string) => {
+  const queryIndex = to.indexOf('?')
+  const pathPart = queryIndex === -1 ? to : to.slice(0, queryIndex)
+  const query = queryIndex === -1 ? '' : to.slice(queryIndex)
+  const base = pathPart.length > 1 && !pathPart.endsWith('/') ? `${pathPart}/` : pathPart
+  return `${base}${query}`
+}
 const stripLinks = (text: string) => text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
 const SITE_URL = 'https://datepilot.online'
 const CONTACT_EMAIL = 'bazminoadsense2@gmail.com'
@@ -139,7 +146,7 @@ function updateSeo(path: string) {
   if (path === '/') {
     graph.push({
       '@type': 'WebSite', '@id': `${SITE_URL}/#website`, name: 'DatePilot', url: SITE_URL,
-      potentialAction: { '@type': 'SearchAction', target: `${SITE_URL}/calculators?query={search_term_string}`, 'query-input': 'required name=search_term_string' }
+      potentialAction: { '@type': 'SearchAction', target: `${SITE_URL}/calculators/?query={search_term_string}`, 'query-input': 'required name=search_term_string' }
     })
   }
 
@@ -208,7 +215,7 @@ function updateSeo(path: string) {
       builtPath += `/${segment}`
       const segmentSeo = routeSeo(builtPath)
       if (segmentSeo.title !== 'Page Not Found') {
-        breadcrumbItems.push({ position, name: segmentSeo.title.split(' — ')[0].split(' | ')[0], item: `${SITE_URL}${builtPath}` })
+        breadcrumbItems.push({ position, name: segmentSeo.title.split(' — ')[0].split(' | ')[0], item: `${SITE_URL}${builtPath}/` })
         position++
       }
     }
@@ -233,12 +240,12 @@ function useRoute() {
   const [path, setPath] = useState(normalize(window.location.pathname))
   useEffect(() => { const listener = () => setPath(normalize(window.location.pathname)); window.addEventListener('popstate', listener); return () => window.removeEventListener('popstate', listener) }, [])
   useEffect(() => { updateSeo(path) }, [path])
-  const go = useCallback((next: string) => { window.history.pushState({}, '', next); setPath(normalize(next.split('?')[0] || '/')); window.scrollTo({ top: 0, behavior: 'smooth' }) }, [])
+  const go = useCallback((next: string) => { window.history.pushState({}, '', withSlash(next)); setPath(normalize(next.split('?')[0] || '/')); window.scrollTo({ top: 0, behavior: 'smooth' }) }, [])
   return { path, go }
 }
 
 function NavLink({ to, go, children, className }: { to: string; go: (p: string) => void; children: React.ReactNode; className?: string }) {
-  return <a href={to} className={className} onClick={(e) => { e.preventDefault(); go(to) }}>{children}</a>
+  return <a href={withSlash(to)} className={className} onClick={(e) => { e.preventDefault(); go(to) }}>{children}</a>
 }
 
 function Header({ go }: { go: (path: string) => void }) {

@@ -103,7 +103,7 @@ for (const [route, [title, description]] of Object.entries(routes)) {
   if (route === '/') {
     graph.push({
       '@type': 'WebSite', '@id': `${siteUrl}/#website`, name: 'DatePilot', url: siteUrl,
-      potentialAction: { '@type': 'SearchAction', target: `${siteUrl}/calculators?query={search_term_string}`, 'query-input': 'required name=search_term_string' },
+      potentialAction: { '@type': 'SearchAction', target: `${siteUrl}/calculators/?query={search_term_string}`, 'query-input': 'required name=search_term_string' },
     })
   }
   const schemaTag = `<script id="datepilot-schema" type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c')}</script>`
