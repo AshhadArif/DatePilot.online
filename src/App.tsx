@@ -359,7 +359,7 @@ function Header({ go }: { go: (path: string) => void }) {
       <NavLink to="/guides" go={navigate}>Guides</NavLink>
       <NavLink to="/about" go={navigate}>About</NavLink>
     </nav>
-    <NavLink to="/calculators?query=" go={navigate} className="find-button">Find a tool <small>⌘ K</small></NavLink>
+    <NavLink to="/calculators/" go={navigate} className="find-button">Find a tool <small>⌘ K</small></NavLink>
   </header>
 }
 
@@ -1243,7 +1243,7 @@ function App({ initialPath }: { initialPath?: string }) {
     const onKey = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault()
-        if (path !== '/calculators') go('/calculators?query=')
+        if (path !== '/calculators') go('/calculators/')
         else document.getElementById('tool-search')?.focus()
       }
     }
