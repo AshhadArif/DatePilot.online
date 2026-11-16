@@ -1,6 +1,8 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { lastmod } from '../src/content/lastmod.ts'
+import { authorRef, organizationNode, personNode, publisherRef, SITE_LAUNCH_DATE } from '../src/site.ts'
+import { render } from '../.ssr/entry-server.js'
 
 const root = process.cwd()
 const dist = path.join(root, 'dist')
@@ -36,11 +38,16 @@ const routes = {
   '/calculators/deadline-calculator': ['Deadline Calculator — Forward and Reverse Deadline Planning', 'Plan a deadline forward from a start date or backward from a due date, using calendar days or Monday-to-Friday business days.'],
   '/calendar/quarter-calculator': ['Quarter Calculator — Calendar and Fiscal Quarters', 'Find the quarter for any date or the exact dates of any calendar or fiscal quarter, with fiscal year start month and day counts.'],
   '/calendar/day-of-year': ['Day of Year Calculator — Ordinal Date and Days Left in Year', 'See the ordinal day of the year, days remaining, percentage complete, leap-year status, and weekdays left after any date.'],
-  '/about': ['About DatePilot — Our Approach to Date Calculations', 'Learn how DatePilot builds date and time tools, explains its methods, and checks calculation accuracy.'],
+  '/about': ['About DatePilot — Our Approach to Date Calculations', 'Learn who runs DatePilot, how the site is funded, how calculators are checked, and how corrections are handled.'],
+  '/about/author': ['About the Editor — DatePilot', 'Fahad is the founder and editor of DatePilot. Read his role, areas of focus, editorial process, and how to report a correction.'],
+  '/editorial-policy': ['Editorial Standards and Review Process — DatePilot', 'How DatePilot researches, writes, checks, reviews, and corrects its date calculators and guides, including its use of automation.'],
+  '/methodology': ['How DatePilot Tests Its Calculators — Methodology', 'The calculation pipeline, test strategy, reproducible examples, known limitations, and tool-by-tool verification focus behind DatePilot.'],
+  '/changelog': ['DatePilot Changelog — Site and Content History', 'A dated record of material changes to DatePilot calculators, guides, sources, policies, and trust pages.'],
+  '/advertising-policy': ['Advertising and Editorial Independence — DatePilot', 'How DatePilot is funded by Google AdSense, how ads are kept separate from content, and how to control personalised advertising.'],
   '/contact': ['Contact DatePilot — Report Issues and Corrections', 'Report incorrect calculations, broken links, accessibility issues, or other problems with DatePilot.'],
-  '/privacy-policy': ['Privacy Policy — How DatePilot Handles Your Data', 'DatePilot calculators run in your browser. Read how we handle calculator inputs, cookies, and any analytics.'],
-  '/cookie-policy': ['Cookie Policy — Which Cookies DatePilot Uses', 'Learn about essential, analytics, and advertising cookies used by DatePilot when enabled.'],
-  '/terms': ['Terms of Use — DatePilot', 'Read the terms governing use of DatePilot date and time calculation tools.'],
+  '/privacy-policy': ['Privacy Policy — How DatePilot Handles Your Data', 'DatePilot calculators run in your browser. Read how we handle calculator inputs, Google AdSense advertising, cookies, and server logs.'],
+  '/cookie-policy': ['Cookie Policy — Which Cookies DatePilot Uses', 'Learn which first-party and Google AdSense advertising cookies may be set when you use DatePilot, and how to control them.'],
+  '/terms': ['Terms of Use — DatePilot', 'Read the terms governing use of DatePilot date and time calculation tools, including advertising and third-party links.'],
   '/disclaimer': ['Disclaimer — DatePilot', 'DatePilot provides general calculations, not official or legal advice. Read important disclaimers.'],
   '/report-an-error': ['Report an Error — DatePilot', 'Found an incorrect calculation, broken link, or accessibility problem? Report it to DatePilot.'],
 }
@@ -94,20 +101,42 @@ const missingDates = Object.keys(routes).filter((route) => !lastmod[route])
 if (missingDates.length) throw new Error(`Missing lastmod dates for: ${missingDates.join(', ')}`)
 
 const template = fs.readFileSync(templatePath, 'utf8')
+const rootPattern = '<div id="root"><!--ssr-outlet--></div>'
+if (!template.includes(rootPattern)) throw new Error('index.html is missing the SSR outlet inside #root')
+
 for (const [route, [title, description]] of Object.entries(routes)) {
   const canonical = `${siteUrl}${route === '/' ? '/' : `${route}/`}`
-  const schemaType = route.startsWith('/guides/') ? 'Article' : /^\/(calculators|calendar|time|converters)\//.test(route) ? 'WebApplication' : 'WebPage'
-  const graph = [
-    { '@type': schemaType, '@id': `${canonical}#page`, name: title, description, url: canonical, isPartOf: { '@id': `${siteUrl}/#website` }, dateModified: lastmod[route] },
-  ]
+  const schemaType = route === '/about/author' ? 'ProfilePage' : route.startsWith('/guides/') ? 'Article' : /^\/(calculators|calendar|time|converters)\//.test(route) ? 'WebApplication' : 'WebPage'
+  const pageNode = {
+    '@type': schemaType,
+    '@id': `${canonical}#page`,
+    name: title,
+    description,
+    url: canonical,
+    isPartOf: { '@id': `${siteUrl}/#website` },
+    inLanguage: 'en',
+    isAccessibleForFree: true,
+    datePublished: SITE_LAUNCH_DATE,
+    dateModified: lastmod[route],
+    author: authorRef,
+    publisher: publisherRef,
+    reviewedBy: authorRef,
+    mainEntityOfPage: canonical,
+  }
+  if (route === '/about/author') {
+    pageNode.mainEntity = authorRef
+    pageNode.about = authorRef
+  }
+  const graph = [pageNode, organizationNode, personNode]
   if (route === '/') {
     graph.push({
-      '@type': 'WebSite', '@id': `${siteUrl}/#website`, name: 'DatePilot', url: siteUrl,
+      '@type': 'WebSite', '@id': `${siteUrl}/#website`, name: 'DatePilot', url: siteUrl, publisher: publisherRef, inLanguage: 'en',
       potentialAction: { '@type': 'SearchAction', target: `${siteUrl}/calculators/?query={search_term_string}`, 'query-input': 'required name=search_term_string' },
     })
   }
   const schemaTag = `<script id="datepilot-schema" type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c')}</script>`
   const html = template
+    .replace(rootPattern, `<div id="root">${render(route)}</div>`)
     .replace(/<title>.*?<\/title>/, `<title>${title}</title>`)
     .replace(/<meta name="description" content=".*?" \/>/, `<meta name="description" content="${description}" />`)
     .replace(/<meta property="og:title" content=".*?" \/>/, `<meta property="og:title" content="${title}" />`)
@@ -123,6 +152,7 @@ for (const [route, [title, description]] of Object.entries(routes)) {
 }
 
 const notFoundHtml = template
+  .replace(rootPattern, `<div id="root">${render('/404')}</div>`)
   .replace(/<title>.*?<\/title>/, '<title>Page Not Found — DatePilot</title>')
   .replace(/<meta name="description" content=".*?" \/>/, '<meta name="description" content="This DatePilot page does not exist. Browse the date calculators, calendar tools, time tools, and guides instead." />')
   .replace(/<link rel="canonical" href=".*?" \/>/, '')
@@ -140,4 +170,4 @@ const sitemap = [
 ].join('\n')
 fs.writeFileSync(path.join(dist, 'sitemap.xml'), sitemap)
 
-console.log(`Generated ${Object.keys(routes).length} route HTML shells, 404.html, and sitemap.xml in dist/`)
+console.log(`Generated ${Object.keys(routes).length} prerendered route pages, 404.html, and sitemap.xml in dist/`)

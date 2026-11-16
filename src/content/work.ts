@@ -137,7 +137,7 @@ export const workContent: Record<string, ToolContent> = {
     ],
     sources: [
       ['US Department of Labor — Wage and Hour Division', 'https://www.dol.gov/agencies/whd'],
-      ['US Bureau of Labor Statistics — Work schedules', 'https://www.bls.gov/opub/ted/2021/what-does-it-mean-to-work-full-time.htm'],
+      ['US Bureau of Labor Statistics — Work schedules glossary', 'https://www.bls.gov/bls/glossary.htm'],
     ],
   },
 
@@ -254,7 +254,7 @@ export const workContent: Record<string, ToolContent> = {
     ],
     sources: [
       ['US Department of Labor — Wage and Hour Division', 'https://www.dol.gov/agencies/whd'],
-      ['US Bureau of Labor Statistics — Work schedules', 'https://www.bls.gov/opub/ted/2021/what-does-it-mean-to-work-full-time.htm'],
+      ['US Bureau of Labor Statistics — Work schedules glossary', 'https://www.bls.gov/bls/glossary.htm'],
     ],
   },
 }

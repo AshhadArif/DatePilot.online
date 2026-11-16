@@ -120,3 +120,55 @@ test('route shells exist for every sitemap URL', () => {
   assert.ok(fs.existsSync(path.join(root, 'dist/404.html')), 'dist/404.html must exist')
   assert.match(read('dist/404.html'), /noindex/)
 })
+
+import { toolTrust } from '../src/content/trust.ts'
+import { contentPages } from '../src/content/pages.ts'
+
+test('every tool has methodology, examples, and stated limits', () => {
+  assert.ok(toolSlugs.length >= 20, `expected the full tool set, found ${toolSlugs.length}`)
+  for (const slug of toolSlugs) {
+    const trust = toolTrust[slug]
+    assert.ok(trust, `missing toolTrust entry for ${slug}`)
+    assert.ok(trust.formula.length > 40, `toolTrust formula for ${slug} is too short`)
+    assert.ok(trust.assumptions.length >= 2, `toolTrust assumptions for ${slug} need at least two entries`)
+    assert.ok(trust.examples.length >= 2, `toolTrust examples for ${slug} need at least two entries`)
+    assert.ok(trust.limits.length >= 2, `toolTrust limits for ${slug} need at least two entries`)
+  }
+})
+
+test('trust pages are registered as routes with review dates', () => {
+  for (const key of Object.keys(contentPages)) {
+    const route = `/${key}`
+    assert.ok(lastmod[route], `missing lastmod entry for ${route}`)
+    const data = contentPages[key]
+    assert.ok(data.sections.length >= 4, `${route} needs at least four sections`)
+    for (const section of data.sections) assert.ok(section.blocks.length > 0, `${route} has an empty section: ${section.heading}`)
+  }
+})
+
+test('privacy and cookie policies describe the advertising actually served', () => {
+  const app = read('src/App.tsx')
+  assert.ok(!/does not currently display advertising/i.test(app), 'privacy policy must not claim the site has no advertising')
+  assert.ok(!/no advertising code/i.test(app), 'cookie policy must not claim there is no advertising code')
+  assert.match(app, /Google AdSense/, 'policies must name the advertising provider')
+  assert.match(app, /consent/i, 'policies must explain consent for advertising cookies')
+})
+
+test('prerendered pages contain article content and publisher schema', () => {
+  for (const route of ['/calculators/age-calculator', '/guides/time-zones', '/about/author', '/methodology', '/advertising-policy']) {
+    const file = route === '/' ? 'dist/index.html' : `dist${route}/index.html`
+    const html = read(file)
+    assert.ok(!html.includes('<!--ssr-outlet-->'), `${file} still contains the empty SSR outlet`)
+    assert.ok(html.length > 5000, `${file} is too small to contain rendered content`)
+    assert.ok(/"author":\{"@id":"https:\/\/datepilot\.online\/#person"\}/.test(html), `${file} is missing the author reference`)
+    assert.ok(/"publisher":\{"@id":"https:\/\/datepilot\.online\/#organization"\}/.test(html), `${file} is missing the publisher reference`)
+  }
+})
+
+test('tool pages show the author byline and a rendered methodology section', () => {
+  const html = read('dist/calculators/age-calculator/index.html')
+  assert.match(html, /By (?:<!-- -->)?Fahad/)
+  assert.match(html, /Founder and editor/)
+  assert.match(html, /Method, checked examples, and limits/)
+  assert.match(html, /Known limitations/)
+})

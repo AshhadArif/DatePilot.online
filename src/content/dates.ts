@@ -169,7 +169,7 @@ export const dateContent: Record<string, ToolContent> = {
     ],
     sources: [
       ['NIST — What Time is It? FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/what-time-it-faqs'],
-      ['US Naval Observatory — Introduction to Calendars', 'https://aa.usno.navy.mil/faq/calendars'],
+      ['NASA — Calendars and their History', 'https://eclipse.gsfc.nasa.gov/SEhelp/calendars.html'],
       ['ISO — ISO 8601 date and time format', 'https://www.iso.org/iso-8601-date-and-time-format.html'],
     ],
   },
@@ -333,7 +333,7 @@ export const dateContent: Record<string, ToolContent> = {
     ],
     sources: [
       ['NIST — What Time is It? FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/what-time-it-faqs'],
-      ['US Naval Observatory — Introduction to Calendars', 'https://aa.usno.navy.mil/faq/calendars'],
+      ['NASA — Calendars and their History', 'https://eclipse.gsfc.nasa.gov/SEhelp/calendars.html'],
       ['ISO — ISO 8601 date and time format', 'https://www.iso.org/iso-8601-date-and-time-format.html'],
     ],
   },
@@ -441,7 +441,7 @@ export const dateContent: Record<string, ToolContent> = {
     ],
     sources: [
       ['NIST — What Time is It? FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/what-time-it-faqs'],
-      ['US Naval Observatory — Introduction to Calendars', 'https://aa.usno.navy.mil/faq/calendars'],
+      ['NASA — Calendars and their History', 'https://eclipse.gsfc.nasa.gov/SEhelp/calendars.html'],
     ],
   },
 
@@ -565,7 +565,7 @@ export const dateContent: Record<string, ToolContent> = {
     ],
     sources: [
       ['NIST — What Time is It? FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/what-time-it-faqs'],
-      ['US Naval Observatory — Introduction to Calendars', 'https://aa.usno.navy.mil/faq/calendars'],
+      ['NASA — Calendars and their History', 'https://eclipse.gsfc.nasa.gov/SEhelp/calendars.html'],
       ['ISO — ISO 8601 date and time format', 'https://www.iso.org/iso-8601-date-and-time-format.html'],
     ],
   },

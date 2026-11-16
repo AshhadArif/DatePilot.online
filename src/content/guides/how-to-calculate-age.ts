@@ -24,7 +24,7 @@ export const content: GuideContent = {
     ['How do I find the age difference between two people?', 'Subtract the earlier birth date from the later one and express the result in years, months and days, or convert the span into total days. The span itself never changes, but the difference in whole years can: two people born a year apart show a difference of zero or one depending on whether the younger birthday has occurred. Use the age difference calculator for the span and the age calculator for each person on the date that matters.'],
   ],
   sources: [
-    ['US Naval Observatory — Leap years', 'https://aa.usno.navy.mil/faq/leap_years'],
+    ['NASA — Calendars and their History', 'https://eclipse.gsfc.nasa.gov/SEhelp/calendars.html'],
     ['Royal Museums Greenwich — Which years are leap years and can you have leap seconds?', 'https://www.rmg.co.uk/stories/time/which-years-are-leap-years-can-you-have-leap-seconds'],
     ['NIST — Leap Seconds FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/leap-seconds-faqs'],
     ['Encyclopaedia Britannica — Leap year', 'https://www.britannica.com/science/leap-year-calendar'],

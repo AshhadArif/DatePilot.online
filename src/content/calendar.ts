@@ -140,8 +140,8 @@ export const calendarContent: Record<string, ToolContent> = {
       ['Do weekdays repeat on a cycle?', 'Yes. The Gregorian calendar repeats exactly every 400 years — 146,097 days, which is 20,871 whole weeks — so any date that exists in both years falls on the same weekday 400 years apart. Inside periods with no skipped century leap year, such as 1901–2099, the pattern also repeats every 28 years.'],
     ],
     sources: [
-      ['US Naval Observatory — Julian Date Converter', 'https://aa.usno.navy.mil/data/JulianDate'],
-      ['US Naval Observatory — Introduction to Calendars', 'https://aa.usno.navy.mil/faq/calendars'],
+      ['NASA JPL — JD Date/Time Converter', 'https://ssd.jpl.nasa.gov/tools/jdc/'],
+      ['NASA — Calendars and their History', 'https://eclipse.gsfc.nasa.gov/SEhelp/calendars.html'],
       ['Royal Museums Greenwich — Why seven days in a week?', 'https://www.rmg.co.uk/stories/time/why-12-months-year-seven-days-week-or-60-minutes-hour'],
     ],
   },
@@ -450,8 +450,7 @@ export const calendarContent: Record<string, ToolContent> = {
       ['How accurate is the Gregorian leap year rule?', 'The calendar averages 365.2425 days against an approximate tropical year of 365.2422 days. The gap of about 0.0003 days per year adds up to roughly one day every few thousand years — accurate enough for civil purposes for millennia, so no further adjustment is planned.'],
     ],
     sources: [
-      ['US Naval Observatory — Leap Years', 'https://aa.usno.navy.mil/faq/leap_years'],
-      ['US Naval Observatory — Introduction to Calendars', 'https://aa.usno.navy.mil/faq/calendars'],
+      ['NASA — Calendars and their History', 'https://eclipse.gsfc.nasa.gov/SEhelp/calendars.html'],
       ['NIST — Leap Seconds FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/leap-seconds-faqs'],
       ['Royal Museums Greenwich — Which years are leap years?', 'https://www.rmg.co.uk/stories/time/which-years-are-leap-years-can-you-have-leap-seconds'],
       ['Britannica — Gregorian calendar', 'https://www.britannica.com/topic/Gregorian-calendar'],
@@ -726,7 +725,7 @@ export const calendarContent: Record<string, ToolContent> = {
       ['ISO — ISO 8601 date and time format', 'https://www.iso.org/iso-8601-date-and-time-format.html'],
       ['ISO — ISO 8601-1:2019 Date and time', 'https://www.iso.org/standard/70907.html'],
       ['NIST — Timekeeping and clocks FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/timekeeping-and-clocks-faqs'],
-      ['US Naval Observatory — Julian Date Converter', 'https://aa.usno.navy.mil/data/JulianDate'],
+      ['NASA JPL — JD Date/Time Converter', 'https://ssd.jpl.nasa.gov/tools/jdc/'],
     ],
   },
 }

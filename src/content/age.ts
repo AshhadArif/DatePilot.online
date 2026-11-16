@@ -177,7 +177,7 @@ export const ageContent: Record<string, ToolContent> = {
     ],
     sources: [
       ['NIST — What Time is It? FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/what-time-it-faqs'],
-      ['US Naval Observatory — Introduction to Calendars', 'https://aa.usno.navy.mil/faq/calendars'],
+      ['NASA — Calendars and their History', 'https://eclipse.gsfc.nasa.gov/SEhelp/calendars.html'],
       ['Royal Museums Greenwich — Which years are leap years?', 'https://www.rmg.co.uk/stories/time/which-years-are-leap-years-can-you-have-leap-seconds'],
     ],
   },
@@ -291,7 +291,7 @@ export const ageContent: Record<string, ToolContent> = {
     ],
     sources: [
       ['NIST — What Time is It? FAQs', 'https://www.nist.gov/pml/time-and-frequency-division/what-time-it-faqs'],
-      ['US Naval Observatory — Introduction to Calendars', 'https://aa.usno.navy.mil/faq/calendars'],
+      ['NASA — Calendars and their History', 'https://eclipse.gsfc.nasa.gov/SEhelp/calendars.html'],
     ],
   },
 }

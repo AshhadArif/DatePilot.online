@@ -7,6 +7,7 @@ export type Block =
   | { type: 'ul'; items: string[] }
   | { type: 'table'; headers: string[]; rows: string[][] }
   | { type: 'note'; text: string }
+  | { type: 'links'; items: SourceLink[] }
   | { type: 'component'; name: DynamicBlockName }
 
 export type Section = { heading: string; blocks: Block[] }
