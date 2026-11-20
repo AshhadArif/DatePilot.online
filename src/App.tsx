@@ -118,15 +118,15 @@ const routeSeo = (path: string): Seo => {
     '/converters': { title: 'Date Conversion Tools — Formats Made Clear', description: 'Convert dates between ISO 8601, US, and European formats with an explicit day and month order so ambiguous dates stay clear.' },
     '/guides': { title: 'Date and Time Guides — Calculations, Calendars, Time Zones', description: 'Practical explanations for date calculations, calendar rules, time zones, and date formats.' },
     '/faq': { title: 'Frequently Asked Questions — DatePilot', description: 'Answers about DatePilot calculations, endpoint conventions, privacy, and how date tools work.' },
-    '/about': { title: 'About DatePilot — Our Approach to Date Calculations', description: 'Learn who runs DatePilot, how the site is funded, how calculators are checked, and how corrections are handled.' },
+    '/about': { title: 'About DatePilot — Our Approach to Date Calculations', description: 'Learn who runs DatePilot, how its calculators are checked, and how corrections are handled.' },
     '/about/author': { title: 'About the Editor — DatePilot', description: 'Fahad is the founder and editor of DatePilot. Read his role, areas of focus, editorial process, and how to report a correction.', type: 'ProfilePage' },
     '/editorial-policy': { title: 'Editorial Standards and Review Process — DatePilot', description: 'How DatePilot researches, writes, checks, reviews, and corrects its date calculators and guides, including its use of automation.' },
     '/methodology': { title: 'How DatePilot Tests Its Calculators — Methodology', description: 'The calculation pipeline, test strategy, reproducible examples, known limitations, and tool-by-tool verification focus behind DatePilot.' },
     '/changelog': { title: 'DatePilot Changelog — Site and Content History', description: 'A dated record of material changes to DatePilot calculators, guides, sources, policies, and trust pages.' },
-    '/advertising-policy': { title: 'Advertising and Editorial Independence — DatePilot', description: 'How DatePilot is funded by Google AdSense, how ads are kept separate from content, and how to control personalised advertising.' },
+    '/advertising-policy': { title: 'Advertising Status and Editorial Independence — DatePilot', description: 'DatePilot has applied to Google AdSense. Read the current status, editorial commitments, and planned privacy safeguards.' },
     '/contact': { title: 'Contact DatePilot — Report Issues and Corrections', description: 'Report incorrect calculations, broken links, accessibility issues, or other problems with DatePilot.' },
-    '/privacy-policy': { title: 'Privacy Policy — How DatePilot Handles Your Data', description: 'DatePilot calculators run in your browser. Read how we handle calculator inputs, Google AdSense advertising, cookies, and server logs.' },
-    '/cookie-policy': { title: 'Cookie Policy — Which Cookies DatePilot Uses', description: 'Learn which first-party and Google AdSense advertising cookies may be set when you use DatePilot, and how to control them.' },
+    '/privacy-policy': { title: 'Privacy Policy — How DatePilot Handles Your Data', description: 'DatePilot calculators run in your browser. Read how we handle calculator inputs, the AdSense review code, cookies, and server logs.' },
+    '/cookie-policy': { title: 'Cookie Policy — DatePilot', description: 'Learn how DatePilot handles browser data now and what may change if Google AdSense approves the site.' },
     '/terms': { title: 'Terms of Use — DatePilot', description: 'Read the terms governing use of DatePilot date and time calculation tools, including advertising and third-party links.' },
     '/disclaimer': { title: 'Disclaimer — DatePilot', description: 'DatePilot provides general calculations, not official or legal advice. Read important disclaimers.' },
     '/report-an-error': { title: 'Report an Error — DatePilot', description: 'Found an incorrect calculation, broken link, or accessibility problem? Report it to DatePilot.' },
@@ -369,7 +369,7 @@ function Footer({ go }: { go: (path: string) => void }) {
     <div>
       <NavLink to="/" go={go} className="brand"><b>DP</b><span>DatePilot<span className="dot">.</span></span></NavLink>
       <p>Useful answers for dates, calendars, and time.</p>
-      <p className="footer-small">Independent and funded by advertising. Advertisers do not influence our calculations or explanations.</p>
+      <p className="footer-small">Independent. AdSense review is pending; no ads are currently displayed.</p>
     </div>
     <div className="footer-columns">
       <div><small>Explore</small>{link('/calculators', 'Calculators')}{link('/calendar', 'Calendar')}{link('/time', 'Time')}{link('/converters', 'Converters')}{link('/guides', 'Guides')}{link('/faq', 'FAQ')}</div>
@@ -377,7 +377,7 @@ function Footer({ go }: { go: (path: string) => void }) {
       <div><small>Support</small>{link('/contact', 'Contact')}{link('/report-an-error', 'Report an error')}{link('/disclaimer', 'Disclaimer')}</div>
       <div><small>Legal</small>{link('/privacy-policy', 'Privacy Policy')}{link('/cookie-policy', 'Cookie Policy')}{link('/terms', 'Terms of Use')}</div>
     </div>
-    <small className="footer-note">Built for clarity. Calculator inputs stay in your browser. Last reviewed {reviewedLabel('2026-11-16')}.</small>
+    <small className="footer-note">Built for clarity. Calculator inputs stay in your browser. Last reviewed {reviewedLabel('2026-11-20')}.</small>
   </footer>
 }
 
@@ -411,10 +411,21 @@ function Home({ go }: { go: (path: string) => void }) {
     </section>
     <section className="section">
       <div className="section-head">
-        <div><p className="eyebrow">POPULAR STARTING POINTS</p><h2>Tools that do the work</h2></div>
+        <div><p className="eyebrow">DATEPILOT CALCULATORS</p><h2>Tools that do the work</h2></div>
         <NavLink className="text-link" to="/calculators" go={go}>View all tools →</NavLink>
       </div>
       <div className="tool-grid">{tools.map((tool) => <Card key={tool.slug} tool={tool} go={go} />)}</div>
+    </section>
+    <section className="examples-section">
+      <div className="section-head">
+        <div><p className="eyebrow">CHECK THE RULE, NOT JUST THE RESULT</p><h2>Examples from the edge cases</h2></div>
+        <NavLink className="text-link" to="/methodology" go={go}>How calculations are checked →</NavLink>
+      </div>
+      <div className="example-grid">
+        <article><span>CALENDAR MONTHS</span><h3>31 January + 1 month</h3><p>The Date Calculator clamps to the last valid day: 28 February in a common year, or 29 February in a leap year. A month is not treated as 30 days.</p><NavLink className="inline-link" to="/calculators/date-calculator" go={go}>Try the Date Calculator</NavLink></article>
+        <article><span>ISO WEEK-YEAR</span><h3>1 January 2027</h3><p>This date is ISO week 53 of 2026. The calculator reports the week-year as well as the week number, so a New Year boundary is visible.</p><NavLink className="inline-link" to="/calendar/week-number" go={go}>Check a week number</NavLink></article>
+        <article><span>AGE FROM A LEAP DAY</span><h3>Born on 29 February</h3><p>This age calculator counts the next birthday as 1 March in a common year. On 28 February, it has not yet added another year.</p><NavLink className="inline-link" to="/calculators/age-calculator" go={go}>Calculate an age</NavLink></article>
+      </div>
     </section>
     <section className="principles">
       <div><p className="eyebrow">WHY DATEPILOT</p><h2>Answers you can inspect.</h2></div>
@@ -429,7 +440,7 @@ function Home({ go }: { go: (path: string) => void }) {
         <p className="eyebrow">HOW THIS SITE IS RUN</p>
         <h2>Built independently. Reviewed before it ships.</h2>
         <p>DatePilot is written and maintained by {AUTHOR_NAME}, a {AUTHOR_ROLE.toLowerCase()} who focuses on date, calendar, and time calculations. Every calculator has a stated method, verified examples, and known limits. Pages are reviewed before publication and when a correction is confirmed.</p>
-        <p>Advertising through Google AdSense keeps the site free. Advertisers have no input into tool logic, editorial wording, or which sources we cite.</p>
+        <p>DatePilot has applied to Google AdSense, and the site is awaiting review. No ads are currently displayed and the site is not yet funded by advertising. If approved, advertising will not influence tool logic, editorial wording, or source selection.</p>
         <div className="trust-actions">
           <NavLink to={AUTHOR_PATH} go={go} className="primary">Meet the editor <span>→</span></NavLink>
           <NavLink to="/editorial-policy" go={go} className="quiet">Read the editorial standards</NavLink>
@@ -989,6 +1000,28 @@ function ToolIndex({ category, go }: { category?: Tool['category']; go: (path: s
   const list = needle ? base.filter((tool) => `${tool.title} ${tool.summary} ${tool.category}`.toLowerCase().includes(needle)) : base
   const title = category === 'Time' ? 'Put every time zone in context.' : category === 'Calendar' ? 'See the shape of the calendar.' : category === 'Date' ? 'Work with dates, without the guesswork.' : category === 'Convert' ? 'Know exactly what the date means.' : 'All the tools, in one place.'
   const explanation = category === 'Time' ? 'Compare elapsed time, count down to a moment, and convert local times using named time zones.' : category === 'Calendar' ? 'Check weekdays, ISO week numbers, and leap years using clearly stated calendar conventions.' : category === 'Date' ? 'Plan deadlines, compare date ranges, add or subtract days, and count working days.' : category === 'Convert' ? 'Translate dates between ISO 8601, US, and European formats, and resolve ambiguous numeric dates with an explicit day and month order.' : 'Start with the task you need to solve, then follow the method and related guidance on each tool page.'
+  const hubFaqs: [string, string][] = !category ? [
+    ['Which calculator should I use to find a date a number of days away?', 'Use Add Days or Subtract Days when you have one starting date and a day count. Use Days Between Dates when you already know both endpoints. For month-based schedules, use the Date Calculator and choose calendar months explicitly.'],
+    ['What is the difference between working days and business days here?', 'Both use a weekday pattern and exclude weekends according to the selected rule. DatePilot does not automatically remove public holidays, company closures, or country-specific nonworking days; verify those separately.'],
+    ['Which tool handles a deadline with a buffer?', 'Use the Deadline Calculator to move forward from a start or work backward from a target, then set the duration and buffer that match your plan. Check the governing contract or official rule for endpoint and holiday conventions.'],
+    ['Where can I learn the rules behind a result?', 'Each calculator page explains its method and assumptions. The guides cover shared topics such as date counting, working days, leap years, time zones, and ISO week numbering.'],
+  ] : category === 'Date' ? [
+    ['Should I use Days Between Dates or Add Days?', 'Use Days Between Dates when both dates are known and you want the gap. Use Add Days when you know a starting date and want to find the later date. The former reports an exclusive elapsed gap; for inclusive schedules, check the convention your task requires.'],
+    ['Does one month mean 30 days?', 'No. A calendar month varies from 28 to 31 days. DatePilot’s month arithmetic uses calendar months and clamps to the last valid day when the destination month is shorter.'],
+    ['Are public holidays removed from working-day results?', 'No. The tools use the stated weekday pattern and do not include a hidden national or regional holiday list. Check the holiday calendar relevant to your workplace or deadline.'],
+  ] : category === 'Calendar' ? [
+    ['Why can a January date have a week number from the previous year?', 'ISO weeks are numbered by the year containing that week’s Thursday. A few dates near New Year therefore belong to the prior or next ISO week-year. The Week Number Calculator displays both values.'],
+    ['What is the Gregorian leap-year rule?', 'A year divisible by four is usually a leap year. Century years are exceptions unless divisible by 400: 1900 was common, while 2000 was a leap year.'],
+    ['Do weekday results match historical local calendars?', 'Not always. DatePilot uses the proleptic Gregorian calendar for weekday arithmetic, extending Gregorian rules backward. A historical date may have been recorded under a different calendar in its country.'],
+  ] : category === 'Time' ? [
+    ['When should I use a named time zone instead of a UTC offset?', 'Use a named zone for a place and event date when local clock rules matter. A numeric offset is fixed; it does not include a region’s daylight-saving or historical changes.'],
+    ['Can a time-zone conversion change the date?', 'Yes. Converting a moment near midnight can move the local date forward or backward. Enter the specific date because a named zone’s UTC offset can vary through the year.'],
+    ['Does the countdown update continuously?', 'No. It calculates from your device clock when you submit the form. Submit it again to refresh the remaining time; the target defaults to 17:00 local time on the selected date.'],
+  ] : [
+    ['Why is 03/04/2026 ambiguous?', 'It can mean 3 April in day-first notation or March 4 in month-first notation. Choose the input order before converting; the converter does not guess which date the writer intended.'],
+    ['Does changing a date format change the calendar date?', 'No. Format conversion changes how the same date is written. It does not shift the time zone or add or subtract a day.'],
+    ['Which date format is least ambiguous across regions?', 'A year-first ISO 8601 date such as 2026-04-03 is unambiguous for a calendar date. For a timestamp, include a time and UTC offset or a clearly named time zone.'],
+  ]
   const breadcrumbLabel = category ? `${category} tools` : 'Calculators'
   const breadcrumbPath = category === 'Time' ? '/time' : category === 'Calendar' ? '/calendar' : category === 'Convert' ? '/converters' : '/calculators'
   return <main className="page" id="main-content" tabIndex={-1}>
@@ -1015,18 +1048,32 @@ function ToolIndex({ category, go }: { category?: Tool['category']; go: (path: s
         <p>{explanation} Each calculator explains its inputs, method, examples, limitations, and related next steps so the result is easier to interpret.</p>
         <p><NavLink className="text-link" to="/guides" go={go}>Read the DatePilot guides →</NavLink></p>
       </section>}
+    <section className="seo-content">
+      <h2>{category ? `${category} calculator questions` : 'Choosing the right calculator'}</h2>
+      {hubFaqs.map(([question, answer]) => <div className="faq-item" key={question}><h3>{question}</h3><p><RichText text={answer} go={go} /></p></div>)}
+    </section>
   </main>
 }
 
 function Guides({ go }: { go: (path: string) => void }) {
+  const guideGroups = [
+    { title: 'Date arithmetic and planning', description: 'Choose these when you need a date, duration, age, or working-day count.', slugs: ['date-calculations', 'days-between-dates', 'add-subtract-days', 'working-days', 'how-to-calculate-age', 'leap-years'] },
+    { title: 'Weekdays and calendar systems', description: 'Understand weekday lookup, ISO week-years, and why calendars can label the same date differently.', slugs: ['day-of-week', 'week-numbers', 'iso-week-date', 'week-numbering-systems', 'calendar-systems'] },
+    { title: 'Time, time zones, and clocks', description: 'Work through named time zones, daylight-saving transitions, UTC, Unix timestamps, and leap seconds.', slugs: ['time-zones', 'utc-vs-gmt', 'daylight-saving-time', 'unix-time', 'leap-seconds'] },
+    { title: 'Writing dates and times clearly', description: 'Avoid ambiguous numeric dates and choose a format that carries the context readers need.', slugs: ['date-time-formats'] },
+  ]
   return <main className="page" id="main-content" tabIndex={-1}>
     <Breadcrumbs items={[['Guides', '/guides']]} go={go} />
     <p className="eyebrow accent">FIELD NOTES</p>
     <h1>Understand the rules behind the result.</h1>
-    <p className="lead">Practical explanations for questions that calculators alone cannot answer.</p>
-    <div className="guide-list">{guides.map((guide, index) => <NavLink key={guide.slug} to={`/guides/${guide.slug}`} go={go}>
-      <span>{String(index + 1).padStart(2, '0')}</span><div><strong>{guide.title}</strong><p>{guide.description}</p></div><i>↗</i>
-    </NavLink>)}</div>
+    <p className="lead">Practical explanations for questions that calculators alone cannot answer. Start with the problem you need to solve; each guide explains the rule, shows where a common shortcut can fail, and points to the relevant calculator.</p>
+    {guideGroups.map((group) => <section className="seo-content" key={group.title}>
+      <h2>{group.title}</h2>
+      <p>{group.description}</p>
+      <div className="guide-list">{group.slugs.map((slug) => { const guide = guides.find((item) => item.slug === slug); return guide ? <NavLink key={guide.slug} to={`/guides/${guide.slug}`} go={go}>
+        <span aria-hidden="true">→</span><div><strong>{guide.title}</strong><p>{guide.description}</p></div><i aria-hidden="true">Open</i>
+      </NavLink> : null })}</div>
+    </section>)}
   </main>
 }
 
@@ -1100,7 +1147,7 @@ function Faq({ go }: { go: (path: string) => void }) {
     </section>
     <section className="seo-content">
       <h2>Does DatePilot store my calculator inputs?</h2>
-      <p>No. DatePilot calculators run entirely in your browser. Inputs are not sent to a server, stored in a database, or tracked. See the <NavLink className="inline-link" to="/privacy-policy" go={go}>Privacy Policy</NavLink> for details.</p>
+      <p>Calculator values are processed in your browser and are not sent to DatePilot’s server. This is specific to the values you enter; hosting logs and Google’s review code are separate services described in the <NavLink className="inline-link" to="/privacy-policy" go={go}>Privacy Policy</NavLink>.</p>
     </section>
     <section className="seo-content">
       <h2>How does DatePilot handle daylight saving time?</h2>
@@ -1109,6 +1156,13 @@ function Faq({ go }: { go: (path: string) => void }) {
     <section className="seo-content">
       <h2>Can I use DatePilot for legal or official purposes?</h2>
       <p>DatePilot provides general-purpose calculations. For legal, medical, financial, or official deadlines, verify the result with the responsible authority. Read the <NavLink className="inline-link" to="/disclaimer" go={go}>Disclaimer</NavLink>.</p>
+    </section>
+    <section className="seo-content">
+      <h2>Calendar edge cases</h2>
+      <div className="faq-item"><h3>What is the difference between adding 30 days and adding one month?</h3><p>Thirty days is a fixed day count; one month follows the calendar. For example, 31 January plus 30 days is 2 March in 2026, while one calendar month from 31 January clamps to 28 February. Choose the unit that matches the wording of your schedule or agreement.</p></div>
+      <div className="faq-item"><h3>Which calendar do DatePilot’s date and weekday tools use?</h3><p>They use Gregorian calendar rules, including the century exception for leap years: 1900 was not a leap year, while 2000 was. Weekday calculations extend those rules backward proleptically, so historical answers may differ from the calendar a place actually used before adopting the Gregorian reform.</p></div>
+      <div className="faq-item"><h3>Can the age shown for a leap-day birthday depend on local rules?</h3><p>Yes. DatePilot uses a stated calendar convention and is not a legal-age authority. A jurisdiction may treat the birthday anniversary differently for a law or contract; verify the applicable rule if the result has legal consequences.</p></div>
+      <div className="faq-item"><h3>Can I use a fixed UTC offset instead of a named time zone?</h3><p>A UTC offset describes the difference from UTC at a particular moment. A named zone such as Europe/London also carries local clock-change rules, so it is usually the better input for a future or past event. See <NavLink className="inline-link" to="/guides/time-zones" go={go}>how named time zones work</NavLink>.</p></div>
     </section>
   </main>
 }
@@ -1122,7 +1176,7 @@ function TrustPage({ kind, go }: { kind: string; go: (p: string) => void }) {
         ['What DatePilot is', 'DatePilot is a focused date, calendar, and time reference for people planning work, checking dates, comparing times, and learning the rules behind everyday calendar questions. It is built around a small set of useful tools rather than a large collection of unrelated calculators.'],
         ['How the content is made', 'Calculators are built first. Each one is then described with its purpose, inputs, method, assumptions, worked examples, limitations, and the standards or reference works it relies on. Guides explain the rules behind those calculations. Every page is reviewed by the editor before publication, and automation is used only to help draft, check, and test material, not as an author. Read the [editorial standards](/editorial-policy) for the full process.'],
         ['How accuracy is checked', 'We make calculations inspectable. Inputs are labeled, conventions are stated, and the explanation beside a result describes what it includes. Pages are checked against reproducible examples and edge cases such as leap days, month boundaries, weekdays, ISO week numbering, and time-zone transitions. The [methodology page](/methodology) describes the pipeline and gives worked examples you can reproduce.'],
-        ['How DatePilot is funded', 'DatePilot is independent and free to use. It is funded by advertising served through Google AdSense. Advertisers have no input into calculator logic, editorial wording, or source selection, and advertising is kept separate from content. See the [advertising policy](/advertising-policy) and [privacy policy](/privacy-policy) for details.'],
+        ['Advertising status', 'DatePilot has applied to Google AdSense and is awaiting review. No ads are currently displayed, and the site is not yet funded by advertising. The AdSense review code is installed, but there are no active ad placements. If approved, advertising will remain separate from editorial decisions. See the [advertising policy](/advertising-policy) and [privacy policy](/privacy-policy) for details.'],
         ['How DatePilot is built', 'DatePilot is a static web application. Calculator logic runs entirely in your browser using standard JavaScript date APIs and the browser\'s IANA timezone database. Calculator inputs are not sent to a server.'],
         ['What DatePilot is not', 'DatePilot is not an official government service, legal adviser, medical adviser, financial adviser, or a substitute for the organization responsible for an important deadline or decision. It does not claim professional credentials it does not have.'],
         ['Corrections and contact', `If you find an incorrect calculation, inaccurate explanation, broken link, or accessibility issue, report it through the [Contact page](/contact) or email ${CONTACT_EMAIL}. Confirmed corrections are fixed and recorded in the [Changelog](/changelog).`],
@@ -1133,20 +1187,20 @@ function TrustPage({ kind, go }: { kind: string; go: (p: string) => void }) {
       sections: [
         ['Why contact us', 'Contact DatePilot to report an incorrect calculation, incorrect explanation, outdated information, broken link, accessibility issue, privacy question, or other technical problem. Correction reports are especially useful because they help us investigate reproducible cases.'],
         ['What to include', 'Include the page URL, the inputs you entered, the result you expected, the calendar or timezone convention involved, and a short description of the problem. Do not include sensitive personal information that is not needed to investigate the issue.'],
-        ['How to reach us', `Email us at ${CONTACT_EMAIL} with your report or question. We aim to respond within 5 business days. For urgent accessibility issues, please include "Accessibility" in the subject line.`],
-        ['Response time', 'We review all messages and aim to respond within 5 business days. Calculation correction reports are prioritized because they may affect other users. Confirmed corrections are recorded in the [Changelog](/changelog).'],
+        ['How to reach us', `Email us at ${CONTACT_EMAIL} with your report or question. Response time can vary. For accessibility issues, please include "Accessibility" in the subject line.`],
+        ['Response time', 'Messages are reviewed as they are received, and response time can vary. Calculation correction reports are prioritized because they may affect other users. Confirmed corrections are recorded in the [Changelog](/changelog).'],
       ]
     },
     'privacy-policy': {
       title: 'Privacy Policy',
       sections: [
         ['Calculator behavior', 'All DatePilot calculators run entirely in your browser. The dates, times, and other values you enter are processed locally using JavaScript. Calculator inputs are not transmitted to, stored on, or accessed by any server, and we do not keep a history of your calculations.'],
-        ['Advertising and Google AdSense', 'DatePilot displays advertising through Google AdSense to keep the site free. Google and its partners may use cookies or similar technologies to serve, measure, and personalise ads based on your visits to this and other websites. Google\'s use of advertising data is described at policies.google.com/technologies/partner-sites. You can manage personalised advertising through Google Ad Settings and opt out of many third-party vendors through aboutads.info. Where required by law, including for visitors in the European Economic Area, the United Kingdom, and Switzerland, a consent message is shown before advertising cookies are used, and you can change or withdraw your choice later.'],
-        ['Cookies', 'DatePilot does not set first-party analytics or session cookies of its own. Advertising cookies are set by Google and its partners only as described above and in the [Cookie Policy](/cookie-policy). You can block or delete cookies through your browser settings, though that may affect how ads are personalised.'],
+        ['Advertising and Google AdSense', 'DatePilot has applied to Google AdSense and is awaiting review. The AdSense review script is present, but no ads are currently displayed and there are no active ad placements. Loading Google-hosted code may send technical request data, such as your IP address and browser information, to Google. If the site is approved and ads are enabled, Google and its partners may process data or use cookies to serve, measure, and personalise ads. Google describes its advertising data practices at policies.google.com/technologies/partner-sites. Before serving personalised ads to visitors in the EEA, UK, or Switzerland, DatePilot will configure an applicable Google-certified consent management platform.'],
+        ['Cookies', 'DatePilot does not set first-party analytics or session cookies of its own. The AdSense review script is installed, but there are no active ad placements in the page markup. If advertising is enabled after approval, Google or its partners may use cookies as described above and in the [Cookie Policy](/cookie-policy). You can block or delete cookies through your browser settings.'],
         ['Analytics', 'DatePilot does not currently run a first-party analytics product. If privacy-respecting analytics are added later, this policy will describe them before they are activated, and they will be used only to understand aggregate usage rather than to identify individual visitors.'],
         ['Server logs', 'The site is served by a hosting provider that processes standard request logs, such as IP address, browser type, pages requested, and timestamps, for security, abuse prevention, and operations. Those logs are handled under the provider\'s privacy terms and are not combined with calculator inputs, which never leave your browser.'],
         ['Third-party services', 'Apart from Google AdSense and the hosting provider, DatePilot fonts and core assets are served from this domain. Links to external sources open the relevant standards body, government, or reference site, and those sites have their own privacy policies.'],
-        ['Your choices and rights', 'You can manage cookies through your browser, control personalised advertising through Google Ad Settings, and use the consent controls shown on the site where required. If you have a privacy question or want to exercise a right available in your jurisdiction, contact us using the details below and we will respond within a reasonable period.'],
+        ['Your choices and rights', 'You can manage cookies through your browser and control personalised advertising through Google Ad Settings. DatePilot does not currently display ads or provide an on-site advertising consent control. If ads are enabled, the site will provide the consent mechanism required for the advertising options and regions it serves. For privacy questions or to exercise a right available in your jurisdiction, contact us using the details below.'],
         ['Children\'s privacy', 'DatePilot is not directed at children under 13 and does not knowingly collect personal information from children.'],
         ['Changes to this policy', `This policy may be updated as DatePilot adds or changes features. The review date shown on this page indicates when it was last checked. Material changes are recorded in the [Changelog](/changelog).`],
         ['Contact', `For privacy questions, email ${CONTACT_EMAIL} or use the [Contact page](/contact).`],
@@ -1156,12 +1210,12 @@ function TrustPage({ kind, go }: { kind: string; go: (p: string) => void }) {
       title: 'Cookie Policy',
       sections: [
         ['What cookies are', 'Cookies are small text files placed on your device by websites you visit. They can remember preferences, support site functions, or help advertising and analytics services measure activity. Similar technologies, such as local storage or pixels, may serve related purposes.'],
-        ['Cookies used by DatePilot', 'DatePilot does not set first-party analytics or session cookies. The calculators run locally and do not require a cookie to work. Cookies you may encounter come from Google AdSense advertising, described below.'],
+        ['Cookies used by DatePilot', 'DatePilot does not set first-party analytics or session cookies. The calculators run locally and do not require a cookie to work. The AdSense review script is present, but no ad placements are active and DatePilot is not currently displaying ads. If advertising is enabled after approval, Google or its partners may use cookies or similar technologies as described below.'],
         ['Essential cookies', 'At the time of this review, DatePilot does not set essential first-party cookies. If a feature ever requires one, it will be listed here by name and purpose before it is used.'],
-        ['Advertising cookies', 'Google AdSense and its partners may set cookies to serve, measure, and personalise ads, limit how often you see an ad, and detect invalid activity. These cookies are set by Google or its partners, not by DatePilot, and their use is governed by Google\'s advertising policies. Where required by law, a consent message is shown before advertising cookies are used.'],
+        ['Advertising cookies', 'If Google AdSense is approved and ads are enabled, Google and its partners may use cookies to serve, measure, and personalise ads, limit how often you see an ad, and detect invalid activity. These cookies would be set by Google or its partners, not by DatePilot. No ads are currently displayed, and no on-site advertising consent control is currently active. Before serving personalised ads in the EEA, UK, or Switzerland, DatePilot will configure a Google-certified consent management platform.'],
         ['Analytics cookies', 'DatePilot does not currently use a first-party analytics product. If analytics are added later, this section will describe the cookies or similar technologies before they are activated.'],
-        ['Managing cookies', 'You can control, block, and delete cookies through your browser settings. You can manage personalised advertising through Google Ad Settings and opt out of many third-party vendors through aboutads.info. Blocking advertising cookies does not stop ads from appearing, but it can make them less relevant.'],
-        ['Consent and choices', 'Visitors in the European Economic Area, the United Kingdom, and Switzerland are shown a consent message where required. You can accept, reject, or later change advertising choices through the consent controls. Withdrawing consent stops future use of the relevant cookies but does not affect processing that already happened.'],
+        ['Managing cookies', 'You can control, block, and delete cookies through your browser settings. If ads are enabled, you can manage personalised advertising through Google Ad Settings. Blocking advertising cookies may affect personalisation, depending on Google\'s settings and the choices available in your region.'],
+        ['Consent and choices', 'DatePilot does not currently display ads or provide an on-site advertising consent control. Before enabling personalised ads for users in the EEA, UK, or Switzerland, DatePilot will configure a Google-certified consent management platform. The available choices and controls will be described here when that setup is active.'],
         ['Third-party privacy policies', 'Google\'s handling of advertising data is described at policies.google.com/technologies/partner-sites. Other third parties that serve ads or links have their own policies.'],
         ['Changes', 'This policy may be updated as DatePilot changes its cookie usage. The review date shown on this page indicates when it was last checked, and material changes are recorded in the [Changelog](/changelog).'],
       ]
@@ -1173,7 +1227,7 @@ function TrustPage({ kind, go }: { kind: string; go: (p: string) => void }) {
         ['What DatePilot provides', 'DatePilot provides general-purpose date, calendar, and time calculation tools and explanatory content. Results are informational and should be verified for any consequential use.'],
         ['Not professional advice', 'DatePilot does not provide legal, medical, financial, or other professional advice. Use DatePilot results as a starting point and verify with the responsible authority when accuracy matters.'],
         ['Accuracy and review', 'DatePilot aims for accuracy but does not guarantee that all results are error-free. Calculation methods, calendar conventions, and timezone rules are stated on each tool page, and pages are reviewed before publication and after confirmed corrections. Report errors using the [Contact page](/contact).'],
-        ['Advertising', 'DatePilot is funded by advertising served through Google AdSense. Ads are separated from editorial content, and advertisers do not influence calculations, explanations, or source selection. Your use of advertising cookies is described in the [Privacy Policy](/privacy-policy) and [Cookie Policy](/cookie-policy).'],
+        ['Advertising', 'DatePilot has applied to Google AdSense and is awaiting review. No ads are currently displayed. If advertising is enabled after approval, it will remain separate from editorial content and will not influence calculations, explanations, or source selection. Any advertising cookies will be described in the [Privacy Policy](/privacy-policy) and [Cookie Policy](/cookie-policy).'],
         ['External links', 'DatePilot links to standards bodies, government guidance, and other reference sites. Those sites are not controlled by DatePilot, and their content, availability, and policies are their own responsibility.'],
         ['Availability', 'DatePilot is provided as-is and may be unavailable at times. We do not guarantee uninterrupted access.'],
         ['Limitation of liability', 'DatePilot is not liable for any decisions, losses, or damages resulting from use of the site or its calculations.'],
@@ -1187,8 +1241,8 @@ function TrustPage({ kind, go }: { kind: string; go: (p: string) => void }) {
         ['General purpose only', 'DatePilot provides general-purpose date, calendar, and time calculations for informational use. Results are not guaranteed to be suitable for any specific purpose.'],
         ['Not official or legal advice', 'DatePilot is not a government agency, legal service, financial adviser, or medical service. Do not rely on DatePilot results for legal deadlines, tax filings, medical decisions, contractual obligations, or other consequential matters without verifying with the responsible authority.'],
         ['Accuracy', 'DatePilot uses standard calendar rules and browser timezone data. While we aim for accuracy, calculation errors may exist. Each tool states its assumptions and known limits, and confirmed errors are corrected and recorded. Report errors using the [Contact page](/contact).'],
-        ['Advertising', 'DatePilot displays advertising through Google AdSense. Ads are not endorsements, and DatePilot is not responsible for the products or services advertised. Advertising has no influence on editorial content.'],
-        ['Third-party services', 'DatePilot relies on third-party services for hosting and advertising. DatePilot is not responsible for the actions or policies of those third parties, which are described in their own terms and privacy policies.'],
+        ['Advertising', 'DatePilot has applied to Google AdSense and is awaiting review. No ads are currently displayed. If ads are enabled after approval, they are not endorsements, and advertising will not influence editorial content.'],
+        ['Third-party services', 'DatePilot uses a hosting provider and loads the Google AdSense review script. If advertising is enabled later, Google will provide the ads subject to the applicable policies and privacy choices. Third-party services have their own terms and privacy policies.'],
       ]
     },
     'report-an-error': {
@@ -1198,7 +1252,7 @@ function TrustPage({ kind, go }: { kind: string; go: (p: string) => void }) {
         ['How to report', `Email us at ${CONTACT_EMAIL} with the details below.`],
         ['What to include', 'Please include: (1) the page URL where you found the problem, (2) the inputs you used if it is a calculation error, (3) the result you expected and why, (4) the result DatePilot gave you, and (5) a short description of the issue.'],
         ['Accessibility issues', 'If you are reporting an accessibility barrier, please include "Accessibility" in the subject line so we can prioritize your report.'],
-        ['What happens next', 'We review all reports and aim to respond within 5 business days. Calculation errors are prioritized. If we confirm an error, we fix it, update the affected page, and record the change in the [Changelog](/changelog).'],
+        ['What happens next', 'Reports are reviewed as they are received. Calculation errors are prioritized. If we confirm an error, we fix it, update the affected page, and record the change in the [Changelog](/changelog). Response time can vary.'],
       ]
     },
   }
@@ -1213,9 +1267,9 @@ function TrustPage({ kind, go }: { kind: string; go: (p: string) => void }) {
     <p className="eyebrow accent">DATEPILOT</p>
     <h1>{page.title}</h1>
     <AuthorByline path={`/${kind}`} go={go} />
-    {['privacy-policy', 'cookie-policy', 'terms', 'disclaimer'].includes(kind) && <p className="doc-note">DatePilot is independent and funded by Google AdSense advertising. Advertising is kept separate from editorial content. Read the <NavLink className="inline-link" to="/advertising-policy" go={go}>advertising policy</NavLink>.</p>}
+    {['privacy-policy', 'cookie-policy', 'terms', 'disclaimer'].includes(kind) && <p className="doc-note">DatePilot has applied to Google AdSense and is awaiting review. No ads are currently displayed. Read the <NavLink className="inline-link" to="/advertising-policy" go={go}>advertising policy</NavLink>.</p>}
     {page.sections.map(([heading, paragraph]) => <section className="seo-content legal-section" key={heading}><h2>{heading}</h2><p><RichText text={paragraph} go={go} /></p></section>)}
-    {kind === 'contact' && <div className="legal-review"><p><strong>Email:</strong> <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p><p><strong>Response time:</strong> Within 5 business days</p></div>}
+    {kind === 'contact' && <div className="legal-review"><p><strong>Email:</strong> <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p><p><strong>Response time:</strong> Response time can vary</p></div>}
     {kind === 'report-an-error' && <div className="legal-review"><p><strong>Email:</strong> <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p><p><strong>Subject line tip:</strong> Include "Accessibility" for accessibility issues</p></div>}
   </main>
 }

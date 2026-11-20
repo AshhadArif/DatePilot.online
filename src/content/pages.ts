@@ -33,7 +33,7 @@ export const contentPages: Record<string, ContentPageData> = {
           {
             type: 'p',
             text:
-              'DatePilot is independent. It is not owned by a calendar company, a payroll provider, or an advertising network. Advertising is served by Google AdSense and is kept separate from editorial decisions; the [advertising policy](/advertising-policy) explains exactly how that works.',
+              'DatePilot is independent. It is not owned by a calendar company, a payroll provider, or an advertising network. DatePilot has applied to Google AdSense and is awaiting review; no ads are currently displayed. If advertising is enabled after approval, it will remain separate from editorial decisions. See the [advertising policy](/advertising-policy) for the current status and commitments.',
           },
         ],
       },
@@ -50,8 +50,8 @@ export const contentPages: Record<string, ContentPageData> = {
             items: [
               'Calculator pages state the purpose, inputs, method, assumptions, worked examples, limitations, and related tools.',
               'Guide pages explain a standard or rule, show worked examples, and link to the primary sources used.',
-              'Trust pages explain who runs the site, how it is funded, how data is handled, and how to report a problem.',
-              'Pages are not auto-published. A human editor reviews every page before it goes live.',
+              'Trust pages explain who runs the site, its current advertising status, how data is handled, and how to report a problem.',
+              'Pages are not published automatically. The editor is responsible for deciding what goes live and for checking the published page.',
             ],
           },
         ],
@@ -123,7 +123,7 @@ export const contentPages: Record<string, ContentPageData> = {
           {
             type: 'p',
             text:
-              'Every content page shows a "Last reviewed" date. A page is reviewed when it is edited, when a linked standard changes, or when a correction is confirmed. In addition, the full set of calculators and guides is reviewed on a regular cycle so that examples, sources, and time zone data stay current. Material changes are recorded on the [changelog](/changelog).',
+              'Every content page shows a "Last reviewed" date for its most recent editorial check. Reviews are triggered by a material edit, a confirmed correction, or a source or rule change that affects the page. We do not claim a fixed review interval for every page. Material changes are recorded on the [changelog](/changelog).',
           },
           {
             type: 'p',
@@ -138,7 +138,7 @@ export const contentPages: Record<string, ContentPageData> = {
           {
             type: 'p',
             text:
-              'Automation is used for drafting assistance, consistency checks, test generation, and build verification. It is not credited as an author and it does not publish pages on its own. A human editor reviews the final text, checks the examples, and confirms that every cited source supports the claim it is attached to.',
+              'Automation may assist with drafting, consistency checks, and test generation. A human editor is responsible for deciding what is published and for reviewing the page, its examples, and its cited sources. Automated checks can catch regressions, but they do not replace checking the underlying rule or source.',
           },
           {
             type: 'p',
@@ -158,7 +158,7 @@ export const contentPages: Record<string, ContentPageData> = {
           {
             type: 'p',
             text:
-              'We aim to acknowledge reports within 5 business days. Confirmed calculation errors are prioritised. When a correction changes a published answer, the page is updated and dated, and the change is recorded on the changelog.',
+              'Reports are reviewed as they are received; response time can vary. Confirmed calculation errors are prioritised. When a correction changes a published answer, the page is updated and dated, and the change is recorded on the changelog.',
           },
         ],
       },
@@ -168,7 +168,7 @@ export const contentPages: Record<string, ContentPageData> = {
           {
             type: 'p',
             text:
-              'DatePilot is funded by advertising served through Google AdSense. Advertisers do not see articles before publication, cannot request changes, and cannot buy a recommendation. There are no paid reviews, sponsored articles, or paid links on this site. The [advertising policy](/advertising-policy) sets out the separation in full.',
+              'DatePilot has applied to Google AdSense and is awaiting review. No ads are currently displayed and the site is not yet funded by advertising. If approved, advertisers will not see articles before publication, request changes, or buy recommendations. DatePilot does not accept paid reviews, sponsored articles, or paid links. The [advertising policy](/advertising-policy) explains the current status and editorial commitments.',
           },
           {
             type: 'p',
@@ -190,9 +190,9 @@ export const contentPages: Record<string, ContentPageData> = {
     ],
     faqs: [
       ['Who writes DatePilot content?', 'Fahad, the founder and editor, writes and reviews the content and maintains the calculators. There is no anonymous content team. The about the editor page describes the role and the review process.'],
-      ['Does DatePilot use AI to write pages?', 'Automation assists with drafting, consistency checks, and test generation, but a human editor reviews every page and checks the examples and sources before publication. AI is not credited as an author and does not publish pages on its own.'],
-      ['How often is content reviewed?', 'Every page shows a last-reviewed date. Pages are reviewed when edited, when a standard changes, or when a correction is confirmed, and the full set is reviewed on a regular cycle. Material changes are listed on the changelog.'],
-      ['Can advertisers influence the content?', 'No. Ads are served by Google AdSense and kept separate from editorial decisions. There are no paid reviews, sponsored articles, or paid links. See the advertising policy for details.'],
+      ['Does DatePilot use AI to write pages?', 'Automation may assist with drafting, consistency checks, and test generation. A human editor decides what is published and reviews the page, examples, and cited sources. Automated checks do not replace checking the underlying rule.'],
+      ['How often is content reviewed?', 'Pages are reviewed when materially edited, when a relevant source or rule changes, or when a correction is confirmed. DatePilot does not claim a fixed review interval for every page. Material changes are listed on the changelog.'],
+      ['Can advertisers influence the content?', 'No ads are currently displayed because DatePilot is awaiting Google AdSense review. If the site is approved, advertising will remain separate from editorial decisions. DatePilot does not accept paid reviews, sponsored articles, or paid links. See the advertising policy for details.'],
     ],
   },
 
@@ -268,7 +268,7 @@ export const contentPages: Record<string, ContentPageData> = {
           {
             type: 'p',
             text:
-              'Each tool page includes a "Verified examples" table with fixed inputs and expected results. Enter the same inputs in the calculator and the same result should appear. If it does not, the page or the tool has changed in a way that was not reviewed. Report the difference using the [Report an error](/report-an-error) page and include the inputs you used.',
+              'Each tool page includes reproducible examples with fixed inputs and expected results. Enter the same inputs in the calculator and compare the output. These examples make the stated convention visible; they do not prove that every possible input has been tested. Report a mismatch through the [Report an error](/report-an-error) page and include the inputs you used.',
           },
           {
             type: 'p',
@@ -389,7 +389,10 @@ export const contentPages: Record<string, ContentPageData> = {
           {
             type: 'ul',
             items: [
-              '16 November 2026 — EEAT and transparency update. Added this changelog, an editorial standards page, a methodology page, an author page, and an advertising policy. Added per-tool methodology, assumptions, verified examples, and limitations. Added author, publisher, and review signals to structured data. Rewrote the privacy and cookie policies to describe the Google AdSense advertising that is actually present. Added static HTML rendering so the content of every route is available without JavaScript.',
+              '20 November 2026 — Corrected advertising and privacy disclosures to match the current AdSense review status. Added worked examples to the homepage showing how DatePilot handles calendar-month clamping, ISO week-years, and leap-day birthdays.',
+              '20 November 2026 — Clarified the editorial review and correction-reporting descriptions so they do not promise a fixed review cycle or response time. Clarified that reproducible examples cover named cases, not every possible input.',
+              '20 November 2026 — Reorganized the guide directory around the problems its articles solve, expanded the general FAQ with concrete calendar and time-zone edge cases, and added task-specific questions to the calculator directories.',
+              '16 November 2026 — Editorial transparency update. Added this changelog, editorial standards, methodology, author information, and an advertising policy. Added per-tool methodology, assumptions, worked examples, and limitations. Added author and publisher information to structured data. Added static HTML rendering so page content is available without JavaScript.',
               '10 November 2026 — Internal links, pushState URLs, canonical tags, and breadcrumb structured data now use trailing-slash URLs consistently.',
               '7 November 2026 — Split the combined guides into individual guide pages, added source lists to every tool page, and fixed broken glossary links.',
               '6 November 2026 — Added ads.txt with the Google AdSense publisher ID.',
@@ -434,10 +437,10 @@ export const contentPages: Record<string, ContentPageData> = {
   },
 
   'advertising-policy': {
-    title: 'Advertising and editorial independence',
-    eyebrow: 'HOW DATEPILOT IS FUNDED',
+    title: 'Advertising status and editorial independence',
+    eyebrow: 'ADVERTISING STATUS',
     lead:
-      'DatePilot is free to use and funded by advertising. This page explains who serves the ads, how they are kept separate from the content, and what control you have over personalisation.',
+      'DatePilot has applied to Google AdSense and is awaiting review. No ads are currently displayed and the site is not yet funded by advertising. This page explains the current setup and the commitments that will apply if ads are enabled.',
     showAuthor: true,
     sections: [
       {
@@ -446,12 +449,12 @@ export const contentPages: Record<string, ContentPageData> = {
           {
             type: 'p',
             text:
-              'DatePilot displays advertising served by Google AdSense, using publisher ID ca-pub-8166232264627968. Google and its advertising partners may use cookies and similar technologies to select, deliver, measure, and limit ads. DatePilot does not sell advertising space directly and does not control which individual ads Google shows.',
+              'DatePilot has applied to Google AdSense and is awaiting review. The AdSense review script is installed, but no ads are currently displayed and there are no active ad placements. Loading Google-hosted code may send technical request data, such as an IP address and browser information, to Google. If approved and enabled, Google and its partners may use data or cookies to select, deliver, measure, and limit ads. DatePilot does not sell advertising space directly or choose individual ads.',
           },
           {
             type: 'p',
             text:
-              'The full data-handling description is in the [privacy policy](/privacy-policy) and the [cookie policy](/cookie-policy). Advertising is also disclosed in the site footer and in this policy so visitors can see how the site is funded.',
+              'The current data-handling description is in the [privacy policy](/privacy-policy) and [cookie policy](/cookie-policy). Those pages will be updated if advertising is enabled after approval.',
           },
         ],
       },
@@ -481,7 +484,7 @@ export const contentPages: Record<string, ContentPageData> = {
           {
             type: 'p',
             text:
-              'Ads must remain clearly distinguishable from editorial content and must not interfere with the calculators. DatePilot does not use ads disguised as navigation, fake buttons, or fake download links, and it does not ask visitors to click ads. Ad units are placed so that the calculator inputs and results remain usable, including on small screens.',
+              'If ads are enabled after approval, they must remain clearly distinguishable from editorial content and must not interfere with the calculators. DatePilot will not disguise ads as navigation, buttons, or download links, ask visitors to click ads, or place ads so they obstruct the tools. There are no active ad placements at this time.',
           },
           {
             type: 'ul',
@@ -500,7 +503,7 @@ export const contentPages: Record<string, ContentPageData> = {
           {
             type: 'p',
             text:
-              'Google may use cookies to serve ads based on your prior visits to this site or other sites. You can opt out of personalised advertising through Google Ads Settings or the Digital Advertising Alliance opt-out page. Where consent is required by law, personalised advertising is served only with consent; otherwise non-personalised ads may be shown.',
+              'If ads are enabled, Google may use cookies or similar technologies to serve, measure, or personalise ads. Before serving personalised ads to users in the EEA, UK, or Switzerland, DatePilot will configure a Google-certified consent management platform. Until that setup is active, the site will not enable personalised advertising for those users. Google Ads Settings and the Digital Advertising Alliance provide additional advertising preference controls.',
           },
           {
             type: 'links',
@@ -519,15 +522,15 @@ export const contentPages: Record<string, ContentPageData> = {
           {
             type: 'p',
             text:
-              'If you see an ad that is misleading, inappropriate, or interferes with the page, report it to Google using the AdChoices icon on the ad and contact DatePilot at bazminoadsense2@gmail.com with the page URL and a description. We review reports and, where possible, block categories of ads that are inconsistent with the site\'s standards.',
+              'If advertising is enabled and you see an ad that is misleading, inappropriate, or interferes with the page, report it to Google using the AdChoices icon and contact DatePilot at bazminoadsense2@gmail.com with the page URL and a description. We will review reports and use available controls to address the issue.',
           },
         ],
       },
     ],
     faqs: [
-      ['Does DatePilot sell sponsored content?', 'No. There are no paid reviews, sponsored articles, paid rankings, or paid links. Advertising is served by Google AdSense and is kept separate from editorial decisions.'],
-      ['Can I use DatePilot without personalised ads?', 'Yes. You can manage personalised advertising through Google Ads Settings or the Digital Advertising Alliance opt-out page, and you can control cookies through your browser settings.'],
-      ['Why does DatePilot show ads?', 'Advertising funds the calculators, guides, and maintenance of the site. It allows the tools to remain free without charging visitors or selling their calculator inputs.'],
+      ['Does DatePilot sell sponsored content?', 'No. DatePilot does not accept paid reviews, sponsored articles, paid rankings, or paid links. The site is awaiting Google AdSense review; no ads are currently displayed.'],
+      ['Can I use DatePilot without personalised ads?', 'No ads are currently displayed. If advertising is enabled, the available choices will depend on your region; before personalised ads are served in the EEA, UK, or Switzerland, DatePilot will configure a Google-certified consent management platform.'],
+      ['Why does DatePilot show ads?', 'DatePilot has applied to Google AdSense but is awaiting review, so no ads are currently displayed. If approved, advertising may help support the free calculators and guides.'],
     ],
   },
 
@@ -598,7 +601,7 @@ export const contentPages: Record<string, ContentPageData> = {
           {
             type: 'p',
             text:
-              'Correction reports, accessibility issues, privacy questions, and advertising concerns are welcome. Email bazminoadsense2@gmail.com or use the [Contact](/contact) page. Include the page URL, the inputs you used, the result you expected, and the result the site gave you. Reports are acknowledged within 5 business days and confirmed calculation errors are prioritised.',
+              'Correction reports, accessibility issues, privacy questions, and advertising concerns are welcome. Email bazminoadsense2@gmail.com or use the [Contact](/contact) page. Include the page URL, the inputs you used, the result you expected, and the result the site gave you. Response time can vary; confirmed calculation errors are prioritised.',
           },
         ],
       },
